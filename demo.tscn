@@ -1,0 +1,52 @@
+[gd_scene load_steps=8 format=3 uid="uid://cay57tp5kyf4v"]
+
+[ext_resource type="Script" path="res://demo.gd" id="1_5v2dx"]
+[ext_resource type="Script" path="res://addons/gsplat-nodes/util/splat_mesh.gd" id="1_rngrg"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yej2p"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_k7xtm"]
+sky_material = SubResource("ProceduralSkyMaterial_yej2p")
+
+[sub_resource type="Environment" id="Environment_0yi2i"]
+background_mode = 2
+sky = SubResource("Sky_k7xtm")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_dyrx8"]
+size = Vector2(10, 10)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tvj52"]
+
+[node name="Demo" type="Node3D"]
+script = ExtResource("1_5v2dx")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_0yi2i")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_dyrx8")
+
+[node name="SplatMesh" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.26476, 0.217277, -0.028387)
+script = ExtResource("1_rngrg")
+ply_file = "res://models/teddy.ply"
+
+[node name="SplatMesh2" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7836, 0.168986, 0)
+script = ExtResource("1_rngrg")
+ply_file = "res://models/toyota_wotire.ply"
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.869133, 0.494579, 0, -0.494579, 0.869133, 0, 1.02979, 2.27626)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19847, 0.705668, -0.439531)
+mesh = SubResource("CylinderMesh_tvj52")

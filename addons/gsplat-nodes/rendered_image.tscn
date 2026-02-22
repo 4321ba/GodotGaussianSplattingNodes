@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3 uid="uid://bnccylo4e2qjw"]
+
+[ext_resource type="Script" path="res://addons/gsplat-nodes/rendered_image.gd" id="1_t7fyv"]
+[ext_resource type="Shader" path="res://addons/gsplat-nodes/resources/shaders/spatial/main.gdshader" id="1_trxpo"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_1mbec"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mclnb"]
+render_priority = 0
+shader = ExtResource("1_trxpo")
+
+[node name="RenderedImage" type="MeshInstance3D"]
+mesh = SubResource("QuadMesh_1mbec")
+surface_material_override/0 = SubResource("ShaderMaterial_mclnb")
+script = ExtResource("1_t7fyv")
