@@ -117,7 +117,8 @@ func init_gpu() -> void:
 	
 func cleanup_gpu():
 	should_terminate_thread[0] = true
-	load_thread.wait_to_finish()
+	if load_thread.is_started():
+		load_thread.wait_to_finish()
 	if context: context.free()
 	if render_texture: render_texture.texture_rd_rid = RID()
 
@@ -135,11 +136,11 @@ func rasterize() -> void:
 	
 	# Run the projection pipeline. This will return how many duplicated points
 	# we will actually need to sort after culling.
-	context.device.capture_timestamp('Start')
+	#context.device.capture_timestamp('Start')
 	var compute_list := context.compute_list_begin()
 	pipelines['gsplat_projection'].call(context, compute_list, camera_push_constants)
 	context.compute_list_end()
-	context.device.capture_timestamp('Projection')
+	#context.device.capture_timestamp('Projection')
 	
 	# Then, run the sort and gsplat_rasterize pipelines with block sizes based on the
 	# amount of points to sort determined in the projection pipeline.
@@ -150,17 +151,17 @@ func rasterize() -> void:
 		pipelines['radix_sort_spine'].call(context, compute_list, push_constant)
 		pipelines['radix_sort_downsweep'].call(context, compute_list, push_constant, [], descriptors['grid_dimensions'].rid, 0)
 	context.compute_list_end()
-	context.device.capture_timestamp('Sort')
+	#context.device.capture_timestamp('Sort')
 	
 	compute_list = context.compute_list_begin()
 	pipelines['gsplat_boundaries'].call(context, compute_list, [], [], descriptors['grid_dimensions'].rid, 3*4)
 	context.compute_list_end()
-	context.device.capture_timestamp('Boundaries')
+	#context.device.capture_timestamp('Boundaries')
 	
 	compute_list = context.compute_list_begin()
 	pipelines['gsplat_render'].call(context, compute_list, RenderingContext.create_push_constant([float(should_enable_heatmap[0]), -1]))
 	context.compute_list_end()
-	context.device.capture_timestamp('Render')
+	#context.device.capture_timestamp('Render')
 
 func get_splat_position(screen_position : Vector2i) -> Vector3:
 	var tile : Vector2i = screen_position * render_scale[0] / TILE_SIZE

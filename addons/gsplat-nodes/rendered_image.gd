@@ -1,37 +1,49 @@
 @tool
 extends MeshInstance3D
 
-# Need to use get_singleton because of https://github.com/godotengine/godot/issues/91713
-@onready var viewport : Variant = Engine.get_singleton('EditorInterface').get_editor_viewport_3d(0) if Engine.is_editor_hint() else get_viewport()
-@onready var camera : Variant = viewport.get_camera_3d()
-@onready var material : ShaderMaterial = get_surface_override_material(0)
-@onready var camera_fov := [camera.fov]
-
 var rasterizer : GaussianSplattingRasterizer
+
 var should_print_debug = false
 const DEBUG_PRINT_INTERVAL = 1.0
 var debug_timer = 0.0
 
 var splat_meshes : Array[SplatMesh] = []
 
-func _ready() -> void:
-	find_by_method(get_parent(), StringName("is_splat_mesh"), splat_meshes)
-	assert(len(splat_meshes) <= GaussianSplattingRasterizer.MAX_OBJECT_COUNT)
+var rasterizer_update_queued := false
+
+func register_splat(splat: SplatMesh) -> void:
+	if splat not in splat_meshes:
+		splat_meshes.append(splat)
+		assert(len(splat_meshes) <= GaussianSplattingRasterizer.MAX_OBJECT_COUNT)
+		queue_rasterizer_update()
+
+func unregister_splat(splat: SplatMesh) -> void:
+	if splat in splat_meshes:
+		splat_meshes.erase(splat)
+		queue_rasterizer_update()
+
+func queue_rasterizer_update() -> void:
+	# If an update is already scheduled for this frame, ignore the request
+	if not rasterizer_update_queued:
+		rasterizer_update_queued = true
+		call_deferred("update_rasterizer_state")
+
+func update_rasterizer_state() -> void:
+	rasterizer_update_queued = false
 	var splat_filenames := []
 	for m in splat_meshes:
-		splat_filenames.append(m.ply_file)
+		if m.ply_file and not m.ply_file.is_empty():
+			splat_filenames.append(m.ply_file)
 	
-	if splat_filenames:
+	if splat_filenames.size() > 0:
+		visible = true
 		init_rasterizer(splat_filenames)
-	
-	viewport.size_changed.connect(reset_render_texture)
+	else:
+		visible = false
+		if rasterizer:
+			RenderingServer.call_on_render_thread(rasterizer.cleanup_gpu)
+			rasterizer = null
 
-# source: https://forum.godotengine.org/t/how-do-you-get-all-nodes-of-a-certain-class/9143
-func find_by_method(node: Node, method_name : StringName, result : Array) -> void:
-	if node.has_method(method_name) and node.is_visible_in_tree():
-		result.push_back(node)
-	for child in node.get_children():
-		find_by_method(child, method_name, result)
 
 func print_debug_info() -> void:
 	
@@ -87,7 +99,7 @@ func print_debug_info() -> void:
 	print('VRAM Used:       %s' % video_memory_used)
 	print('Rendered Splats: %s' % num_rendered_splats)
 	print('Rendered Size:   %.0v' % rasterizer.texture_size)
-	print('Camera Position: %+.2v' % camera.global_position)
+	#print('Camera Position: %+.2v' % camera.global_position)
 	print('')
 	print('Stage Timings')
 	for i in len(timings):
@@ -95,6 +107,16 @@ func print_debug_info() -> void:
 	
 
 func init_rasterizer(ply_file_paths : Array) -> void:
+	# Need to use get_singleton because of https://github.com/godotengine/godot/issues/91713
+	var current_viewport = Engine.get_singleton('EditorInterface').get_editor_viewport_3d(0) if Engine.is_editor_hint() else get_viewport()
+
+	var current_camera = current_viewport.get_camera_3d()
+	assert(current_camera)
+
+		# TODO what if we create multiple viewports???
+	if not current_viewport.size_changed.is_connected(reset_render_texture):
+		current_viewport.size_changed.connect(reset_render_texture)
+	
 	if rasterizer: RenderingServer.call_on_render_thread(rasterizer.cleanup_gpu)
 	
 	var ply_file = PlyFile.new(ply_file_paths[0])
@@ -104,8 +126,8 @@ func init_rasterizer(ply_file_paths : Array) -> void:
 			ply_file = PlyFile.merge(ply_file, next_ply_file)
 	
 	var render_texture := Texture2DRD.new()
-	rasterizer = GaussianSplattingRasterizer.new(ply_file, viewport.size, render_texture, camera)
-	material.set_shader_parameter('render_texture', render_texture)
+	rasterizer = GaussianSplattingRasterizer.new(ply_file, current_viewport.size, render_texture, current_camera)
+	get_surface_override_material(0).set_shader_parameter('render_texture', render_texture)
 	#if not Engine.is_editor_hint():
 		#camera.reset()
 		#$LoadingBar.set_visibility(true)
@@ -117,8 +139,9 @@ func init_rasterizer(ply_file_paths : Array) -> void:
 
 func reset_render_texture() -> void:
 	rasterizer.is_loaded = false
-	rasterizer.texture_size = viewport.size
-	material.set_shader_parameter('render_texture', rasterizer.render_texture)
+	var current_viewport = Engine.get_singleton('EditorInterface').get_editor_viewport_3d(0) if Engine.is_editor_hint() else get_viewport()
+	rasterizer.texture_size = current_viewport.size
+	get_surface_override_material(0).set_shader_parameter('render_texture', rasterizer.render_texture)
 
 func _process(delta: float) -> void:
 	if should_print_debug:
