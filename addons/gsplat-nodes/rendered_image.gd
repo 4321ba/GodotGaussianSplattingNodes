@@ -7,16 +7,16 @@ var should_print_debug = false
 const DEBUG_PRINT_INTERVAL = 1.0
 var debug_timer = 0.0
 
-var splat_meshes : Array[SplatMesh] = []
+var splat_meshes : Array[SplatCloud3D] = []
 var rasterizer_update_queued := false
 
-func register_splat(splat: SplatMesh) -> void:
+func register_splat(splat: SplatCloud3D) -> void:
 	if splat not in splat_meshes:
 		splat_meshes.append(splat)
 		assert(len(splat_meshes) <= GaussianSplattingRasterizer.MAX_OBJECT_COUNT)
 		queue_rasterizer_update()
 
-func unregister_splat(splat: SplatMesh) -> void:
+func unregister_splat(splat: SplatCloud3D) -> void:
 	if splat in splat_meshes:
 		splat_meshes.erase(splat)
 		queue_rasterizer_update()
@@ -31,7 +31,7 @@ func update_rasterizer_state() -> void:
 	rasterizer_update_queued = false
 	
 	# We now collect the actual data resources instead of strings
-	var active_splat_data : Array[GaussianSplatData] = []
+	var active_splat_data : Array[SplatCloudData] = []
 	for m in splat_meshes:
 		if m.splat_data:
 			active_splat_data.append(m.splat_data)
@@ -45,7 +45,7 @@ func update_rasterizer_state() -> void:
 			RenderingServer.call_on_render_thread(rasterizer.cleanup_gpu)
 			rasterizer = null
 
-func init_rasterizer(splat_data_array : Array[GaussianSplatData]) -> void:
+func init_rasterizer(splat_data_array : Array[SplatCloudData]) -> void:
 	# Need to use get_singleton because of https://github.com/godotengine/godot/issues/91713
 	var current_viewport = Engine.get_singleton('EditorInterface').get_editor_viewport_3d(0) if Engine.is_editor_hint() else get_viewport()
 
@@ -63,7 +63,7 @@ func init_rasterizer(splat_data_array : Array[GaussianSplatData]) -> void:
 	
 	# And merge any additional loaded resources
 	for data in splat_data_array.slice(1):
-		combined_data = GaussianSplatData.merge(combined_data, data)
+		combined_data = SplatCloudData.merge(combined_data, data)
 	
 	var render_texture := Texture2DRD.new()
 	rasterizer = GaussianSplattingRasterizer.new(combined_data, current_viewport.size, render_texture, current_camera)

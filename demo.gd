@@ -1,7 +1,7 @@
 extends Node3D
 
-@onready var splat := $SplatMesh
-@onready var splat2 := $SplatMesh2
+@onready var splat := $SplatCloud3D
+@onready var splat2 := $SplatCloud3D2
 @onready var cam := $Camera3D
 
 var angle := 0.0

@@ -55,26 +55,26 @@ func _import(source_file: String, save_path: String, options: Dictionary, platfo
 	var vertices := file.get_buffer(size * len(properties) * 4).to_float32_array()
 	
 	# Format the properties to match the default layout
-	if properties.hash() != GaussianSplatData.DEFAULT_PROPERTIES.hash():
+	if properties.hash() != SplatCloudData.DEFAULT_PROPERTIES.hash():
 		var prop_inverse := {}
 		for i in properties.size():
 			prop_inverse[properties[i]] = i
 		
 		var new_vertices := PackedFloat32Array()
-		new_vertices.resize(size * GaussianSplatData.DEFAULT_PROP_CNT)
+		new_vertices.resize(size * SplatCloudData.DEFAULT_PROP_CNT)
 		
 		for i in size:
-			for pi in GaussianSplatData.DEFAULT_PROP_CNT:
-				if GaussianSplatData.DEFAULT_PROPERTIES[pi] in prop_inverse:
-					new_vertices[i * GaussianSplatData.DEFAULT_PROP_CNT + pi] = vertices[i * len(properties) + prop_inverse[GaussianSplatData.DEFAULT_PROPERTIES[pi]]]
+			for pi in SplatCloudData.DEFAULT_PROP_CNT:
+				if SplatCloudData.DEFAULT_PROPERTIES[pi] in prop_inverse:
+					new_vertices[i * SplatCloudData.DEFAULT_PROP_CNT + pi] = vertices[i * len(properties) + prop_inverse[SplatCloudData.DEFAULT_PROPERTIES[pi]]]
 				else:
-					new_vertices[i * GaussianSplatData.DEFAULT_PROP_CNT + pi] = 0.0
+					new_vertices[i * SplatCloudData.DEFAULT_PROP_CNT + pi] = 0.0
 					
-		properties = GaussianSplatData.DEFAULT_PROPERTIES.duplicate()
+		properties = SplatCloudData.DEFAULT_PROPERTIES.duplicate()
 		vertices = new_vertices
 
 	# Create the resource and populate it
-	var splat_data := GaussianSplatData.new()
+	var splat_data := SplatCloudData.new()
 	splat_data.size = size
 	splat_data.properties = properties
 	splat_data.vertices = vertices

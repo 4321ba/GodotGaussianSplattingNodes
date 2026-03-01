@@ -1,7 +1,8 @@
 @tool
-class_name SplatMesh extends Node3D
+@icon("res://addons/gsplat-nodes/icons/splat_cloud_3d.svg")
+class_name SplatCloud3D extends Node3D
 
-@export var splat_data: GaussianSplatData :
+@export var splat_data: SplatCloudData :
 	set(value):
 		if splat_data != value:
 			# Unregister the old data first

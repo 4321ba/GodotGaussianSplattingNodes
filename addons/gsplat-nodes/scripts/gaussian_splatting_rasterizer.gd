@@ -15,7 +15,7 @@ var pipelines : Dictionary
 var descriptors : Dictionary
 var descriptor_sets : Dictionary
 
-var point_cloud : GaussianSplatData
+var point_cloud : SplatCloudData
 var render_texture : Texture2DRD
 var camera : Camera3D
 var camera_projection : Projection
@@ -57,7 +57,7 @@ var should_terminate_thread : Array[bool] = [false]
 var num_splats_loaded : Array[int] = [0]
 var basis_override := Basis.IDENTITY
 
-func _init(point_cloud : GaussianSplatData, output_texture_size : Vector2i, render_texture : Texture2DRD, camera : Camera3D) -> void:
+func _init(point_cloud : SplatCloudData, output_texture_size : Vector2i, render_texture : Texture2DRD, camera : Camera3D) -> void:
 	self.point_cloud = point_cloud
 	self.texture_size = output_texture_size
 	self.render_texture = render_texture
@@ -113,7 +113,7 @@ func init_gpu() -> void:
 	# Begin loading splats asynchronously
 	should_terminate_thread[0] = false
 	num_splats_loaded[0] = 0
-	load_thread.start(GaussianSplatData.load_gaussian_splats.bind(point_cloud, point_cloud.size / 1000, context.device, descriptors['splats'].rid, should_terminate_thread, num_splats_loaded, loaded.emit))
+	load_thread.start(SplatCloudData.load_gaussian_splats.bind(point_cloud, point_cloud.size / 1000, context.device, descriptors['splats'].rid, should_terminate_thread, num_splats_loaded, loaded.emit))
 	
 func cleanup_gpu():
 	should_terminate_thread[0] = true
