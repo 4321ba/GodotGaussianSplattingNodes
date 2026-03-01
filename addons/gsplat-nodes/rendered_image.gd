@@ -8,7 +8,6 @@ const DEBUG_PRINT_INTERVAL = 1.0
 var debug_timer = 0.0
 
 var splat_meshes : Array[SplatMesh] = []
-
 var rasterizer_update_queued := false
 
 func register_splat(splat: SplatMesh) -> void:
@@ -30,19 +29,53 @@ func queue_rasterizer_update() -> void:
 
 func update_rasterizer_state() -> void:
 	rasterizer_update_queued = false
-	var splat_filenames := []
-	for m in splat_meshes:
-		if m.ply_file and not m.ply_file.is_empty():
-			splat_filenames.append(m.ply_file)
 	
-	if splat_filenames.size() > 0:
+	# We now collect the actual data resources instead of strings
+	var active_splat_data : Array[GaussianSplatData] = []
+	for m in splat_meshes:
+		if m.splat_data:
+			active_splat_data.append(m.splat_data)
+	
+	if active_splat_data.size() > 0:
 		visible = true
-		init_rasterizer(splat_filenames)
+		init_rasterizer(active_splat_data)
 	else:
 		visible = false
 		if rasterizer:
 			RenderingServer.call_on_render_thread(rasterizer.cleanup_gpu)
 			rasterizer = null
+
+func init_rasterizer(splat_data_array : Array[GaussianSplatData]) -> void:
+	# Need to use get_singleton because of https://github.com/godotengine/godot/issues/91713
+	var current_viewport = Engine.get_singleton('EditorInterface').get_editor_viewport_3d(0) if Engine.is_editor_hint() else get_viewport()
+
+	var current_camera = current_viewport.get_camera_3d()
+	assert(current_camera)
+
+	# TODO what if we create multiple viewports???
+	if not current_viewport.size_changed.is_connected(reset_render_texture):
+		current_viewport.size_changed.connect(reset_render_texture)
+	
+	if rasterizer: RenderingServer.call_on_render_thread(rasterizer.cleanup_gpu)
+	
+	# We just take the first loaded resource directly
+	var combined_data = splat_data_array[0]
+	
+	# And merge any additional loaded resources
+	for data in splat_data_array.slice(1):
+		combined_data = GaussianSplatData.merge(combined_data, data)
+	
+	var render_texture := Texture2DRD.new()
+	rasterizer = GaussianSplattingRasterizer.new(combined_data, current_viewport.size, render_texture, current_camera)
+	get_surface_override_material(0).set_shader_parameter('render_texture', render_texture)
+	#if not Engine.is_editor_hint():
+		#camera.reset()
+		#$LoadingBar.set_visibility(true)
+		#rasterizer.loaded.connect($LoadingBar.set_visibility.bind(false))
+	#ImGui.Text('Enable Heatmap: '); ImGui.SameLine(); if ImGui.Checkbox('##heatmap_bool', rasterizer.should_enable_heatmap): rasterizer.is_loaded = false
+	#ImGui.Text('Render Scale:   '); ImGui.SameLine(); if ImGui.SliderFloat('##render_scale_float', rasterizer.render_scale, 0.05, 1.5): reset_render_texture()
+	#ImGui.Text('Model Scale:    '); ImGui.SameLine(); if ImGui.SliderFloat('##model_scale_float', rasterizer.model_scale, 0.25, 5.0): rasterizer.is_loaded = false
+	#ImGui.Text('Camera FOV:     '); ImGui.SameLine(); if ImGui.SliderFloat('##fov_float', camera_fov, 20, 170): camera.fov = camera_fov[0]
 
 
 func print_debug_info() -> void:
@@ -106,42 +139,14 @@ func print_debug_info() -> void:
 		print(timings[i])
 	
 
-func init_rasterizer(ply_file_paths : Array) -> void:
-	# Need to use get_singleton because of https://github.com/godotengine/godot/issues/91713
-	var current_viewport = Engine.get_singleton('EditorInterface').get_editor_viewport_3d(0) if Engine.is_editor_hint() else get_viewport()
-
-	var current_camera = current_viewport.get_camera_3d()
-	assert(current_camera)
-
-		# TODO what if we create multiple viewports???
-	if not current_viewport.size_changed.is_connected(reset_render_texture):
-		current_viewport.size_changed.connect(reset_render_texture)
-	
-	if rasterizer: RenderingServer.call_on_render_thread(rasterizer.cleanup_gpu)
-	
-	var ply_file = PlyFile.new(ply_file_paths[0])
-	for file in ply_file_paths.slice(1):
-		if file.ends_with('.ply'):
-			var next_ply_file = PlyFile.new(file)
-			ply_file = PlyFile.merge(ply_file, next_ply_file)
-	
-	var render_texture := Texture2DRD.new()
-	rasterizer = GaussianSplattingRasterizer.new(ply_file, current_viewport.size, render_texture, current_camera)
-	get_surface_override_material(0).set_shader_parameter('render_texture', render_texture)
-	#if not Engine.is_editor_hint():
-		#camera.reset()
-		#$LoadingBar.set_visibility(true)
-		#rasterizer.loaded.connect($LoadingBar.set_visibility.bind(false))
-	#ImGui.Text('Enable Heatmap: '); ImGui.SameLine(); if ImGui.Checkbox('##heatmap_bool', rasterizer.should_enable_heatmap): rasterizer.is_loaded = false
-	#ImGui.Text('Render Scale:   '); ImGui.SameLine(); if ImGui.SliderFloat('##render_scale_float', rasterizer.render_scale, 0.05, 1.5): reset_render_texture()
-	#ImGui.Text('Model Scale:    '); ImGui.SameLine(); if ImGui.SliderFloat('##model_scale_float', rasterizer.model_scale, 0.25, 5.0): rasterizer.is_loaded = false
-	#ImGui.Text('Camera FOV:     '); ImGui.SameLine(); if ImGui.SliderFloat('##fov_float', camera_fov, 20, 170): camera.fov = camera_fov[0]
-
 func reset_render_texture() -> void:
 	rasterizer.is_loaded = false
 	var current_viewport = Engine.get_singleton('EditorInterface').get_editor_viewport_3d(0) if Engine.is_editor_hint() else get_viewport()
 	rasterizer.texture_size = current_viewport.size
 	get_surface_override_material(0).set_shader_parameter('render_texture', rasterizer.render_texture)
+
+func _ready() -> void:
+	queue_rasterizer_update()
 
 func _process(delta: float) -> void:
 	if should_print_debug:

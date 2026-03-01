@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://cg6mjdnr07juw"
+path="res://.godot/imported/teddy.ply-06134c725915ab499eba1b4c10403975.res"
+
+[deps]
+
+source_file="res://models/teddy.ply"
+dest_files=["res://.godot/imported/teddy.ply-06134c725915ab499eba1b4c10403975.res"]
+
+[params]
+

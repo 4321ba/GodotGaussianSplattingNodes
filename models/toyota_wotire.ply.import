@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://cu5n4mn8ywddj"
+path="res://.godot/imported/toyota_wotire.ply-03f30ac771104a53a7dce9160d39c20b.res"
+
+[deps]
+
+source_file="res://models/toyota_wotire.ply"
+dest_files=["res://.godot/imported/toyota_wotire.ply-03f30ac771104a53a7dce9160d39c20b.res"]
+
+[params]
+

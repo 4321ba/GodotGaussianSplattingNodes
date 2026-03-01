@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://b4n2t8n54x1pg"
+path="res://.godot/imported/radix_sort_downsweep.glsl-f2461ab3e1c735ea003b242ef2434bfe.res"
+
+[deps]
+
+source_file="res://addons/gsplat-nodes/shaders/radix_sort_downsweep.glsl"
+dest_files=["res://.godot/imported/radix_sort_downsweep.glsl-f2461ab3e1c735ea003b242ef2434bfe.res"]
+
+[params]
+

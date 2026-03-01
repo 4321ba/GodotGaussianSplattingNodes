@@ -15,7 +15,7 @@ var pipelines : Dictionary
 var descriptors : Dictionary
 var descriptor_sets : Dictionary
 
-var point_cloud : PlyFile
+var point_cloud : GaussianSplatData
 var render_texture : Texture2DRD
 var camera : Camera3D
 var camera_projection : Projection
@@ -57,7 +57,7 @@ var should_terminate_thread : Array[bool] = [false]
 var num_splats_loaded : Array[int] = [0]
 var basis_override := Basis.IDENTITY
 
-func _init(point_cloud : PlyFile, output_texture_size : Vector2i, render_texture : Texture2DRD, camera : Camera3D) -> void:
+func _init(point_cloud : GaussianSplatData, output_texture_size : Vector2i, render_texture : Texture2DRD, camera : Camera3D) -> void:
 	self.point_cloud = point_cloud
 	self.texture_size = output_texture_size
 	self.render_texture = render_texture
@@ -69,12 +69,12 @@ func init_gpu() -> void:
 	# We have to use `RenderingServer.get_rendering_device()` as Texture2DRD can only be used
 	# on the main rendering device.
 	context = RenderingContext.create(RenderingServer.get_rendering_device())
-	var projection_shader := context.load_shader('res://addons/gsplat-nodes/resources/shaders/compute/gsplat_projection.glsl')
-	var radix_sort_upsweep_shader := context.load_shader('res://addons/gsplat-nodes/resources/shaders/compute/radix_sort_upsweep.glsl')
-	var radix_sort_spine_shader := context.load_shader('res://addons/gsplat-nodes/resources/shaders/compute/radix_sort_spine.glsl')
-	var radix_sort_downsweep_shader := context.load_shader('res://addons/gsplat-nodes/resources/shaders/compute/radix_sort_downsweep.glsl')
-	shaders['boundaries'] = context.load_shader('res://addons/gsplat-nodes/resources/shaders/compute/gsplat_boundaries.glsl')
-	shaders['render'] = context.load_shader('res://addons/gsplat-nodes/resources/shaders/compute/gsplat_render.glsl')
+	var projection_shader := context.load_shader('res://addons/gsplat-nodes/shaders/gsplat_projection.glsl')
+	var radix_sort_upsweep_shader := context.load_shader('res://addons/gsplat-nodes/shaders/radix_sort_upsweep.glsl')
+	var radix_sort_spine_shader := context.load_shader('res://addons/gsplat-nodes/shaders/radix_sort_spine.glsl')
+	var radix_sort_downsweep_shader := context.load_shader('res://addons/gsplat-nodes/shaders/radix_sort_downsweep.glsl')
+	shaders['boundaries'] = context.load_shader('res://addons/gsplat-nodes/shaders/gsplat_boundaries.glsl')
+	shaders['render'] = context.load_shader('res://addons/gsplat-nodes/shaders/gsplat_render.glsl')
 	
 	# --- DESCRIPTOR PREPARATION ---
 	var num_sort_elements_max := point_cloud.size * 10 # FIXME: This should not be a static value!
@@ -113,7 +113,7 @@ func init_gpu() -> void:
 	# Begin loading splats asynchronously
 	should_terminate_thread[0] = false
 	num_splats_loaded[0] = 0
-	load_thread.start(PlyFile.load_gaussian_splats.bind(point_cloud, point_cloud.size / 1000, context.device, descriptors['splats'].rid, should_terminate_thread, num_splats_loaded, loaded.emit))
+	load_thread.start(GaussianSplatData.load_gaussian_splats.bind(point_cloud, point_cloud.size / 1000, context.device, descriptors['splats'].rid, should_terminate_thread, num_splats_loaded, loaded.emit))
 	
 func cleanup_gpu():
 	should_terminate_thread[0] = true

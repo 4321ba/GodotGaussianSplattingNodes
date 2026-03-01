@@ -1,9 +1,9 @@
-class_name PlyFile extends Resource
+class_name GaussianSplatData extends Resource
 
-var size : int
-var vertices : PackedFloat32Array
-var properties : Array[StringName]
-var split : Array[int] # indices where new objects start
+@export var size : int
+@export var vertices : PackedFloat32Array
+@export var properties : Array[StringName]
+@export var split : Array[int] # indices where new objects start
 
 const DEFAULT_PROPERTIES : Array[StringName] = [&"x", &"y", &"z", &"nx", &"ny", &"nz", &"f_dc_0", &"f_dc_1", &"f_dc_2", &"f_rest_0", &"f_rest_1", 
 &"f_rest_2", &"f_rest_3", &"f_rest_4", &"f_rest_5", &"f_rest_6", &"f_rest_7", &"f_rest_8", &"f_rest_9", &"f_rest_10", &"f_rest_11", 
@@ -12,7 +12,7 @@ const DEFAULT_PROPERTIES : Array[StringName] = [&"x", &"y", &"z", &"nx", &"ny", 
 &"f_rest_32", &"f_rest_33", &"f_rest_34", &"f_rest_35", &"f_rest_36", &"f_rest_37", &"f_rest_38", &"f_rest_39", &"f_rest_40", &"f_rest_41", 
 &"f_rest_42", &"f_rest_43", &"f_rest_44", &"opacity", &"scale_0", &"scale_1", &"scale_2", &"rot_0", &"rot_1", &"rot_2", &"rot_3"]
 const DEFAULT_PROP_CNT = len(DEFAULT_PROPERTIES)
-
+"""
 func _init(path:='') -> void:
 	split = []
 	if not path.is_empty(): parse(path)
@@ -38,7 +38,7 @@ func parse(path : String) -> void:
 				new_vertices[i * DEFAULT_PROP_CNT + pi] = vertices[i * len(properties) + prop_inverse[DEFAULT_PROPERTIES[pi]]] if DEFAULT_PROPERTIES[pi] in prop_inverse else 0
 		properties = DEFAULT_PROPERTIES.duplicate()
 		vertices = new_vertices
-	
+	"""
 func get_vertex(index : int) -> Dictionary:
 	var start_index := len(properties) * index
 	var vertex := {}
@@ -46,8 +46,8 @@ func get_vertex(index : int) -> Dictionary:
 		vertex[properties[i]] = vertices[start_index + i]
 	return vertex
 
-static func merge(pc1 : PlyFile, pc2 : PlyFile) -> PlyFile:
-	var merged := PlyFile.new()
+static func merge(pc1 : GaussianSplatData, pc2 : GaussianSplatData) -> GaussianSplatData:
+	var merged := GaussianSplatData.new()
 	merged.size = pc1.size + pc2.size
 	assert(pc1.properties.hash() == pc2.properties.hash())
 	merged.properties = pc1.properties
@@ -59,7 +59,7 @@ static func merge(pc1 : PlyFile, pc2 : PlyFile) -> PlyFile:
 		merged.split.append(s + pc1.vertices.size())
 	return merged
 
-static func load_gaussian_splats(point_cloud : PlyFile, stride : int, device : RenderingDevice, buffer : RID, should_terminate_reference : Array[bool], num_points_loaded : Array[int], callback : Callable):
+static func load_gaussian_splats(point_cloud : GaussianSplatData, stride : int, device : RenderingDevice, buffer : RID, should_terminate_reference : Array[bool], num_points_loaded : Array[int], callback : Callable):
 	const STRUCT_SIZE := 60 # floats
 	assert(len(should_terminate_reference) == 1 and len(num_points_loaded) == 1)
 	var num_propoerties := len(point_cloud.properties)

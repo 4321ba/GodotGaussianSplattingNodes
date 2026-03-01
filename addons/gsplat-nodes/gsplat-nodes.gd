@@ -2,14 +2,15 @@
 extends EditorPlugin
 
 
-func _enter_tree() -> void:
-	# Initialization of the plugin goes here.
-	pass
+var import_plugin
 
+func _enter_tree():
+	import_plugin = preload("res://addons/gsplat-nodes/scripts/ply_importer.gd").new()
+	add_import_plugin(import_plugin)
 
-func _exit_tree() -> void:
-	# Clean-up of the plugin goes here.
-	pass
+func _exit_tree():
+	remove_import_plugin(import_plugin)
+	import_plugin = null
 
 
 # Replace this value with a PascalCase autoload name, as per the GDScript style guide.

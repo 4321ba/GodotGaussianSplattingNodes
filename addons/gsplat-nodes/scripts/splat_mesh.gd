@@ -1,13 +1,13 @@
 @tool
 class_name SplatMesh extends Node3D
 
-@export var ply_file: String :
+@export var splat_data: GaussianSplatData :
 	set(value):
-		if ply_file != value:
-			# Unregister the old file first
+		if splat_data != value:
+			# Unregister the old data first
 			_unregister()
-			ply_file = value
-			# Register with the new file
+			splat_data = value
+			# Register with the new data
 			_update_registration()
 
 func _enter_tree() -> void:
@@ -22,8 +22,11 @@ func _exit_tree() -> void:
 	_unregister()
 
 func _update_registration() -> void:
-	if not FileAccess.file_exists(ply_file):
+	# If no resource is assigned, ensure it is unregistered and abort
+	if not splat_data:
+		_unregister()
 		return
+		
 	# is_visible_in_tree() checks this node AND all parent visibilities
 	if is_inside_tree() and is_visible_in_tree():
 		_register()
