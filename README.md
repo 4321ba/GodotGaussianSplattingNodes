@@ -8,8 +8,6 @@ For the previous work which this project is based on, see [this](https://github.
 
 ## Todo list
 
-- AI USAGE PAPER WHERE/HOW
-- make ply files an imported resource
 - update engine version to latest (look [here](https://github.com/EdMUK/GodotGaussianSplatting))
 - make editor lag less when this thing is active, especially when the 3d editor is not rendering, and starts to render, there is a hiccup, and also, it does not refresh often enough
 - test on amd hardware, something seems wrong
