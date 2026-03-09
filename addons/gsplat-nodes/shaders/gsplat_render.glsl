@@ -49,9 +49,11 @@ shared float[WORKGROUP_SIZE] pos_z_tile;
 shared uint shared_t;
 
 void main() {
-    shared_t = ~0; // Initialize shared alpha to MAX_UINT
-	const ivec2 dims = imageSize(rasterized_image);
-	const uvec2 grid_size = (dims + TILE_SIZE - 1) / TILE_SIZE;
+    if (gl_LocalInvocationIndex == 0)
+        shared_t = ~0; // Initialize shared alpha to MAX_UINT
+    barrier();
+    const ivec2 dims = imageSize(rasterized_image);
+    const uvec2 grid_size = (dims + TILE_SIZE - 1) / TILE_SIZE;
     
     const uvec2 id_block = gl_WorkGroupID.xy;
     const uint id_local = gl_LocalInvocationIndex;
@@ -78,7 +80,8 @@ void main() {
         color_tile[id_local] = data.color;
         image_pos_tile[id_local] = data.image_pos;
         pos_z_tile[id_local] = data.pos_z;
-        shared_t = 0; // Reset shared alpha
+        if (gl_LocalInvocationIndex == 0)
+            shared_t = 0; // Reset shared alpha
         barrier();
 
         for (uint j = 0; j < chunk_size && t > MIN_ALPHA; ++j) {
@@ -89,7 +92,7 @@ void main() {
             
             float power = -0.5 * (conic.x * offset.x*offset.x + conic.z * offset.y*offset.y) - conic.y * offset.x*offset.y;
             // if (power > 0.0) continue; // Branching is slowwwwww
-            float alpha = color.a * exp(power);
+            float alpha = min(0.999, color.a * exp(power));
             // if (alpha < MIN_ALPHA) continue;
 
             blended_color += color.rgb * alpha * t;
@@ -111,7 +114,7 @@ void main() {
         // alpha of the entire block will be greater than MIN_ALPHA.
         // In such case, some threads still have splats to draw and all threads in the block
         // will continue to loop fetching the remaining splats into shared memory.
-        atomicAdd(shared_t, uint(t*MIN_FACTOR));
+        atomicAdd(shared_t, uint(t*MIN_FACTOR)); // will this not stop too early? - Gemini
         barrier();
     }
     vec3 heatmap_color = mix(vec3(0,0,1), vec3(1,0.2,0.2), num_splats*5e-4) * (1.0 - t) * heatmap_factor;

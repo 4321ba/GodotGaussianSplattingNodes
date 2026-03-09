@@ -41,26 +41,10 @@ const uint SHMEM_SIZE = PARTITION_SIZE;
 shared uint local_histogram[SHMEM_SIZE]; // (R, S=16)=4096, (P) for alias. take maximum.
 shared uint local_histogram_sum[RADIX];
 
-// Returns 0b00000....11111, where msb is id-1.
-uvec4 get_exclusive_subgroup_mask(uint id) {
-    return uvec4(
-        (1 << id) - 1,
-        (1 << (id - 32)) - 1,
-        (1 << (id - 64)) - 1,
-        (1 << (id - 96)) - 1
-    );
-}
-
-uint get_bit_count(uvec4 value) {
-    uvec4 result = bitCount(value);
-    return result[0] + result[1] + result[2] + result[3];
-}
-
 void main() {
     uint thread_index = gl_SubgroupInvocationID; // 0..31
     uint subgroup_index = gl_SubgroupID;         // 0..15
     uint index = subgroup_index * gl_SubgroupSize + thread_index;
-    uvec4 subgroup_mask = get_exclusive_subgroup_mask(thread_index);
 
     uint partition_index = gl_WorkGroupID.x;
     uint partition_start = partition_index * PARTITION_SIZE;
@@ -102,8 +86,8 @@ void main() {
         }
 
         // Subgroup level offset for radix
-        uint subgroup_offset = get_bit_count(subgroup_mask & mask);
-        uint radix_count = get_bit_count(mask);
+        uint subgroup_offset = subgroupBallotExclusiveBitCount(mask);
+        uint radix_count = subgroupBallotBitCount(mask);
 
         // Elect a representative per radix, add to histogram
         if (subgroup_offset == 0) {
@@ -151,7 +135,7 @@ void main() {
     barrier();
 
     // Local histogram add 128
-    if (index < intermediate_offset) {
+    if (intermediate_size > 0 && index < intermediate_offset) {
         local_histogram_sum[index] += local_histogram_sum[intermediate_offset + index / gl_SubgroupSize];
     }
     barrier();

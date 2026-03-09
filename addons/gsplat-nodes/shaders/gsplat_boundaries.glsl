@@ -47,4 +47,9 @@ void main() {
     const uint last_tile_id = bounds_buffer.length() - 1;
     if (tile_id == last_tile_id)
         bounds_buffer[last_tile_id].y = sort_buffer_size - 1;
+        
+    //if (id == sort_buffer_size - 1) {
+    //    bounds_buffer[tile_id].y = sort_buffer_size;
+    //} // instead??
+    
 }
