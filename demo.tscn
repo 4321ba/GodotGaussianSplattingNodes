@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://56clp6t0q440" path="res://demo.gd" id="1_5v2dx"]
 [ext_resource type="Script" uid="uid://dm8qmvv3mqfng" path="res://addons/gsplat-nodes/scripts/splat_cloud_3d.gd" id="1_rngrg"]
+[ext_resource type="Script" uid="uid://c8xejwtqkcrxn" path="res://addons/gsplat-nodes/postprocess.gd" id="2_6bw2v"]
 [ext_resource type="Resource" uid="uid://fax4lm013t4c" path="res://models/teddy.ply" id="3_x5ke8"]
 [ext_resource type="Resource" uid="uid://cogkyflgtn73x" path="res://models/toyota_wotire.ply" id="4_ambvu"]
 
@@ -18,6 +19,21 @@ sky = SubResource("Sky_k7xtm")
 tonemap_mode = 2
 glow_enabled = true
 
+[sub_resource type="CompositorEffect" id="CompositorEffect_kem5a"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 3
+access_resolved_color = false
+access_resolved_depth = true
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("2_6bw2v")
+metadata/_custom_type_script = "uid://c8xejwtqkcrxn"
+
+[sub_resource type="Compositor" id="Compositor_gxmxl"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_kem5a")])
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_dyrx8"]
 size = Vector2(10, 10)
 
@@ -32,6 +48,7 @@ shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748180960]
 environment = SubResource("Environment_0yi2i")
+compositor = SubResource("Compositor_gxmxl")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1427154160]
 mesh = SubResource("PlaneMesh_dyrx8")

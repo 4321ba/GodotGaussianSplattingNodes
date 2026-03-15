@@ -15,12 +15,21 @@ func _enter_tree() -> void:
 	# Listen for visibility toggles (the eye icon in the editor, or hide() in-game)
 	if not visibility_changed.is_connected(_update_registration):
 		visibility_changed.connect(_update_registration)
+	
+	# Tell Godot to trigger _notification when the node's transform changes
+	set_notify_transform(true) 
+	
 	_update_registration()
 
 func _exit_tree() -> void:
 	if visibility_changed.is_connected(_update_registration):
 		visibility_changed.disconnect(_update_registration)
 	_unregister()
+
+func _notification(what: int) -> void:
+	# Instantly pushes transform changes to the GPU manager
+	if what == NOTIFICATION_TRANSFORM_CHANGED:
+		SplatCompositor.splat_transforms[self] = global_transform
 
 func _update_registration() -> void:
 	# If no resource is assigned, ensure it is unregistered and abort
@@ -35,7 +44,11 @@ func _update_registration() -> void:
 		_unregister()
 
 func _register() -> void:
-	GsplatRenderedImage.register_splat(self)
+	# Cache initial transform and register
+	SplatCompositor.splat_transforms[self] = global_transform
+	SplatCompositor.register_splat(self)
 
 func _unregister() -> void:
-	GsplatRenderedImage.unregister_splat(self)
+	# Unregister and clean up transform cache
+	SplatCompositor.unregister_splat(self)
+	SplatCompositor.splat_transforms.erase(self)

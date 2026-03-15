@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cffcime0v0txv"
+path="res://.godot/imported/post.glsl-ef12d8aff5e62864a3b516fe4599b74e.res"
+
+[deps]
+
+source_file="res://addons/gsplat-nodes/post.glsl"
+dest_files=["res://.godot/imported/post.glsl-ef12d8aff5e62864a3b516fe4599b74e.res"]
+
+[params]
+
