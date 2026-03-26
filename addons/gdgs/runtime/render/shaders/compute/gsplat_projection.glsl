@@ -170,6 +170,11 @@ void main() {
 	uint instance_id = splat_instance_ids[id];
 	mat4 model_matrix = instance_model_matrices[instance_id];
 
+	// --- VISIBILITY ---
+	float is_visible = model_matrix[0][3];
+	if (is_visible < 0.5) return;
+	model_matrix[0][3] = 0.0;
+	
 	// --- FRUSTUM CULLING ---
 	mat3 object_linear = mat3(model_matrix);
 	mat3 world_covariance = object_linear * DECODE_COVARIANCE(splat.covariance) * transpose(object_linear);
