@@ -6,6 +6,8 @@ This is a work in progress master thesis project.
 
 For the previous work which this project is based on, see [this](https://github.com/4321ba/GodotGaussianSplattingGame/tree/vitavehicle) repo, which in turn was based on the [GodotGaussianSplatting](https://github.com/2Retr0/GodotGaussianSplatting) project.
 
+For another implementation that popped up recently, see [this](https://github.com/ReconWorldLab/godot-gaussian-splatting) repository, I will rebase this repository mostly onto that implementation too.
+
 ## Todo list
 
 - make editor lag less when this thing is active, especially when the 3d editor is not rendering, and starts to render, there is a hiccup, and also, it does not refresh often enough

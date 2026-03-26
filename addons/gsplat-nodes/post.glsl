@@ -4,7 +4,6 @@
 layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 
 layout(rgba16f, binding = 0, set = 0) uniform image2D scene_tex;
-// Your rasterizer outputs color in .rgb and depth in .a (we don't need a separate depth binding)
 layout(rgba32f, binding = 1, set = 0) uniform readonly image2D gsplat_tex; 
 layout(set = 0, binding = 2) uniform sampler2D scene_depth_tex;
 
@@ -15,33 +14,15 @@ layout(push_constant, std430) uniform Params {
     float depth_test_min_alpha;
     float debug_view;
     vec2 _pad0;
-    mat4 inv_projection;
-} p;
+    mat4 _inv_projection;
 
-vec3 visualize_depth(float depth) {
-    float normalized = clamp(depth / 20.0, 0.0, 1.0);
-    return vec3(normalized);
-}
+} p;
 
 vec3 srgb_to_linear(vec3 color) {
     bvec3 cutoff = lessThanEqual(color, vec3(0.04045));
     vec3 lower = color / 12.92;
     vec3 higher = pow((color + 0.055) / 1.055, vec3(2.4));
     return mix(higher, lower, cutoff);
-}
-
-float get_scene_view_depth(ivec2 pixel, out bool has_scene_depth) {
-    float raw_depth = texelFetch(scene_depth_tex, pixel, 0).r;
-    if (raw_depth <= 0.0 || raw_depth >= 1.0) {
-        has_scene_depth = false;
-        return 0.0;
-    }
-    vec2 uv = (vec2(pixel) + vec2(0.5)) / p.screen_size;
-    vec3 ndc = vec3(uv * 2.0 - 1.0, raw_depth);
-    vec4 view = p.inv_projection * vec4(ndc, 1.0);
-    view.xyz /= view.w;
-    has_scene_depth = true;
-    return -view.z;
 }
 
 void main() {
@@ -59,24 +40,14 @@ void main() {
     bool has_gsplat_depth = raw_gsplat_depth > 0.0001;
     float gsplat_alpha = has_gsplat_depth ? 1.0 : 0.0;
 
-    // Convert your NDC depth into Linear View Space to match Godot's scene depth
-    float gsplat_view_depth = 0.0;
-    if (has_gsplat_depth) {
-        float ndc_z = raw_gsplat_depth * 2.0 - 1.0;
-        vec4 view = p.inv_projection * vec4(0.0, 0.0, ndc_z, 1.0);
-        gsplat_view_depth = -(view.z / view.w);
-    }
-
-    bool has_scene_depth = false;
-    float scene_view_depth = get_scene_view_depth(pixel, has_scene_depth);
-    bool depth_rejected = has_scene_depth && has_gsplat_depth && gsplat_view_depth > scene_view_depth + p.depth_bias;
-
-    int debug_view = int(p.debug_view + 0.5);
-    if (debug_view == 1) { imageStore(scene_tex, pixel, vec4(vec3(gsplat_alpha), 1.0)); return; }
-    if (debug_view == 2) { imageStore(scene_tex, pixel, vec4(srgb_to_linear(gsplat_rgb), 1.0)); return; }
-    if (debug_view == 3) { imageStore(scene_tex, pixel, vec4(has_gsplat_depth ? visualize_depth(gsplat_view_depth) : vec3(0.0), 1.0)); return; }
-    if (debug_view == 4) { imageStore(scene_tex, pixel, vec4(has_scene_depth ? visualize_depth(scene_view_depth) : vec3(0.0), 1.0)); return; }
-    if (debug_view == 5) { imageStore(scene_tex, pixel, depth_rejected ? vec4(1.0, 0.0, 0.0, 1.0) : vec4(0.0, 1.0, 0.0, 1.0)); return; }
+    // Fetch the raw Godot hardware depth buffer
+    float raw_scene_depth = texelFetch(scene_depth_tex, pixel, 0).r;
+    bool has_scene_depth = raw_scene_depth > 0.0; // 0.0 is the far plane / skybox
+    
+    // Godot 4 uses Reverse-Z (1.0 is near, 0.0 is far).
+    // If the scene's raw depth is greater than the splat's raw depth, 
+    // the scene is physically closer to the camera. We reject the splat.
+    bool depth_rejected = has_scene_depth && has_gsplat_depth && (raw_scene_depth > raw_gsplat_depth);
 
     if (!has_gsplat_depth || depth_rejected) return;
 
