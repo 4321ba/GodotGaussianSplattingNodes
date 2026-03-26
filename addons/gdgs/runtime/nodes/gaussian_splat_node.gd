@@ -1,4 +1,5 @@
 @tool
+@icon("res://addons/gdgs/editor/icons/gaussian_splat_node.svg")
 extends VisualInstance3D
 class_name GaussianSplatNode
 
