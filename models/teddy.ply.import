@@ -1,6 +1,7 @@
 [remap]
 
-importer="gsplat.ply.importer"
+importer="gaussian.splat.importer"
+importer_version=5
 type="Resource"
 uid="uid://fax4lm013t4c"
 path="res://.godot/imported/teddy.ply-06134c725915ab499eba1b4c10403975.res"

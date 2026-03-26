@@ -1,6 +1,7 @@
 [remap]
 
-importer="gsplat.ply.importer"
+importer="gaussian.splat.importer"
+importer_version=5
 type="Resource"
 uid="uid://cogkyflgtn73x"
 path="res://.godot/imported/toyota_wotire.ply-03f30ac771104a53a7dce9160d39c20b.res"

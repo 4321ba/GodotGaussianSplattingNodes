@@ -26,4 +26,4 @@ window/size/viewport_height=900
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gsplat-nodes/plugin.cfg")
+enabled=PackedStringArray("res://addons/gdgs/plugin.cfg")
