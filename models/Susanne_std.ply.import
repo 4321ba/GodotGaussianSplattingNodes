@@ -1,0 +1,15 @@
+[remap]
+
+importer="gaussian.splat.importer"
+importer_version=5
+type="Resource"
+uid="uid://dydiabahy1fw4"
+path="res://.godot/imported/DefaultFilenamestd.ply-1677cce53835d8c339a21e7ea1557a1d.res"
+
+[deps]
+
+source_file="res://models/DefaultFilenamestd.ply"
+dest_files=["res://.godot/imported/DefaultFilenamestd.ply-1677cce53835d8c339a21e7ea1557a1d.res"]
+
+[params]
+

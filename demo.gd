@@ -22,8 +22,8 @@ func _process(delta):
 
 	# --- SplatMesh2: rotate in place, opposite direction, slower ---
 	splat2.rotate_y(-speed * 0.6 * delta)
-	for s in [$SplatCloud3D3, $SplatCloud3D4, $SplatCloud3D5, $SplatCloud3D6, $SplatCloud3D7, $SplatCloud3D8, $SplatCloud3D9, $SplatCloud3D10, $SplatCloud3D11, $SplatCloud3D12]:
-		s.rotate_y(-speed * 0.6 * delta)
+	#for s in [$SplatCloud3D3, $SplatCloud3D4, $SplatCloud3D5, $SplatCloud3D6, $SplatCloud3D7, $SplatCloud3D8, $SplatCloud3D9, $SplatCloud3D10, $SplatCloud3D11, $SplatCloud3D12]:
+#		s.rotate_y(-speed * 0.6 * delta)
 
 	# --- Camera forward/back movement ---
 	var cam_speed = 2.0

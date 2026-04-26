@@ -14,3 +14,4 @@ For another implementation that popped up recently, see [this](https://github.co
 - időben változó fájlok kezelése
 - konkrét splates környezetben mindkétféle objektumok, környezetek rekonstrukciója, iitlabor modellje pl?
 - gltf splatos formátum kezelése
+- fizika integrálása jobban: collision automata generálása kérésre?

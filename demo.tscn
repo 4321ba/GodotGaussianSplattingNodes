@@ -5,6 +5,8 @@
 [ext_resource type="Script" uid="uid://1ed5fa5wo7se" path="res://addons/gdgs/runtime/nodes/gaussian_splat_node.gd" id="2_c6xj6"]
 [ext_resource type="Resource" uid="uid://fax4lm013t4c" path="res://models/teddy.ply" id="3_x5ke8"]
 [ext_resource type="Resource" uid="uid://cogkyflgtn73x" path="res://models/toyota_wotire.ply" id="4_ambvu"]
+[ext_resource type="Resource" uid="uid://by67y8rqe8qs2" path="res://models/DefaultFilenamepbr.ply" id="6_gxmxl"]
+[ext_resource type="Resource" uid="uid://dydiabahy1fw4" path="res://models/DefaultFilenamestd.ply" id="7_n4w22"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yej2p"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -109,7 +111,7 @@ process_thread_group = 0
 physics_interpolation_mode = 0
 auto_translate_mode = 0
 editor_description = ""
-transform = Transform3D(-1, 2.6226832e-07, 0, -2.6226832e-07, -1, 0, 0, 0, 1, -2.60534e-08, 0.29801616, -1.0097171)
+transform = Transform3D(-1, 2.6226832e-07, 0, -2.6226832e-07, -1, 0, 0, 0, 1, 0.7837331, 0.7950859, -1.0139489)
 rotation_edit_mode = 0
 rotation_order = 2
 top_level = false
@@ -117,7 +119,7 @@ visible = true
 visibility_parent = NodePath("")
 layers = 1
 script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
+gaussian = ExtResource("6_gxmxl")
 metadata/_custom_type_script = "uid://1ed5fa5wo7se"
 
 [node name="SplatCloud3D6" type="VisualInstance3D" parent="." unique_id=999944855]
@@ -129,7 +131,7 @@ process_thread_group = 0
 physics_interpolation_mode = 0
 auto_translate_mode = 0
 editor_description = ""
-transform = Transform3D(-1, 2.6226832e-07, 0, -2.6226832e-07, -1, 0, 0, 0, 1, 5.21068e-08, 0, -2.5362575)
+transform = Transform3D(-1, 2.6226832e-07, 0, -2.6226832e-07, -1, 0, 0, 0, 1, 1.7475734, 1.4004298, -2.5362573)
 rotation_edit_mode = 0
 rotation_order = 2
 top_level = false
@@ -137,165 +139,5 @@ visible = true
 visibility_parent = NodePath("")
 layers = 1
 script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
-metadata/_custom_type_script = "uid://1ed5fa5wo7se"
-
-[node name="SplatCloud3D5" type="VisualInstance3D" parent="." unique_id=1464833796]
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-transform = Transform3D(-1, 4.371139e-07, 0, -4.371139e-07, -1, 0, 0, 0, 1, 1.4564809, 0.29801628, -1.7462431)
-rotation_edit_mode = 0
-rotation_order = 2
-top_level = false
-visible = true
-visibility_parent = NodePath("")
-layers = 1
-script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
-metadata/_custom_type_script = "uid://1ed5fa5wo7se"
-
-[node name="SplatCloud3D8" type="VisualInstance3D" parent="." unique_id=682059077]
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-transform = Transform3D(-1, 4.3711387e-07, 0, -4.3711387e-07, -1, 0, 0, 0, 1, 1.4111949, 0.7338853, -2.8976142)
-rotation_edit_mode = 0
-rotation_order = 2
-top_level = false
-visible = true
-visibility_parent = NodePath("")
-layers = 1
-script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
-metadata/_custom_type_script = "uid://1ed5fa5wo7se"
-
-[node name="SplatCloud3D9" type="VisualInstance3D" parent="." unique_id=239391951]
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-transform = Transform3D(-1, 4.3711387e-07, 0, -4.3711387e-07, -1, 0, 0, 0, 1, 1.411195, 0.4358691, -4.4241548)
-rotation_edit_mode = 0
-rotation_order = 2
-top_level = false
-visible = true
-visibility_parent = NodePath("")
-layers = 1
-script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
-metadata/_custom_type_script = "uid://1ed5fa5wo7se"
-
-[node name="SplatCloud3D10" type="VisualInstance3D" parent="." unique_id=1816849908]
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-transform = Transform3D(-1, 6.119594e-07, 0, -6.119594e-07, -1, 0, 0, 0, 1, 2.867676, 0.73388565, -3.6341403)
-rotation_edit_mode = 0
-rotation_order = 2
-top_level = false
-visible = true
-visibility_parent = NodePath("")
-layers = 1
-script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
-metadata/_custom_type_script = "uid://1ed5fa5wo7se"
-
-[node name="SplatCloud3D11" type="VisualInstance3D" parent="." unique_id=43830986]
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-transform = Transform3D(-1, 2.6226832e-07, 0, -2.6226832e-07, -1, 0, 0, 0, 1, 2.7224624, 0.43586934, -3.1942828)
-rotation_edit_mode = 0
-rotation_order = 2
-top_level = false
-visible = true
-visibility_parent = NodePath("")
-layers = 1
-script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
-metadata/_custom_type_script = "uid://1ed5fa5wo7se"
-
-[node name="SplatCloud3D12" type="VisualInstance3D" parent="." unique_id=560561527]
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-transform = Transform3D(-1, 2.6226832e-07, 0, -2.6226832e-07, -1, 0, 0, 0, 1, 4.385276, 0.73388577, -3.6323783)
-rotation_edit_mode = 0
-rotation_order = 2
-top_level = false
-visible = true
-visibility_parent = NodePath("")
-layers = 1
-script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
-metadata/_custom_type_script = "uid://1ed5fa5wo7se"
-
-[node name="SplatCloud3D4" type="VisualInstance3D" parent="." unique_id=2051184175]
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, 1.3112674, 0, -1.3063855)
-rotation_edit_mode = 0
-rotation_order = 2
-top_level = false
-visible = true
-visibility_parent = NodePath("")
-layers = 1
-script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
-metadata/_custom_type_script = "uid://1ed5fa5wo7se"
-
-[node name="SplatCloud3D3" type="VisualInstance3D" parent="." unique_id=1164882677]
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, 2.9740806, 0.29801616, -1.744481)
-rotation_edit_mode = 0
-rotation_order = 2
-top_level = false
-visible = true
-visibility_parent = NodePath("")
-layers = 1
-script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
+gaussian = ExtResource("7_n4w22")
 metadata/_custom_type_script = "uid://1ed5fa5wo7se"

@@ -1,0 +1,14 @@
+[remap]
+
+importer="gaussian.splat.importer"
+importer_version=5
+type="Resource"
+uid="uid://b581klbq0wq2m"
+valid=false
+
+[deps]
+
+source_file="res://models/DefaultFilenamecomppbr.ply"
+
+[params]
+
