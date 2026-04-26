@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://56clp6t0q440" path="res://demo.gd" id="1_5v2dx"]
 [ext_resource type="Script" uid="uid://dfcrxohnf1saa" path="res://addons/gdgs/runtime/compositor/gaussian_compositor_effect.gd" id="2_6bw2v"]
 [ext_resource type="Script" uid="uid://1ed5fa5wo7se" path="res://addons/gdgs/runtime/nodes/gaussian_splat_node.gd" id="2_c6xj6"]
+[ext_resource type="Resource" uid="uid://cogkyflgtn73x" path="res://models/toyota_wotire.ply" id="5_6bw2v"]
 [ext_resource type="Resource" uid="uid://by67y8rqe8qs2" path="res://models/Susanne_pbr.ply" id="6_gxmxl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yej2p"]
@@ -42,7 +43,7 @@ size = Vector2(10, 10)
 script = ExtResource("1_5v2dx")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=978179754]
-transform = Transform3D(0.16407233, -0.4598111, 0.8727278, 0.36649907, 0.84980303, 0.37883145, -0.9158378, 0.25769815, 0.3079494, 0, 3.7964137, 0)
+transform = Transform3D(-0.30414417, -0.83181, 0.46431512, -0.021476477, 0.49326858, 0.8696118, -0.9523838, 0.2545155, -0.1678891, 0, 1.8850462, 0)
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748180960]
@@ -81,7 +82,7 @@ process_thread_group = 0
 physics_interpolation_mode = 0
 auto_translate_mode = 0
 editor_description = ""
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7836, 0.80345356, 0)
+transform = Transform3D(-1, -8.742278e-08, 0, 8.742278e-08, -1, 0, 0, 0, 1, 1.7836, 0.80345356, 0)
 rotation_edit_mode = 0
 rotation_order = 2
 top_level = false
@@ -89,7 +90,7 @@ visible = true
 visibility_parent = NodePath("")
 layers = 1
 script = ExtResource("2_c6xj6")
-gaussian = ExtResource("6_gxmxl")
+gaussian = ExtResource("5_6bw2v")
 metadata/_custom_type_script = "uid://1ed5fa5wo7se"
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1409608139]

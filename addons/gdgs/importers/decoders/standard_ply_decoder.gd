@@ -41,19 +41,18 @@ static func decode(path: String) -> Dictionary:
 		packed_floats[b+2] = pz
 		packed_floats[b+3] = _sigmoid(float(_read_property(data, base, property_map, "opacity", 0.0)))
 
-		# 2. Base Color & Metallic (vec4) - Derived from DC0
+		# 2. Material Checks
+		var has_pbr = property_map.has("metallicFactor")
+		var metallic = float(_read_property(data, base, property_map, "metallicFactor", 0.0)) if has_pbr else 0.0
+		var roughness = float(_read_property(data, base, property_map, "roughnessFactor", 0.8)) if has_pbr else 0.75 # Matte default for standard splats
+
+		# 3. Base Color & Metallic (vec4)
 		packed_floats[b+4] = clamp(float(_read_property(data, base, property_map, "f_dc_0", 0.0)) * 0.28209 + 0.5, 0.0, 1.0)
 		packed_floats[b+5] = clamp(float(_read_property(data, base, property_map, "f_dc_1", 0.0)) * 0.28209 + 0.5, 0.0, 1.0)
 		packed_floats[b+6] = clamp(float(_read_property(data, base, property_map, "f_dc_2", 0.0)) * 0.28209 + 0.5, 0.0, 1.0)
-		packed_floats[b+7] = float(_read_property(data, base, property_map, "metallicFactor", 0.0))
+		packed_floats[b+7] = metallic
 
-		# 3. Normal & Roughness (vec4)
-		packed_floats[b+8] = float(_read_property(data, base, property_map, "nx", 0.0))
-		packed_floats[b+9] = float(_read_property(data, base, property_map, "ny", 1.0))
-		packed_floats[b+10] = float(_read_property(data, base, property_map, "nz", 0.0))
-		packed_floats[b+11] = float(_read_property(data, base, property_map, "roughnessFactor", 0.5))
-
-		# 4. Covariance (float[6])
+		# 4. Covariance Math (Required for Normal Inference)
 		var scale_2 := float(_read_property(data, base, property_map, "scale_2", log(1e-6)))
 		var scale := Vector3(
 			exp(float(_read_property(data, base, property_map, "scale_0", 0.0))),
@@ -70,13 +69,35 @@ static func decode(path: String) -> Dictionary:
 		var scale_mat := Basis.from_scale(scale)
 		var rot_mat := Basis(rot).transposed()
 		var cov_3d := (scale_mat * rot_mat).transposed() * (scale_mat * rot_mat)
-		
+
+		# 5. Normal Inference!
+		var nx: float; var ny: float; var nz: float;
+		if property_map.has("nx"):
+			nx = float(_read_property(data, base, property_map, "nx", 0.0))
+			ny = float(_read_property(data, base, property_map, "ny", 1.0))
+			nz = float(_read_property(data, base, property_map, "nz", 0.0))
+		else:
+			# Find the shortest axis and pull its corresponding rotation vector
+			var min_s = min(scale.x, min(scale.y, scale.z))
+			var derived_normal: Vector3
+			if min_s == scale.x: derived_normal = rot_mat.x
+			elif min_s == scale.y: derived_normal = rot_mat.y
+			else: derived_normal = rot_mat.z
+			
+			derived_normal = derived_normal.normalized()
+			nx = derived_normal.x; ny = derived_normal.y; nz = derived_normal.z;
+
+		packed_floats[b+8] = nx
+		packed_floats[b+9] = ny
+		packed_floats[b+10] = nz
+		packed_floats[b+11] = roughness
+
+		# 6. Covariance Data
 		packed_floats[b+12] = cov_3d.x[0]; packed_floats[b+13] = cov_3d.y[0]; packed_floats[b+14] = cov_3d.z[0];
 		packed_floats[b+15] = cov_3d.y[1]; packed_floats[b+16] = cov_3d.z[1]; packed_floats[b+17] = cov_3d.z[2];
 
-		# 5. Padding (vec2)
-		packed_floats[b+18] = 0.0
-		packed_floats[b+19] = 0.0
+		# Padding
+		packed_floats[b+18] = 0.0; packed_floats[b+19] = 0.0;
 
 	var res := GaussianResource.new()
 	res.point_count = count
