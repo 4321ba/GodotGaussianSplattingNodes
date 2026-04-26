@@ -49,17 +49,23 @@ func _import(source_file, save_path, options, platform_variants, gen_files) -> E
 		push_error("[gdgs]: %s" % decode_result.get("message", "Unknown import error"))
 		return int(decode_result.get("error", ERR_CANT_OPEN))
 
-	var build_result := GaussianResourceBuilder.build(decode_result["canonical"])
-	if not build_result.get("ok", false):
-		push_error("[gdgs]: %s" % build_result.get("message", "Unable to build gaussian resource"))
-		return int(build_result.get("error", ERR_INVALID_DATA))
+	var resource: Resource
+	if decode_result.has("resource"):
+		resource = decode_result["resource"] # Catch our pre-built 20-float resource!
+	else:
+		var build_result := GaussianResourceBuilder.build(decode_result["canonical"])
+		if not build_result.get("ok", false):
+			return int(build_result.get("error", ERR_INVALID_DATA))
+		resource = build_result["resource"]
 
 	var filename := "%s.%s" % [save_path, _get_save_extension()]
-	var error := ResourceSaver.save(build_result["resource"], filename)
+	var error := ResourceSaver.save(resource, filename)
+	
 	if error != OK:
 		push_error("[gdgs]: failed to save gaussian resource (%d)" % error)
 	else:
-		print("[gdgs]: import complete, %d gaussians ready for rendering" % int(build_result["resource"].point_count))
+		# FIX: Use 'resource.point_count' instead of the scoped 'build_result'
+		print("[gdgs]: import complete, %d gaussians ready for rendering" % resource.point_count)
 
 	return error
 

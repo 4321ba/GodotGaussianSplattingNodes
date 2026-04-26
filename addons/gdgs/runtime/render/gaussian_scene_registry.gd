@@ -2,7 +2,7 @@
 extends RefCounted
 class_name GaussianSceneRegistry
 
-const FLOATS_PER_SPLAT := 60
+const FLOATS_PER_SPLAT := 20
 const BYTES_PER_FLOAT := 4
 
 class NodeEntry:

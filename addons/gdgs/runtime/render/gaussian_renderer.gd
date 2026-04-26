@@ -25,6 +25,14 @@ func render_for_compositor(
 	var point_count := scene_registry.get_point_count()
 	var safe_size := Vector2i(maxi(texture_size.x, 1), maxi(texture_size.y, 1))
 	var state = state_cache.get_or_create_render_state(safe_size)
+	
+	# --- READ THE SUN CACHE HERE ---
+	var manager = GaussianRenderManager.get_instance()
+	if manager != null:
+		state.sun_dir = manager.cached_sun_dir
+		state.sun_color = manager.cached_sun_color
+		state.sun_energy = manager.cached_sun_energy
+	
 	_update_camera_from_transform(state, camera_transform, camera_projection)
 	state.camera_world_position = camera_world_position
 	state.depth_capture_alpha = clampf(depth_capture_alpha, 0.0, 1.0)
@@ -90,11 +98,16 @@ func _rasterize_state(state, point_count: int) -> void:
 	state.pipelines["gsplat_boundaries"].call(state.context, compute_list, PackedByteArray(), [], state.descriptors["grid_dimensions"].rid, 3 * 4)
 	state.context.compute_list_end()
 
+
 	compute_list = state.context.compute_list_begin()
 	state.pipelines["gsplat_render"].call(
 		state.context,
 		compute_list,
-		RenderingDeviceContext.create_push_constant([0.0, -1, state.depth_capture_alpha, 0.0])
+		RenderingDeviceContext.create_push_constant([
+			0.0, -1, state.depth_capture_alpha, 0.0,
+			state.sun_dir.x, state.sun_dir.y, state.sun_dir.z, state.ambient_energy,
+			state.sun_color.r * state.sun_energy, state.sun_color.g * state.sun_energy, state.sun_color.b * state.sun_energy, 0.0
+		])
 	)
 	state.context.compute_list_end()
 

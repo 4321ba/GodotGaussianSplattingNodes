@@ -10,8 +10,8 @@ const RADIX := 256
 const PARTITION_DIVISION := 8
 const PARTITION_SIZE := PARTITION_DIVISION * WORKGROUP_SIZE
 const MAX_RENDER_STATES := 4
-const FLOATS_PER_SPLAT := 60
-const FLOATS_PER_CULLED_SPLAT := 16
+const FLOATS_PER_SPLAT := 20
+const FLOATS_PER_CULLED_SPLAT := 20
 const BYTES_PER_FLOAT := 4
 const MAX_SORT_ELEMENTS_PER_SPLAT := 10
 
@@ -39,6 +39,11 @@ class RenderState:
 	var shaders: Dictionary = {}
 	var pipelines: Dictionary = {}
 	var descriptors: Dictionary = {}
+	
+	var sun_dir := Vector3(0.0, 1.0, 0.0)
+	var sun_color := Color.WHITE
+	var sun_energy := 1.0
+	var ambient_energy := 0.2
 
 var _render_states: Dictionary = {}
 var _render_state_lru: Array = []

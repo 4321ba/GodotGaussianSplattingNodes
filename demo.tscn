@@ -3,10 +3,7 @@
 [ext_resource type="Script" uid="uid://56clp6t0q440" path="res://demo.gd" id="1_5v2dx"]
 [ext_resource type="Script" uid="uid://dfcrxohnf1saa" path="res://addons/gdgs/runtime/compositor/gaussian_compositor_effect.gd" id="2_6bw2v"]
 [ext_resource type="Script" uid="uid://1ed5fa5wo7se" path="res://addons/gdgs/runtime/nodes/gaussian_splat_node.gd" id="2_c6xj6"]
-[ext_resource type="Resource" uid="uid://fax4lm013t4c" path="res://models/teddy.ply" id="3_x5ke8"]
-[ext_resource type="Resource" uid="uid://cogkyflgtn73x" path="res://models/toyota_wotire.ply" id="4_ambvu"]
-[ext_resource type="Resource" uid="uid://by67y8rqe8qs2" path="res://models/DefaultFilenamepbr.ply" id="6_gxmxl"]
-[ext_resource type="Resource" uid="uid://dydiabahy1fw4" path="res://models/DefaultFilenamestd.ply" id="7_n4w22"]
+[ext_resource type="Resource" uid="uid://by67y8rqe8qs2" path="res://models/Susanne_pbr.ply" id="6_gxmxl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yej2p"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -45,7 +42,7 @@ size = Vector2(10, 10)
 script = ExtResource("1_5v2dx")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=978179754]
-transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+transform = Transform3D(0.16407233, -0.4598111, 0.8727278, 0.36649907, 0.84980303, 0.37883145, -0.9158378, 0.25769815, 0.3079494, 0, 3.7964137, 0)
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748180960]
@@ -64,7 +61,7 @@ process_thread_group = 0
 physics_interpolation_mode = 0
 auto_translate_mode = 0
 editor_description = ""
-transform = Transform3D(-1, -8.742278e-08, 0, 8.742278e-08, -1, 0, 0, 0, 1, -1.26476, 0.217277, -0.028387)
+transform = Transform3D(-1, -8.742278e-08, 0, 8.742278e-08, -1, 0, 0, 0, 1, -1.26476, 1.0424223, -0.028387)
 rotation_edit_mode = 0
 rotation_order = 2
 top_level = false
@@ -72,7 +69,7 @@ visible = true
 visibility_parent = NodePath("")
 layers = 1
 script = ExtResource("2_c6xj6")
-gaussian = ExtResource("3_x5ke8")
+gaussian = ExtResource("6_gxmxl")
 metadata/_custom_type_script = "uid://1ed5fa5wo7se"
 
 [node name="SplatCloud3D2" type="VisualInstance3D" parent="." unique_id=1260039866]
@@ -84,34 +81,7 @@ process_thread_group = 0
 physics_interpolation_mode = 0
 auto_translate_mode = 0
 editor_description = ""
-transform = Transform3D(-1, -8.742278e-08, 0, 8.742278e-08, -1, 0, 0, 0, 1, 1.7836, 0.168986, 0)
-rotation_edit_mode = 0
-rotation_order = 2
-top_level = false
-visible = true
-visibility_parent = NodePath("")
-layers = 1
-script = ExtResource("2_c6xj6")
-gaussian = ExtResource("4_ambvu")
-metadata/_custom_type_script = "uid://1ed5fa5wo7se"
-
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1409608139]
-transform = Transform3D(1, 0, 0, 0, 0.869133, 0.494579, 0, -0.494579, 0.869133, 0, 1.02979, 2.27626)
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1407315207]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19847, 0.705668, -0.439531)
-mesh = SubResource("CylinderMesh_tvj52")
-
-[node name="SplatCloud3D7" type="VisualInstance3D" parent="." unique_id=1716279944]
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-transform = Transform3D(-1, 2.6226832e-07, 0, -2.6226832e-07, -1, 0, 0, 0, 1, 0.7837331, 0.7950859, -1.0139489)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7836, 0.80345356, 0)
 rotation_edit_mode = 0
 rotation_order = 2
 top_level = false
@@ -122,22 +92,9 @@ script = ExtResource("2_c6xj6")
 gaussian = ExtResource("6_gxmxl")
 metadata/_custom_type_script = "uid://1ed5fa5wo7se"
 
-[node name="SplatCloud3D6" type="VisualInstance3D" parent="." unique_id=999944855]
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-transform = Transform3D(-1, 2.6226832e-07, 0, -2.6226832e-07, -1, 0, 0, 0, 1, 1.7475734, 1.4004298, -2.5362573)
-rotation_edit_mode = 0
-rotation_order = 2
-top_level = false
-visible = true
-visibility_parent = NodePath("")
-layers = 1
-script = ExtResource("2_c6xj6")
-gaussian = ExtResource("7_n4w22")
-metadata/_custom_type_script = "uid://1ed5fa5wo7se"
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1409608139]
+transform = Transform3D(1, 0, 0, 0, 0.869133, 0.494579, 0, -0.494579, 0.869133, 0, 1.02979, 2.27626)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1407315207]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19847, 0.705668, -0.439531)
+mesh = SubResource("CylinderMesh_tvj52")

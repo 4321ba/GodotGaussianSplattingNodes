@@ -12,6 +12,21 @@ var _scene_registry: GaussianSceneRegistry = SceneRegistryScript.new()
 var _gpu_state_cache: GaussianGpuStateCache = GpuStateCacheScript.new()
 var _renderer: GaussianRenderer = RendererScript.new()
 
+var cached_sun_dir := Vector3(0.0, 1.0, 0.0)
+var cached_sun_color := Color.WHITE
+var cached_sun_energy := 1.0
+
+func _process(_delta: float) -> void:
+	# Safely fetches the sun on the Main Thread!
+	var tree := get_tree()
+	if tree != null and tree.root != null:
+		var lights = tree.root.find_children("*", "DirectionalLight3D", true, false)
+		if lights.size() > 0:
+			var light = lights[0] as DirectionalLight3D
+			cached_sun_dir = light.global_transform.basis.z.normalized()
+			cached_sun_color = light.light_color
+			cached_sun_energy = light.light_energy
+
 static func get_instance():
 	if _instance != null and is_instance_valid(_instance):
 		return _instance
