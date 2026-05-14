@@ -18,7 +18,7 @@ func _process(delta):
 
 	# Face movement direction (tangent of circle)
 	var forward_dir = -Vector3(-sin(angle), 0, cos(angle)).normalized()
-	splat.look_at(splat.position + forward_dir, Vector3.UP)
+	splat.look_at(splat.position + forward_dir, -Vector3.UP)
 
 	# --- SplatMesh2: rotate in place, opposite direction, slower ---
 	splat2.rotate_y(-speed * 0.6 * delta)

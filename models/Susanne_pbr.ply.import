@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://cc0tvh7edr63x"
+path="res://.godot/imported/Susanne_pbr.ply-e1a11d0f8d7e8e96b7db310f2c3deb00.res"
+
+[deps]
+
+source_file="res://models/Susanne_pbr.ply"
+dest_files=["res://.godot/imported/Susanne_pbr.ply-e1a11d0f8d7e8e96b7db310f2c3deb00.res"]
+
+[params]
+

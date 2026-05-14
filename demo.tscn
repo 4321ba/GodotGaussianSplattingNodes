@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://56clp6t0q440" path="res://demo.gd" id="1_5v2dx"]
 [ext_resource type="Script" uid="uid://dm8qmvv3mqfng" path="res://addons/gsplat-nodes/scripts/splat_cloud_3d.gd" id="1_rngrg"]
-[ext_resource type="Resource" uid="uid://fax4lm013t4c" path="res://models/teddy.ply" id="3_x5ke8"]
+[ext_resource type="Resource" uid="uid://cc0tvh7edr63x" path="res://models/Susanne_pbr.ply" id="3_c6xj6"]
 [ext_resource type="Resource" uid="uid://cogkyflgtn73x" path="res://models/toyota_wotire.ply" id="4_ambvu"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yej2p"]
@@ -37,9 +37,9 @@ environment = SubResource("Environment_0yi2i")
 mesh = SubResource("PlaneMesh_dyrx8")
 
 [node name="SplatCloud3D" type="Node3D" parent="." unique_id=497795048]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.26476, 0.217277, -0.028387)
+transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, -1.26476, 0.217277, -0.028387)
 script = ExtResource("1_rngrg")
-splat_data = ExtResource("3_x5ke8")
+splat_data = ExtResource("3_c6xj6")
 
 [node name="SplatCloud3D2" type="Node3D" parent="." unique_id=98944090]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7836, 0.168986, 0)

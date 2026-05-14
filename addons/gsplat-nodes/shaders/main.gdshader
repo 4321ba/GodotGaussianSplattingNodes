@@ -1,7 +1,9 @@
 shader_type spatial;
-render_mode unshaded, fog_disabled;
+render_mode blend_mix, depth_draw_opaque, cull_disabled;
 
 uniform sampler2D render_texture : source_color, filter_linear_mipmap_anisotropic;
+uniform sampler2D normal_texture;
+uniform sampler2D orm_texture;
 
 // Source: https://gamedev.stackexchange.com/a/148088
 vec3 srgb_to_linear(vec3 x) {
@@ -11,11 +13,23 @@ vec3 srgb_to_linear(vec3 x) {
 }
 
 void vertex() {
-	POSITION = vec4(VERTEX.xy, 0.0, 1.0);
+	POSITION = vec4(VERTEX.xy, 1.0, 1.0); // Pushes quad back
 }
 
 void fragment() {
-	ALBEDO = srgb_to_linear(texture(render_texture, SCREEN_UV).rgb);
-	//DEPTH = 0.9;
-	DEPTH = texture(render_texture, SCREEN_UV).a;//0.00000001;
+	vec4 albedo_alpha = texture(render_texture, SCREEN_UV);
+	
+	// Crucial for Deferred Translucency: We must discard empty space!
+	if (albedo_alpha.a < 0.1) discard; 
+
+	ALBEDO = srgb_to_linear(albedo_alpha.rgb);
+	ALPHA = albedo_alpha.a;
+	
+	// Godot naturally converts this to view-space for the deferred pass
+	NORMAL = texture(normal_texture, SCREEN_UV).xyz;
+	
+	vec3 orm = texture(orm_texture, SCREEN_UV).rgb;
+	AO = orm.r;
+	ROUGHNESS = orm.g;
+	METALLIC = orm.b;
 }
