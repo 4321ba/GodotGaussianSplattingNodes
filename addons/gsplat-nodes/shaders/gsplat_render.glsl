@@ -32,6 +32,7 @@ shared vec4[WORKGROUP_SIZE] conic_met_tile;
 shared vec4[WORKGROUP_SIZE] color_tile;
 shared vec4[WORKGROUP_SIZE] norm_rough_tile;
 shared vec4[WORKGROUP_SIZE] pos_xy_tile;
+shared vec3[WORKGROUP_SIZE] pos_img_depth_tile;
 shared uint shared_t;
 
 void main() {
@@ -55,7 +56,10 @@ void main() {
     vec3 blended_normal = vec3(0.0);
     vec3 blended_orm = vec3(0.0);
     float t = pixel_in_bounds ? 1.0 : 0.0;
-
+    
+    float weighted_depth = 0.0;
+    float total_weight = 0.0;
+    
     for (uint i = 0; i < num_iterations && shared_t > MIN_FACTOR; ++i) {
         const uint sort_offset = WORKGROUP_SIZE*i;
         const uint chunk_size = min(uint(WORKGROUP_SIZE), num_splats - sort_offset);
@@ -74,7 +78,8 @@ void main() {
         color_tile[id_local] = data.color_opacity;
         norm_rough_tile[id_local] = data.normal_roughness;
         pos_xy_tile[id_local] = data.pos_image_xy;
-
+        pos_img_depth_tile[id_local] = vec3(data.pos_image_xy.xy, data.pos_z_pad.x);
+        
         if (id_local == 0) shared_t = 0u;
         barrier();
 
@@ -83,7 +88,8 @@ void main() {
             float metallic = conic_met_tile[j].w;
             vec4 color_op = color_tile[j];
             vec4 norm_rough = norm_rough_tile[j];
-            vec2 offset = pos_xy_tile[j].xy - image_pos;
+            vec2 offset = pos_img_depth_tile[j].xy - image_pos;
+            float splat_depth = pos_img_depth_tile[j].z; // FETCH DEPTH
 
             float power = -0.5 * (conic.x * offset.x*offset.x + conic.z * offset.y*offset.y) - conic.y * offset.x*offset.y;
             if (power > 0.0) continue; 
@@ -94,9 +100,14 @@ void main() {
             float next_t = t * (1.0 - alpha);
             float weight = alpha * t;
             
+            if (alpha > 0.2) {
+                weighted_depth += (1.0 - splat_depth) * alpha * t;
+                total_weight += alpha * t;
+            }
+            
             blended_color += color_op.rgb * weight;
             blended_normal += world_normal * weight;
-            blended_orm += vec3(1.0, norm_rough.w, metallic) * weight; // AO, Roughness, Metallic
+            blended_orm += vec3(1.0, norm_rough.w, metallic) * weight;
 
             t = next_t;
         }
@@ -107,8 +118,12 @@ void main() {
     vec3 heatmap_color = mix(vec3(0,0,1), vec3(1,0.2,0.2), float(num_splats)*5e-4) * (1.0 - t) * heatmap_factor;
     if (pixel_in_bounds) {
         float final_alpha = 1.0 - t;
+        
+        float final_depth = total_weight > 0.0 ? (weighted_depth / total_weight) : 0.0;
+        vec3 final_normal = normalize(blended_normal + vec3(0.0, 0.0, 0.001));
+        
         imageStore(rasterized_image, ivec2(pixel), vec4(blended_color + heatmap_color, final_alpha));
-        imageStore(rasterized_normal, ivec2(pixel), vec4(normalize(blended_normal + vec3(0.0,0.0,0.001)), 0.0));
+        imageStore(rasterized_normal, ivec2(pixel), vec4(final_normal, final_depth));
         imageStore(rasterized_orm, ivec2(pixel), vec4(blended_orm, 0.0));
     }
 

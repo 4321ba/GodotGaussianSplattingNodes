@@ -112,8 +112,8 @@ void main() {
     data.normal_roughness = vec4(world_normal, splat.normal_and_roughness.w);
     data.conic_metallic = vec4(vec3(covariance.z, -covariance.y, covariance.x) / det, splat.cov_and_metallic.w);
     data.pos_image_xy = vec4(image_pos, world_pos.xy);
-    data.pos_z_pad = vec4(world_pos.z, 0.0, 0.0, 0.0);
-    
+    data.pos_z_pad = vec4((ndc_pos.z + 1.0) * 0.5, 0.0, 0.0, 0.0);
+
     culled_buffer[id] = data;
     barrier();
 
@@ -123,9 +123,7 @@ void main() {
         atomicMax(grid_dims[3], (sort_buffer_size + 256 - 1) / 256);
     }
 
-    float view_depth = max(0.0, clip_pos.w);
-    float depth01 = view_depth / (1.0 + view_depth);
-    uint depth = uint(depth01 * 65535.0) & 0xFFFF;
+    uint depth = uint(ndc_pos.z*ndc_pos.z*ndc_pos.z * 0xFFFF) & 0xFFFF;
     for (uint y = rect_bounds.y; y < rect_bounds.w; ++y)
     for (uint x = rect_bounds.x; x < rect_bounds.z; ++x) {
         uint tile_id = y*grid_size.x + x;
