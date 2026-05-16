@@ -13,6 +13,9 @@ vec3 srgb_to_linear(vec3 x) {
 
 void vertex() {
 	POSITION = vec4(VERTEX.xy, 1.0, 1.0);
+	vec4 ndc = vec4(VERTEX.xy, 1.0, 1.0);
+	vec4 view_pt = INV_PROJECTION_MATRIX * ndc;
+	VERTEX = view_pt.xyz / view_pt.w;
 }
 
 void fragment() {
