@@ -1,7 +1,49 @@
 diplomaterv:
   type: web
-  title: "Budapesti Műszaki és Gazdaságtudományi Egyetem Villamosmérnöki és Informatikai
-Kar. Diplomaterv portál"
+  title: "Budapesti Műszaki és Gazdaságtudományi Egyetem Villamosmérnöki és Informatikai Kar. Diplomaterv portál"
   url: https://diplomaterv.vik.bme.hu/
   date: 2026-05-21
 
+kerbl-2023-3dgs:
+  type: article
+  title: "3D Gaussian Splatting for Real-Time Radiance Field Rendering"
+  author:
+    - Bernhard Kerbl
+    - Georgios Kopanas
+    - Thomas Leimkühler
+    - George Drettakis
+  date: 2023
+  archive: arXiv
+  archive-class: cs.GR
+  serial-number: "2308.04079"
+  url: "https://arxiv.org/abs/2308.04079"
+
+gltf-szabvany:
+  type: web
+  title: Khronos Announces glTF Gaussian Splatting Extension
+  url: https://www.khronos.org/news/press/gltf-gaussian-splatting-press-release
+  date: 2026-05-25
+
+genai-inverzrendering-ea:
+  type: web
+  title: Generatív AI és inverz módszerek a képszintézisben
+  url: https://vaitkusm.github.io/genai-inverse-graphics-bme-vik-iit/
+  date: 2026-05-25
+
+onlab-github-repo:
+  type: web
+  title: Godot Gaussian Splatting Game
+  url: https://github.com/4321ba/GodotGaussianSplattingGame/tree/vitavehicle
+  date: 2026-05-25
+
+when-hamsters-attack-td:
+  type: web
+  title: When Hamsters Attack TD
+  url: https://github.com/4321ba/WhenHamstersAttackTD
+  date: 2026-05-25
+
+typst-bme-dipterv-sablon:
+  type: web
+  title: Typst BME Dipterv Sablon
+  url: https://codeberg.org/pilpol/bme-dipterv-sablon
+  date: 2026-05-25
