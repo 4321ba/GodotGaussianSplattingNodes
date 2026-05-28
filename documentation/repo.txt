@@ -1,0 +1,1 @@
+Kód és ppt: https://github.com/4321ba/GodotGaussianSplattingNodes
