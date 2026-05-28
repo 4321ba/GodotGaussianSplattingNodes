@@ -126,7 +126,7 @@ void main() {
             vec3 normal = normalize(norm_rough.xyz);
             
             // Standard Lambertian Diffuse Math
-            float ndotl = abs(dot(normal, sun_direction.xyz));
+            float ndotl = max(0,dot(normal, sun_direction.xyz));
             vec3 ambient = albedo * sun_direction.w;
             vec3 diffuse = albedo * sun_color.rgb * ndotl;
             
