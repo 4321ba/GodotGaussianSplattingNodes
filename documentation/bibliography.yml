@@ -1,6 +1,7 @@
 diplomaterv:
   type: web
-  title: "Budapesti Műszaki és Gazdaságtudományi Egyetem Villamosmérnöki és Informatikai Kar. Diplomaterv portál"
+  title: "Budapesti Műszaki és Gazdaságtudományi Egyetem Villamosmérnöki és Informatikai
+Kar. Diplomaterv portál"
   url: https://diplomaterv.vik.bme.hu/
   date: 2026-05-21
 
@@ -47,3 +48,15 @@ typst-bme-dipterv-sablon:
   title: Typst BME Dipterv Sablon
   url: https://codeberg.org/pilpol/bme-dipterv-sablon
   date: 2026-05-25
+
+amd-bug-upsteam-issue:
+  type: web
+  title: GodotGaussianSplatting issue az AMD bughoz
+  url: https://github.com/2Retr0/GodotGaussianSplatting/issues/3
+  date: 2026-05-28
+
+kinai-repo:
+  type: web
+  title: ReconWorldLab implementációja
+  url: https://github.com/ReconWorldLab/godot-gaussian-splatting
+  date: 2026-05-28

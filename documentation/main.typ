@@ -420,7 +420,9 @@ Ez akkor ütközött problémába, amikor egy másik forrásból származó mode
 
 Így módosítottam a beolvasó részt, hogy 0-ként olvassa a hiányzó adatokat, illetve a megfelelő pozícióba tegye a property-ket. Ez azért működik, mert ami hiányzik, az a 45 db spherical harmonikusokhoz szükséges érték, amiket lehet 0-ra inicializálni, illetve a normálvektor, amit pedig nem használ fel a beolvasó.
 
-```py
+Példareferencia egy kódrészletre: a parse függvény az @parsefuggveny. kódrészleten látható.
+
+#figure(```py
 func parse(path : String) -> void:
 	var file := FileAccess.open(path, FileAccess.READ)
 	var line := file.get_line().split(' ')
@@ -444,42 +446,136 @@ func parse(path : String) -> void:
                     if DEFAULT_PROPERTIES[pi] in prop_inverse else 0
 		properties = DEFAULT_PROPERTIES.duplicate()
 		vertices = new_vertices
-```
+```, caption: [Példa egy kódrészlet számozására]
+) <parsefuggveny>
+
 
 == Dipterv 1 alatt végzett megoldás felvázolása
 
 === RenderedImage pull vs SplatMesh push
 
-dinamikus láthatóság-változtatás, még nem a legjobb módon
+Az eredeti megoldás szerint a RenderedImage válogatta össze a jelenetből a kirajzolandó pontfelhő node-okat, és a transzformjaikat. Ezzel az új megoldással a pontfelhő node-ok maguk regisztrálhatnak, és jelentkezhetnek le a kirajzolásról.
+
+Ez azt is könnyűvé tette, hogy amennyiben a node láthatósága változik, akkor leregisztráljon, és ezzel eltűnjön ténylegesen a jelenetből. Ez része annak a törekvésnek, hogy a pontfelhők az editorba, illetve a játékba is jobban legyenek integrálva, azaz az editorba épített feature-ök (mint pl. a láthatóság) úgy működjenek rajtuk, mint ahogy a felhasználók várják. A nem látható pontfelhő az @lathatosag_lathato. ábrához képest a @lathatosag_nemlathato. ábrán láthatóan nem látható.
+
+#figure(
+  image("pictures/lathatosag_lathato.png")
+  , caption: [Látható a plüssmaci]
+) <lathatosag_lathato>
+
+
+#figure(
+  image("pictures/lathatosag_nemlathato.png")
+  , caption: [Nem látható a plüssmaci]
+) <lathatosag_nemlathato>
+
+Hozzá kell tenni, hogy ez a megoldás még nem volt a legcélravezetőbb: minden láthatóságváltoztatáskor a teljes éppen aktuálisan látható splatos adatot feltöltöttük a GPU-ra. Ez a @igazi_dinamikus_lathatosag. fejezetben került javításra.
 
 === Elsőosztályú polgárok
 
-Ikonok, betöltés, export már elvileg működne belenyúlás nélkül, editor kezeli az importot
+További editorintegrációhoz egyéb apróságokat is elvégeztem, ilyen a @editor_ikonok. ábrán látható ikonok készítése a splat-os node-okhoz, illetve resource-okhoz, a betöltés és a tárolt adat szétcsatolása, és ezzel az editor automatikusan be is tudja tölteni az eddig számára ismeretlen file-t egy Godot resource-á. Ezzel például exportált buildekhez is automatikusan hozzá tudja tenni ezt a fájlt, és ott már nem kell a betöltést lefuttatnia.
+
+Az @tablazat_teszt. táblázatnál láthatóak a node-hoz, illetve a resource-hoz társított ikonok szöveges leírásai is. Ezzel tudom tesztelni a Typst táblázat captionjeit, illetve referenciáit.
+
+#figure(
+  image("pictures/editor_ikonok.png")
+  , caption: [A Node és a Resource saját ikonokat kaptak]
+) <editor_ikonok>
+
+#figure(
+  table( columns:2,
+  [GaussianSplatNode], [GaussianResource], 
+  [Piros, átfedő pöttyök], [Sárga, kisebb sugarú pöttyök]
+  )
+  , caption: [Táblázat teszt]
+) <tablazat_teszt>
 
 === AMD Bug
 
-vkradixsort-nál is felmerült, és javították közben, de az új verzió nem lett betéve a mi általunk használt könyvtárba
+A tesztelések során figyelmes lettem egy AMD hardveren történő bug-ra, ezt a VulkanRadixSort könyvtárra vezettem vissza, és az eltérő subgroup méret okozhatta. A hibát én is kijavítottam, és láttam azt is, hogy upstream is kijavították már, csak az általam használt eredeti megjelenítő nem frissítette a dependency-t. Ezt jeleztem az ő repositoryjukban is, a megfelelő fixet megjelölve @amd-bug-upsteam-issue. A linkelt issue-ban találhatóak a további linkek a kapcsolódó fixekre.
 
-=== CompositorEffect-re áttérés
+=== CompositorEffect
+<compositoreffect>
 
-=== Másik addon-ra rebase-elés
+Godot 4.4-től már lehetőség van a rendering pipeline-ba jobban belenyúlni, CompositorEffect-eket írva. Az eddigi, eredeti megjelenítő egy QuadMesh-t jelenített meg egy MeshInstance3D-vel, ami lényegében mindig az igazi kamera előtt lebegett, így tudta a pontfelhőket megjeleníteni. Én még önlab alatt megcsináltam azt hozzá, hogy az átlátszóság alapján összeollózza az eredeti, sima raszteres kamera által adott képpel, ez viszont több helyen látszott, hogy egy elég összetákolt megoldás volt. Manuálisan kellett meghívni a saját renderelésünket, de csak akkor hogyha tényleg szükségünk volt a képre, különben elkezdett szaggatni az editor. A használt textúrák felszabadításának működése nem világos, illetve ablak átméretezésekor is le kell kezeljünk speciális dolgokat, ami nem egyértelmű, hogy teljes körűen sikerül.
 
-Olyan feature-ök, amik jobbak voltak, átültetése
+=== Addon-ok uniózása
+
+Ezek miatt felkerült a teendők listájára a CompositorEffect-es megoldásnak a vizsgálata is. Közben a félév során egy kínai implementáció is előkerült itt: @kinai-repo. Mérlegelve a szituációt arra jutottam, hogy nem érdemes mindkettőnknek teljesen külön dolgozni a saját programján, így átfutottam az ő kódját, és mivel mindkét projekt (és az a projekt is, amelyet mindketten használtunk: @amd-bug-upsteam-issue) MIT licensz alatt elérhető, unióztam a fontosabb feature-jeinket. A kommunikáció felvételekor leírtam 1-2 dolgot, ennek eredménye lett, hogy ő is kijavította az AMD bugot, illetve valamilyen kovarianciás matekot, amitől a splatok kiterjedései is jól lettek transzformálva, illetve ezután készítettem én is neki egy PR-t az editor ikonokkal, illetve dinamikus láthatósággal és instancinggel. Ezt ő mergeelte is, és megtagelt az acknowledgementsben is.
+
+
+Én pedig az ő implementációja alapján kipróbáltam a CompositorEffect-es megoldást, és tényleg sok problémát egyből megoldott. Így az uniózott projekt már azt használja a továbbiakban.
 
 === Igazi dinamikus láthatóság
+<igazi_dinamikus_lathatosag>
+
+A PR készítése közben a korábbi dinamikus láthatóság problémájából kiindulva biztosan úgy akartam újból megoldani a problémát, hogy láthatóság változtatásakor ne legyen szükség az összes splat adat újbóli feltöltésére. Ez elég könnyen meg is volt oldható úgy, hogy a transzformáció mellé (ami amúgy is minden mozdulatnál újra feltöltődik) pakoltam egy igaz-hamis értéket, ami alapján a shader el tudja dobni a hozzá tartozó splatokat, ezzel megvalósítva a nemláthatóságot.
 
 === Instancing
 
+Hogyha már itt voltam a feltöltésnél, úgy láttam, hogy a feladatkiírásban is szereplő instancinget is akkor a legmegfelelőbb implementálni. Ennél a splat-os modelleket kell különválasztani az objektumoktól.
+
+Eddig minden splat egy extra ID-t kapott, és az ID-edik transzformációs mátrixszal lett eltranszformálva, így megoldva azt, hogy az egyes objektumok máshogyan mozogjanak. Az optimalizációs lehetőség ott jön be, hogyha 1 db kocsi helyett 10 db van a jelenetben, akkor a hozzá tartozó százezer-millió nagyságrendű splat adatait nem szükséges 10-szer tárolni a GPU-n, hiszen ezek ugyanazok.
+
+A megoldás pedig nem nagyon nehéz: az ID buffer legyen kétszer akkora, és minden minden párban az egyik ID mondja meg a transzformációs mátrixot, a másik ID pedig a splatot. Így lehet egy modellnek több transzformációs mátrixa is, csak az ID bufferben kell kétszer benne lennie az összes splat ID-jének. Ez az `nvidia-smi` parancs használatával láthatóan jelentősen javította a memóriahasználatot: a @instancingelott. ábrán 1207MiB-t használt az instancing előtti állapot, míg az @instancingutan. ábrán 818MiB-t, a képeken látható 10-es nagyságrendű autómennyiséggel.
+
+
+#figure(
+  image("pictures/instancing_elott.png")
+  , caption: [Instancing előtti memóriahasználat]
+) <instancingelott>
+
+
+#figure(
+  image("pictures/instancing_utan.png")
+  , caption: [Instancing utáni memóriahasználat]
+) <instancingutan>
+
+
 === Relightolhatóság
+
+A relightolhatóság egy komplex téma, de egy játékmotor esetén nagyon fontos. Alapból a gaussian splates modellek gyakran rendelkeznek gömbi harmonikusokkal kódolt nézeti irány-függő színekkel, splatonként. Ezzel lehet egyszerű tükröződéseket, csillanásokat szimulálni, és a modell tud színt változtatni annak függvényében, hogy melyik irányból nézzük.
+
+Ezzel szemben egy relightolható / újraszínezhető modell nem nézeti irányfüggő színeket tárol magában splatonként, hanem valamilyen fajta anyagtulajdonságokat, például PBR (roughness, metallic, normal stb.) értékeket. Ennek segítségével nem csak a nézeti iránytól függhet a szín, hanem a teljes, komplex jelenettől, kiemelt hangsúlyt fektetve a fényforrás(ok)ra. Ez egy játékban kifejezetten fontos, például ha egy splat-es modell irányt változtat, akkor a nap másik oldalát süti. Ennek megfelelően a színei is teljesen megváltoznak, amit leginkább ilyen módszerekkel lehet megvalósítani.
+
+A lehetőségek felmérésekor többféle megoldás is célravezetőnek tűnt, mindkettő a saját erősségeivel és gyengeségeivel. Végül arra jutottam, hogy mindkettőt megvalósítom, összehasonlítási céllal.
 
 ==== Saját fényszámítással
 
+Az első lehetőség az, hogy mi adjuk át manuálisan a beszámítandó fényforrásokat, és mi számoljuk a színeket a megadott paraméterekből. A prototípust úgy csináltam, hogy egy irányfényforrást tudunk átadni. Ennek a hátránya a manuális fényforrás-összegyűjtés, illetve a shading eltérő lehet a többi, engine által shadelt mesh-étől. Hatalmas előnye viszont, hogy működik a @compositoreffect. fejezetben tagalt CompositorEffect-es megoldással.
+
+A @relightolhato_sajatshaded. ábrán is látható, hogy a megvilágítás működik, de a @relightolhato_godotshaded. ábrához képest azért alulmarad a többi megvilágítással való egyezőségben. Ezen az ambient light állításával némiképp szerintem lehetne segíteni, de ugyanolyan jó sosem lesz.
+
+
+#figure(
+  image("pictures/relightolhato_sajatshaded.png")
+  , caption: [Suzanne, a Blender majom megvilágítva általunk]
+) <relightolhato_sajatshaded>
+
 ==== A Godot fényszámításával
 
+A Godot fényszámításának használatakor viszont elő kellett venni az eredeti, Fullscreen quad-os megoldást, mivel a Godot-nak ezen kereszül tudom átadni a PBR értékeket (egy textúrában), ami alapján ő fogja elvégezni a relightolást, a belül tárolt, gyorsítótárazott, stb. fények alapján. Így ez automatikusan tudna működni pontfényforrásokra és spotlightokra is (csak még egy bug miatt nem tud, lásd @tovabbiteendok-dipterv2), amint azt a @relightolhato_spotlight. ábra is mutatja.
+
+Még egy nagyon komoly hátránya ennek a megoldásnak, hogy ez leginkább egyáltalán nem tud félig átlátszó splat-okat kezelni (ami a gaussian splattingnél egy nagyon fontos tulajdonság), mivel a Godot-nak pixelenként csak egy színt, és PBR material tulajdonságokat lehet átadni. Az pedig nem túlzottan megoldható, hogy több félig átlátszó splat anyagtulajdonságait átlagoljuk, ezt adjuk át a Godot-nak, és továbbra is realisztikus / használható eredményt kapjunk ebből.
+
+Megjegyzendő, hogy a Mesh2Splat-tal generált modelleknél viszont nem fontos az, hogy az átlátszóságot jól kezeljük, mivel ezek a modellek jellemzően nem sok átlátszóságot tartalmaznak, szimpla modelleknél legalábbis.
+
+Ezen kívül viszont, alapból a @relightolhato_godotshaded. ábra jóval jobban belepasszol a jelenetbe, mint a @relightolhato_sajatshaded. ábra.
+
+#figure(
+  image("pictures/relightolhato_godotshaded.png")
+  , caption: [Suzanne, a Blender majom megvilágítva Godot által]
+) <relightolhato_godotshaded>
+
+
+#figure(
+  image("pictures/relightolhato_spotlight.png")
+  , caption: [Suzanne, a Blender majom megvilágítva Godot által egy spotlight-tal is (még bugos)]
+) <relightolhato_spotlight>
 
 == Kitérő: Typst
 
-A diplomaterv dokumentumának elkészítéséhez a Typst nevű nyelvet használom, ami egy modern LaTeX megfelelő. Dani nevű szobatársam segítségével konvertáltuk a sablonokat (főleg ő), ez elérhető itt: @typst-bme-dipterv-sablon
+A diplomaterv dokumentumának elkészítéséhez a Typst nevű nyelvet használom, ami egy modern LaTeX megfelelő. Dani nevű szobatársam segítségével konvertáltuk a sablonokat (főleg ő), ez elérhető itt: @typst-bme-dipterv-sablon.
 
 === Rövid bemutatás
 
@@ -515,9 +611,10 @@ Felkerül végre??
 
 == Még mit lehetne értékelésnek, eredménynek?
 
-<tovabbiteendok-dipterv2>
 == További teendők a Dipterv 2-ig (végleges doksiig)
+<tovabbiteendok-dipterv2>
 
+- Godotos relightolás esetén fixálni a spotlightnál: a 3d pozíció nem jól van beállítva pixelenként
 - Relightolható branch (a saját relightolásos) működjön a nem relightolt dolgokkal egyszerre, ennek visszamerge-elése a mainbe, esetleg PR a kínai csávónak (ha nyitott rá)
 - GLTF szabvány implementálása, tesztelés vele
 - a WhenHamstersAttackTD @when-hamsters-attack-td játék átírása félig (vagy teljesen) GSplatos modellek használatára (esetleg tanszéki terem mint background?, vagy azzal is egy példafelhasználás?)
@@ -526,16 +623,16 @@ Felkerül végre??
 
 == TODO a dipterv1 doksi leadásáig!
 
-- kódblokkok számozása az önlabos doksi szövegében
-- pár oldalt írni az ebben a félévben végzett munkáról
-  - ehhez pedig számozott képeket beszúrni, kipróbálni a számozást fejezetek között is (melyik számozás legyen? - ennek eldöntése, formázással bajlódás majd ráér később)
+- kódblokkok számozásának kipróbálása az önlabos doksi szövegében
+- írni az ebben a félévben végzett munkáról
+  - ehhez pedig számozott képeket beszúrni, kipróbálni a számozást fejezetek között is (melyik számozás legyen (6 vs 4.1, ábrához)? - ennek eldöntése, formázással bajlódás majd ráér később)
   - képaláírások, kép forrásának jelölése hogyan?
 - referenciák a képekre, kódblokkokra, más fejezetekre a doksin belül
 - bemutató diasor
   - előző diasorból kiindulva, 1-2 diát megtartva
   - a félév során elvégzett lépések, munkák 1-1 dián
   - typst egy dián, sablonról, elkészített dokumentációról szót ejteni
-  - utsó dián a @tovabbiteendok-dipterv2 -nél taglaltak felsorolása, konzultálni ezekről a konzulenssel, időpontot kérni ezen dokumentum átnézésére, és finomítására
+  - utsó dián a @tovabbiteendok-dipterv2\-nál taglaltak felsorolása, konzultálni ezekről a konzulenssel, időpontot kérni ezen dokumentum átnézésére, és finomítására
   - további dolgok időbeosztása a nyáron, konzultációk hogyan, ilyesmi 
   
 = Összefoglaló
@@ -548,7 +645,7 @@ a plugin használható, viszonylag jó integrációval, fenn van (??) az asset s
 
 #show: appendix
 
-AI nyilatkozat majd ide!
+TODO AI nyilatkozat majd ide!
 
 = Még több lorem
 #lorem(200)

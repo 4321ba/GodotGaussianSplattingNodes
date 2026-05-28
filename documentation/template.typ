@@ -38,7 +38,9 @@
 }
 
 #let student_statement(student, date) = {
-  page(numbering: none)[
+  page(
+//    numbering: none
+  )[
     #align(center)[
       #text(size: 1.1em)[
         *HALLGATÓI NYILATKOZAT*
@@ -82,14 +84,20 @@
 }
 
 #let format(body) = {
-  set text(font: "New Computer Modern", size: 12pt, lang: "hu")//, top-edge: 0.8em, bottom-edge: -0.2em) // New Computer Modern
+  set text(font: "New Computer Modern", size: 12pt, lang: "hu", region: "hu")//, top-edge: 0.8em, bottom-edge: -0.2em) // New Computer Modern
   set page(
     paper: "a4",
     margin: (left: 3.5cm, rest: 2.5cm),
     numbering: "1",
   )
 
+  show figure.caption: it => [#it.counter.display(). #it.supplement: #it.body]
+  show figure.where(kind: image): set figure(supplement: [ábra])
+  show figure.where(kind: raw): set figure(supplement: [kódrészlet])
+  show figure.where(kind: table): set figure(supplement: [táblázat])
+  
   set ref(supplement: none)
+  //show ref: it => repr(it) // TODO pont a fejezet és figure referenciák után
 
   set outline(indent: auto)
   set outline.entry(fill: repeat(gap: 0.5em)[.])
@@ -174,13 +182,13 @@
   }
 
   if showoutline {
-    set page(numbering: none)
+    //set page(numbering: none)
     outline()
   }
   if showstatement {
     student_statement(student, formatted_date)
   }
-  counter(page).update(1)
+  //counter(page).update(1)
 
   body
 }
@@ -200,3 +208,4 @@
   counter(heading).update(0)
   body
 }
+
