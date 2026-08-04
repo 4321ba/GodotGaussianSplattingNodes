@@ -47,7 +47,15 @@ static func load_gaussian_splats(
 ):
 	const STRUCT_SIZE := 60 # floats
 	assert(len(should_terminate_reference) == 1 and len(num_points_loaded) == 1)
-
+	'''
+	# --- ADD THESE DEBUG LINES ---
+	print("\n--- SPLAT DATA DEBUG ---")
+	print("Total Points: ", point_cloud.size)
+	for i in range(min(3, point_cloud.size)):
+		print("Vertex ", i, ": ", point_cloud.get_vertex(i))
+	print("------------------------\n")
+	# -----------------------------
+	#'''
 	var num_properties := len(point_cloud.properties)
 	var p := point_cloud.vertices
 
