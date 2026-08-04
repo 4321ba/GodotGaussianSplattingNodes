@@ -165,10 +165,19 @@ func _process(delta: float) -> void:
 	var splat_transforms : Array[Transform3D] = []
 	for m in splat_meshes:
 		splat_transforms.append(m.global_transform)
-	rasterizer.update_object_transforms(splat_transforms)
+		
+	var transforms_changed := false
+	if rasterizer.object_transforms != splat_transforms:
+		rasterizer.update_object_transforms(splat_transforms)
+		transforms_changed = true
 		
 	#Engine.max_fps = 30
-	RenderingServer.call_on_render_thread(rasterizer.rasterize)
+	# 3. Check if the async worker thread is still uploading points
+	var is_loading = not rasterizer.is_loaded
+
+	# ONLY request a redraw if something actually requires it!
+	if has_camera_updated or transforms_changed or is_loading:
+		RenderingServer.call_on_render_thread(rasterizer.rasterize)
 
 func _notification(what):
 	if what == NOTIFICATION_PREDELETE and rasterizer: 
