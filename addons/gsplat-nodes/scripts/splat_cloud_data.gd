@@ -47,7 +47,7 @@ static func load_gaussian_splats(
 ):
 	const STRUCT_SIZE := 60 # floats
 	assert(len(should_terminate_reference) == 1 and len(num_points_loaded) == 1)
-	'''
+	#'''
 	# --- ADD THESE DEBUG LINES ---
 	print("\n--- SPLAT DATA DEBUG ---")
 	print("Total Points: ", point_cloud.size)

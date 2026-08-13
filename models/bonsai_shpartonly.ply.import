@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://r1a4s0qhtj1j"
+path="res://.godot/imported/bonsai_shpartonly.ply-31aacaa37bd243bad5f3a0d42af458a4.res"
+
+[deps]
+
+source_file="res://models/bonsai_shpartonly.ply"
+dest_files=["res://.godot/imported/bonsai_shpartonly.ply-31aacaa37bd243bad5f3a0d42af458a4.res"]
+
+[params]
+

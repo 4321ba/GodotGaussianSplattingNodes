@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.gltf.importer"
+type="Resource"
+uid="uid://c2ceswwuskpw6"
+path="res://.godot/imported/bonsai_withsh_centered.glb-f34b7ffb8a30b725a9e490e8c8cfccad.res"
+
+[deps]
+
+source_file="res://models/bonsai_withsh_centered.glb"
+dest_files=["res://.godot/imported/bonsai_withsh_centered.glb-f34b7ffb8a30b725a9e490e8c8cfccad.res"]
+
+[params]
+

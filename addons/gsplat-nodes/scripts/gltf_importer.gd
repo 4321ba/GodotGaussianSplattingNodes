@@ -110,9 +110,19 @@ func _import(source_file: String, save_path: String, options: Dictionary, platfo
 	var scale_info = get_acc.call("KHR_gaussian_splatting:SCALE")
 	var rot_info = get_acc.call("KHR_gaussian_splatting:ROTATION")
 	var op_info = get_acc.call("KHR_gaussian_splatting:OPACITY")
-	var sh_info = get_acc.call("KHR_gaussian_splatting:SH_DEGREE_0_COEF_0")
+	
+	# Fetch all 16 possible SH VEC3 accessors
+	var sh_accessors = []
+	# Degree 0 (1 accessor)
+	sh_accessors.append(get_acc.call("KHR_gaussian_splatting:SH_DEGREE_0_COEF_0"))
+	# Degree 1 (3 accessors)
+	for i in range(3): sh_accessors.append(get_acc.call("KHR_gaussian_splatting:SH_DEGREE_1_COEF_" + str(i)))
+	# Degree 2 (5 accessors)
+	for i in range(5): sh_accessors.append(get_acc.call("KHR_gaussian_splatting:SH_DEGREE_2_COEF_" + str(i)))
+	# Degree 3 (7 accessors)
+	for i in range(7): sh_accessors.append(get_acc.call("KHR_gaussian_splatting:SH_DEGREE_3_COEF_" + str(i)))
 
-	if not pos_info or not scale_info or not rot_info or not op_info or not sh_info:
+	if not pos_info or not scale_info or not rot_info or not op_info or not sh_accessors[0]:
 		printerr("Missing required KHR_gaussian_splatting attributes.")
 		return ERR_FILE_CORRUPT
 
@@ -124,6 +134,7 @@ func _import(source_file: String, save_path: String, options: Dictionary, platfo
 	
 	var idx_x = props.find(&"x")
 	var idx_dc0 = props.find(&"f_dc_0")
+	var idx_rest0 = props.find(&"f_rest_0") 
 	var idx_op = props.find(&"opacity")
 	var idx_scale0 = props.find(&"scale_0")
 	var idx_rot0 = props.find(&"rot_0")
@@ -141,35 +152,45 @@ func _import(source_file: String, save_path: String, options: Dictionary, platfo
 		new_vertices[out_idx + idx_x + 1] = all_floats[p_idx + 1]
 		new_vertices[out_idx + idx_x + 2] = all_floats[p_idx + 2]
 
-		# Spherical Harmonics Degree 0 (VEC3)
-		var sh_idx = sh_info.offset + i * sh_info.stride
-		new_vertices[out_idx + idx_dc0 + 0] = all_floats[sh_idx + 0]
-		new_vertices[out_idx + idx_dc0 + 1] = all_floats[sh_idx + 1]
-		new_vertices[out_idx + idx_dc0 + 2] = all_floats[sh_idx + 2]
-
 		# Opacity (SCALAR) - Inverse Sigmoid
-		# Required because load_gaussian_splats applies exp(-opacity)[cite: 16]
 		var op_idx = op_info.offset + i * op_info.stride
 		var o = clampf(all_floats[op_idx + 0], 0.0001, 0.9999)
 		new_vertices[out_idx + idx_op] = log(o / (1.0 - o))
 
 		# Scale (VEC3) - Inverse Exponential
-		# Required because load_gaussian_splats applies exp(scale)[cite: 16]
 		var sc_idx = scale_info.offset + i * scale_info.stride
 		new_vertices[out_idx + idx_scale0 + 0] = log(maxf(all_floats[sc_idx + 0], 0.0001))
 		new_vertices[out_idx + idx_scale0 + 1] = log(maxf(all_floats[sc_idx + 1], 0.0001))
 		new_vertices[out_idx + idx_scale0 + 2] = log(maxf(all_floats[sc_idx + 2], 0.0001))
 
 		# Rotation (VEC4) 
-		# glTF spec defines rotation as X, Y, Z, W[cite: 12]
-		# SplatCloudData parses them as rot_0 (W), rot_1 (X), rot_2 (Y), rot_3 (Z)[cite: 16]
 		var rot_idx = rot_info.offset + i * rot_info.stride
 		new_vertices[out_idx + idx_rot0 + 0] = all_floats[rot_idx + 3] # W
 		new_vertices[out_idx + idx_rot0 + 1] = all_floats[rot_idx + 0] # X
 		new_vertices[out_idx + idx_rot0 + 2] = all_floats[rot_idx + 1] # Y
 		new_vertices[out_idx + idx_rot0 + 3] = all_floats[rot_idx + 2] # Z
+		
+		# Spherical Harmonics Degree 0 (VEC3)
+		# Spec requires Degree 0 SH[cite: 24]
+		var sh0_info = sh_accessors[0]
+		var sh_idx = sh0_info.offset + i * sh0_info.stride
+		new_vertices[out_idx + idx_dc0 + 0] = all_floats[sh_idx + 0]
+		new_vertices[out_idx + idx_dc0 + 1] = all_floats[sh_idx + 1]
+		new_vertices[out_idx + idx_dc0 + 2] = all_floats[sh_idx + 2]
+		
+		# --- FIXED: Higher Order Spherical Harmonics Channel Mapping ---
+		for acc_idx in range(1, 16):
+			var acc = sh_accessors[acc_idx]
+			if acc != null:
+				var rest_sh_idx = acc.offset + i * acc.stride
+				var coeff_idx = acc_idx - 1 # Ranges from 0 to 14
+				
+				# VEC3 is strictly [R, G, B][cite: 24]. PLY stores them segregated.
+				new_vertices[out_idx + idx_rest0 + coeff_idx + 0]  = all_floats[rest_sh_idx + 0] # Red 
+				new_vertices[out_idx + idx_rest0 + coeff_idx + 15] = all_floats[rest_sh_idx + 1] # Green 
+				new_vertices[out_idx + idx_rest0 + coeff_idx + 30] = all_floats[rest_sh_idx + 2] # Blue 
 
-	# 4. BAKE RESOURCE WITH TYPED ARRAY FIX
+	# 4. BAKE RESOURCE
 	var splat_data = SplatCloudData.new()
 	splat_data.size = point_count
 	splat_data.properties = props.duplicate()

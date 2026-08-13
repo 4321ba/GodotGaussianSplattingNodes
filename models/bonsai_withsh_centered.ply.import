@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://c432m28jw6ku5"
+path="res://.godot/imported/bonsai_withsh_centered.ply-81a532025045e6fca484f71ad30178f4.res"
+
+[deps]
+
+source_file="res://models/bonsai_withsh_centered.ply"
+dest_files=["res://.godot/imported/bonsai_withsh_centered.ply-81a532025045e6fca484f71ad30178f4.res"]
+
+[params]
+
