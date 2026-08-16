@@ -7,13 +7,8 @@ class_name SplatCloudData extends Resource
 @export var split : Array[int] # indices where new objects start
 
 
-const DEFAULT_PROPERTIES : Array[StringName] = [&"x", &"y", &"z", &"nx", &"ny", &"nz", &"f_dc_0", &"f_dc_1", &"f_dc_2", &"f_rest_0", &"f_rest_1", 
-&"f_rest_2", &"f_rest_3", &"f_rest_4", &"f_rest_5", &"f_rest_6", &"f_rest_7", &"f_rest_8", &"f_rest_9", &"f_rest_10", &"f_rest_11", 
-&"f_rest_12", &"f_rest_13", &"f_rest_14", &"f_rest_15", &"f_rest_16", &"f_rest_17", &"f_rest_18", &"f_rest_19", &"f_rest_20", &"f_rest_21", 
-&"f_rest_22", &"f_rest_23", &"f_rest_24", &"f_rest_25", &"f_rest_26", &"f_rest_27", &"f_rest_28", &"f_rest_29", &"f_rest_30", &"f_rest_31", 
-&"f_rest_32", &"f_rest_33", &"f_rest_34", &"f_rest_35", &"f_rest_36", &"f_rest_37", &"f_rest_38", &"f_rest_39", &"f_rest_40", &"f_rest_41", 
-&"f_rest_42", &"f_rest_43", &"f_rest_44", &"opacity", &"scale_0", &"scale_1", &"scale_2", &"rot_0", &"rot_1", &"rot_2", &"rot_3"]
-const DEFAULT_PROP_CNT = len(DEFAULT_PROPERTIES)
+const DEFAULT_PROPERTIES : Array[StringName] = [&"x", &"y", &"z", &"nx", &"ny", &"nz", &"f_dc_0", &"f_dc_1", &"f_dc_2", &"metallicFactor", &"roughnessFactor", &"opacity", &"scale_0", &"scale_1", &"scale_2", &"rot_0", &"rot_1", &"rot_2", &"rot_3"]
+const DEFAULT_PROP_CNT = 19
 
 
 func get_vertex(index : int) -> Dictionary:
@@ -45,7 +40,7 @@ static func load_gaussian_splats(
 	num_points_loaded : Array[int],
 	callback : Callable
 ):
-	const STRUCT_SIZE := 60 # floats
+	const STRUCT_SIZE := 20 # floats
 	assert(len(should_terminate_reference) == 1 and len(num_points_loaded) == 1)
 	#'''
 	# --- ADD THESE DEBUG LINES ---
@@ -76,41 +71,56 @@ static func load_gaussian_splats(
 		var creation_time := Time.get_ticks_msec()*1e-3
 
 		for j in tile_size:
-			var v := num_properties*(i*stride + j) # Vertex index
-			var b := j*STRUCT_SIZE                 # Point index
+			var v := num_properties*(i*stride + j)
+			var b := j*STRUCT_SIZE
 
-			### Position ###
-			for k in range(3): points[b+k+0] = p[v+k+0]
-			points[b+3] = creation_time
+			# 1. Position and Opacity
+			points[b+0] = p[v+0]
+			points[b+1] = p[v+1]
+			points[b+2] = p[v+2]
+			points[b+3] = 1.0 / (1.0 + exp(-p[v+11]))
 
-			### 3D Covariance (precomputed) ###
-			var scale := Basis.from_scale(Vector3(exp(p[v+0+55]), exp(p[v+1+55]), exp(p[v+2+55])))
-			var rotation := Basis(Quaternion(p[v+1+58], p[v+2+58], p[v+3+58], p[v+0+58])).transposed()
+			# 2. Base Color & Object ID
+			points[b+4] = clamp(p[v+6] * 0.28209 + 0.5, 0.0, 1.0)
+			points[b+5] = clamp(p[v+7] * 0.28209 + 0.5, 0.0, 1.0)
+			points[b+6] = clamp(p[v+8] * 0.28209 + 0.5, 0.0, 1.0)
+			points[b+7] = 0
+			for k in point_cloud.split:
+				if v >= k: points[b+7] += 1
+
+			# --- Rotation & Scale ---
+			var scale := Basis.from_scale(Vector3(exp(p[v+12]), exp(p[v+13]), exp(p[v+14])))
+			var rotation := Basis(Quaternion(p[v+16], p[v+17], p[v+18], p[v+15])).transposed()
 			var cov_3d := (scale * rotation).transposed() * (scale * rotation)
 
-			# We only store the top triangle of the covariance since the matrix is symmetric!
-			points[b+0+4] = cov_3d.x[0]
-			points[b+1+4] = cov_3d.y[0]
-			points[b+2+4] = cov_3d.z[0]
-			points[b+3+4] = cov_3d.y[1]
-			points[b+4+4] = cov_3d.z[1]
-			points[b+5+4] = cov_3d.z[2]
+			# 3. Normal & Roughness (With Pseudo-Normal Heuristic!)
+			var nx = p[v+3]; var ny = p[v+4]; var nz = p[v+5];
+			if nx == 0.0 and ny == 0.0 and nz == 0.0:
+				var s0 = p[v+12]; var s1 = p[v+13]; var s2 = p[v+14];
+				var min_s = min(s0, min(s1, s2))
+				var derived_normal: Vector3
+				if min_s == s0: derived_normal = rotation.x
+				elif min_s == s1: derived_normal = rotation.y
+				else: derived_normal = rotation.z
+				derived_normal = derived_normal.normalized()
+				nx = derived_normal.x; ny = derived_normal.y; nz = derived_normal.z;
 
-			### Opacity ###
-			points[b+6+4] = 1.0 / (1.0 + exp(-p[v+54]))
+			points[b+8] = nx
+			points[b+9] = ny
+			points[b+10] = nz
+			points[b+11] = p[v+10] if p[v+10] > 0.0 else 0.75 # Roughness
 
-			### ID for differenciating between objects ###
-			points[b+11] = 0
-			for k in point_cloud.split:
-				if v >= k:
-					points[b+11] += 1
-			
-			### Spherical Harmonic Coefficients ###
-			for k in range(3): points[b+k+12] = p[v+k+6]
-			for k in range(0, 45, 3):
-				points[b+(k+0)+15] = p[v+(k/3+ 0)+9]
-				points[b+(k+1)+15] = p[v+(k/3+15)+9]
-				points[b+(k+2)+15] = p[v+(k/3+30)+9]
+			# 4. Covariance & Metallic
+			points[b+12] = cov_3d.x[0]
+			points[b+13] = cov_3d.y[0]
+			points[b+14] = cov_3d.z[0]
+			points[b+15] = p[v+9] # Metallic
+
+			# 5. Covariance Part 2
+			points[b+16] = cov_3d.y[1]
+			points[b+17] = cov_3d.z[1]
+			points[b+18] = cov_3d.z[2]
+			points[b+19] = 0.0 # Pad
 
 		if should_terminate_reference[0]: return
 

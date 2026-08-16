@@ -67,7 +67,7 @@ func init_rasterizer(splat_data_array : Array[SplatCloudData]) -> void:
 	
 	var render_texture := Texture2DRD.new()
 	rasterizer = GaussianSplattingRasterizer.new(combined_data, current_viewport.size, render_texture, current_camera)
-	get_surface_override_material(0).set_shader_parameter('render_texture', render_texture)
+	reset_render_texture()
 	#if not Engine.is_editor_hint():
 		#camera.reset()
 		#$LoadingBar.set_visibility(true)
@@ -76,7 +76,17 @@ func init_rasterizer(splat_data_array : Array[SplatCloudData]) -> void:
 	#ImGui.Text('Render Scale:   '); ImGui.SameLine(); if ImGui.SliderFloat('##render_scale_float', rasterizer.render_scale, 0.05, 1.5): reset_render_texture()
 	#ImGui.Text('Model Scale:    '); ImGui.SameLine(); if ImGui.SliderFloat('##model_scale_float', rasterizer.model_scale, 0.25, 5.0): rasterizer.is_loaded = false
 	#ImGui.Text('Camera FOV:     '); ImGui.SameLine(); if ImGui.SliderFloat('##fov_float', camera_fov, 20, 170): camera.fov = camera_fov[0]
-
+	
+func reset_render_texture() -> void:
+	rasterizer.is_loaded = false
+	var current_viewport = Engine.get_singleton('EditorInterface').get_editor_viewport_3d(0) if Engine.is_editor_hint() else get_viewport()
+	rasterizer.texture_size = current_viewport.size
+	
+	# Link all 3 G-Buffer Textures to the Quad!
+	var mat = get_surface_override_material(0)
+	mat.set_shader_parameter('render_texture', rasterizer.render_texture)
+	mat.set_shader_parameter('normal_texture', rasterizer.normal_texture)
+	mat.set_shader_parameter('orm_texture', rasterizer.orm_texture)
 
 func print_debug_info() -> void:
 	
@@ -138,13 +148,7 @@ func print_debug_info() -> void:
 	for i in len(timings):
 		print(timings[i])
 	
-
-func reset_render_texture() -> void:
-	rasterizer.is_loaded = false
-	var current_viewport = Engine.get_singleton('EditorInterface').get_editor_viewport_3d(0) if Engine.is_editor_hint() else get_viewport()
-	rasterizer.texture_size = current_viewport.size
-	get_surface_override_material(0).set_shader_parameter('render_texture', rasterizer.render_texture)
-
+	
 func _ready() -> void:
 	queue_rasterizer_update()
 
@@ -155,26 +159,25 @@ func _process(delta: float) -> void:
 			debug_timer -= DEBUG_PRINT_INTERVAL
 			print_debug_info()
 		
-		#$LoadingBar.update_progress(float(rasterizer.num_splats_loaded[0]) / float(rasterizer.point_cloud.size))
 	if not rasterizer:
-		return;
+		return
 	
+	# 1. Check if the camera moved
 	var has_camera_updated := rasterizer.update_camera_matrices()
 	
-	
+	# 2. Check if any splat clouds moved
 	var splat_transforms : Array[Transform3D] = []
 	for m in splat_meshes:
 		splat_transforms.append(m.global_transform)
-		
+	
 	var transforms_changed := false
 	if rasterizer.object_transforms != splat_transforms:
 		rasterizer.update_object_transforms(splat_transforms)
 		transforms_changed = true
 		
-	#Engine.max_fps = 30
 	# 3. Check if the async worker thread is still uploading points
 	var is_loading = not rasterizer.is_loaded
-
+	
 	# ONLY request a redraw if something actually requires it!
 	if has_camera_updated or transforms_changed or is_loading:
 		RenderingServer.call_on_render_thread(rasterizer.rasterize)
