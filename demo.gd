@@ -21,7 +21,7 @@ func _process(delta):
 	splat.look_at(splat.position + forward_dir, -Vector3.UP)
 
 	# --- SplatMesh2: rotate in place, opposite direction, slower ---
-	splat2.rotate_y(-speed * 0.6 * delta)
+	#splat2.rotate_y(-speed * 0.6 * delta)
 
 	# --- Camera forward/back movement ---
 	var cam_speed = 2.0

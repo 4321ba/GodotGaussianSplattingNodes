@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.gltf.importer"
+type="Resource"
+uid="uid://2bd33offq1ti"
+path="res://.godot/imported/cut_tree.glb-dd7bbdd18cf158f21851c4385aec2729.res"
+
+[deps]
+
+source_file="res://models/cut_tree.glb"
+dest_files=["res://.godot/imported/cut_tree.glb-dd7bbdd18cf158f21851c4385aec2729.res"]
+
+[params]
+

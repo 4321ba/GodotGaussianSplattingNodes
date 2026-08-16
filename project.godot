@@ -21,7 +21,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GsplatRenderedImage="*res://addons/gsplat-nodes/rendered_image.tscn"
+GsplatRenderedImage="*uid://bnccylo4e2qjw"
 
 [display]
 

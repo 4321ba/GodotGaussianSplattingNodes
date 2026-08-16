@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.gltf.importer"
+type="Resource"
+uid="uid://belntrfl3ola"
+path="res://.godot/imported/toyota_wotire.glb-0d53128ffb96db720c8727d55c33cde5.res"
+
+[deps]
+
+source_file="res://models/toyota_wotire.glb"
+dest_files=["res://.godot/imported/toyota_wotire.glb-0d53128ffb96db720c8727d55c33cde5.res"]
+
+[params]
+

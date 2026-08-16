@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://dnpu4bkbam6cj"
+path="res://.godot/imported/demo.ply-8f491861fb21b58f34d929dbc9eb87b1.res"
+
+[deps]
+
+source_file="res://models/demo.ply"
+dest_files=["res://.godot/imported/demo.ply-8f491861fb21b58f34d929dbc9eb87b1.res"]
+
+[params]
+
