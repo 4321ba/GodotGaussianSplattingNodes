@@ -89,11 +89,11 @@ func init_gpu() -> void:
 	block_dims.resize(6)
 	block_dims.fill(1)
 	
-	# We use 20 floats (PBR struct) for Splats and Culled Splats
-	descriptors['splats'] = context.create_storage_buffer(safe_point_count * 20*4)
+	# We use 64 floats (PBR struct + sh) for Splats
+	descriptors['splats'] = context.create_storage_buffer(safe_point_count * 64*4)
 	descriptors['uniforms'] = context.create_uniform_buffer(8*4)
 	descriptors['transforms'] = context.create_uniform_buffer(16*MAX_OBJECT_COUNT*4)
-	descriptors['culled_splats'] = context.create_storage_buffer(safe_point_count * 20*4)
+	descriptors['culled_splats'] = context.create_storage_buffer(safe_point_count * 64*4) # do we need this to be 64 as well? or 12 as it was originally?
 	descriptors['grid_dimensions'] = context.create_storage_buffer(2*3*4, block_dims.to_byte_array(), RenderingDevice.STORAGE_BUFFER_USAGE_DISPATCH_INDIRECT)
 	descriptors['histogram'] = context.create_storage_buffer(4 + (1 + 4*RADIX + num_partitions*RADIX)*4)
 	descriptors['sort_keys'] = context.create_storage_buffer(num_sort_elements_max*4*2)

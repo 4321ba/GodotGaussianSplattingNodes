@@ -118,9 +118,10 @@ void main() {
     vec3 heatmap_color = mix(vec3(0,0,1), vec3(1,0.2,0.2), float(num_splats)*5e-4) * (1.0 - t) * heatmap_factor;
     if (pixel_in_bounds) {
         float final_alpha = 1.0 - t;
-        
         float final_depth = total_weight > 0.0 ? (weighted_depth / total_weight) : 0.0;
-        vec3 final_normal = normalize(blended_normal + vec3(0.0, 0.0, 0.001));
+        
+        // Let the length naturally collapse to 0.0 for standard splats!
+        vec3 final_normal = length(blended_normal) > 0.1 ? normalize(blended_normal) : vec3(0.0);
         
         imageStore(rasterized_image, ivec2(pixel), vec4(blended_color + heatmap_color, final_alpha));
         imageStore(rasterized_normal, ivec2(pixel), vec4(final_normal, final_depth));

@@ -7,8 +7,18 @@ class_name SplatCloudData extends Resource
 @export var split : Array[int] # indices where new objects start
 
 
-const DEFAULT_PROPERTIES : Array[StringName] = [&"x", &"y", &"z", &"nx", &"ny", &"nz", &"f_dc_0", &"f_dc_1", &"f_dc_2", &"metallicFactor", &"roughnessFactor", &"opacity", &"scale_0", &"scale_1", &"scale_2", &"rot_0", &"rot_1", &"rot_2", &"rot_3"]
-const DEFAULT_PROP_CNT = 19
+const DEFAULT_PROPERTIES : Array[StringName] = [
+	&"x", &"y", &"z", &"nx", &"ny", &"nz", 
+	&"f_dc_0", &"f_dc_1", &"f_dc_2", 
+	&"f_rest_0", &"f_rest_1", &"f_rest_2", &"f_rest_3", &"f_rest_4", &"f_rest_5", &"f_rest_6", &"f_rest_7", &"f_rest_8", &"f_rest_9", &"f_rest_10", &"f_rest_11", 
+	&"f_rest_12", &"f_rest_13", &"f_rest_14", &"f_rest_15", &"f_rest_16", &"f_rest_17", &"f_rest_18", &"f_rest_19", &"f_rest_20", &"f_rest_21", 
+	&"f_rest_22", &"f_rest_23", &"f_rest_24", &"f_rest_25", &"f_rest_26", &"f_rest_27", &"f_rest_28", &"f_rest_29", &"f_rest_30", &"f_rest_31", 
+	&"f_rest_32", &"f_rest_33", &"f_rest_34", &"f_rest_35", &"f_rest_36", &"f_rest_37", &"f_rest_38", &"f_rest_39", &"f_rest_40", &"f_rest_41", 
+	&"f_rest_42", &"f_rest_43", &"f_rest_44", 
+	&"opacity", &"scale_0", &"scale_1", &"scale_2", &"rot_0", &"rot_1", &"rot_2", &"rot_3",
+	&"metallicFactor", &"roughnessFactor"
+]
+const DEFAULT_PROP_CNT = len(DEFAULT_PROPERTIES)
 
 
 func get_vertex(index : int) -> Dictionary:
@@ -40,23 +50,22 @@ static func load_gaussian_splats(
 	num_points_loaded : Array[int],
 	callback : Callable
 ):
-	const STRUCT_SIZE := 20 # floats
+	const STRUCT_SIZE := 64 # Perfectly aligned 16 vec4s!
 	assert(len(should_terminate_reference) == 1 and len(num_points_loaded) == 1)
-	#'''
-	# --- ADD THESE DEBUG LINES ---
-	print("\n--- SPLAT DATA DEBUG ---")
-	print("Total Points: ", point_cloud.size)
-	for i in range(min(3, point_cloud.size)):
-		print("Vertex ", i, ": ", point_cloud.get_vertex(i))
-	print("------------------------\n")
-	# -----------------------------
-	#'''
+
 	var num_properties := len(point_cloud.properties)
 	var p := point_cloud.vertices
 
-	# ------------------------------------------------------------------
-	# NEW: Queues that workers will fill – upload happens later on render thread
-	# ------------------------------------------------------------------
+	var idx_x = point_cloud.properties.find(&"x")
+	var idx_nx = point_cloud.properties.find(&"nx")
+	var idx_dc0 = point_cloud.properties.find(&"f_dc_0")
+	var idx_rest0 = point_cloud.properties.find(&"f_rest_0")
+	var idx_op = point_cloud.properties.find(&"opacity")
+	var idx_scale0 = point_cloud.properties.find(&"scale_0")
+	var idx_rot0 = point_cloud.properties.find(&"rot_0")
+	var idx_metallic = point_cloud.properties.find(&"metallicFactor")
+	var idx_roughness = point_cloud.properties.find(&"roughnessFactor")
+
 	var upload_data   : Array[PackedByteArray] = []
 	var upload_offset : Array[int]            = []
 	var upload_size   : Array[int]            = []
@@ -65,73 +74,64 @@ static func load_gaussian_splats(
 	var task_id = WorkerThreadPool.add_group_task(func(i : int):
 		if should_terminate_reference[0]: return
 
-		# We swizzle point data so that it matches the std430 layout struct in our kernels
 		var points := PackedFloat32Array(); points.resize(STRUCT_SIZE*stride)
 		var tile_size := mini(point_cloud.size - i*stride, stride)
-		var creation_time := Time.get_ticks_msec()*1e-3
 
 		for j in tile_size:
 			var v := num_properties*(i*stride + j)
 			var b := j*STRUCT_SIZE
 
-			# 1. Position and Opacity
-			points[b+0] = p[v+0]
-			points[b+1] = p[v+1]
-			points[b+2] = p[v+2]
-			points[b+3] = 1.0 / (1.0 + exp(-p[v+11]))
+			points[b+0] = p[v+idx_x+0]
+			points[b+1] = p[v+idx_x+1]
+			points[b+2] = p[v+idx_x+2]
+			points[b+3] = 1.0 / (1.0 + exp(-p[v+idx_op]))
 
-			# 2. Base Color & Object ID
-			points[b+4] = clamp(p[v+6] * 0.28209 + 0.5, 0.0, 1.0)
-			points[b+5] = clamp(p[v+7] * 0.28209 + 0.5, 0.0, 1.0)
-			points[b+6] = clamp(p[v+8] * 0.28209 + 0.5, 0.0, 1.0)
-			points[b+7] = 0
-			for k in point_cloud.split:
-				if v >= k: points[b+7] += 1
+			points[b+4] = p[v+idx_nx+0] if idx_nx != -1 else 0.0
+			points[b+5] = p[v+idx_nx+1] if idx_nx != -1 else 0.0
+			points[b+6] = p[v+idx_nx+2] if idx_nx != -1 else 0.0
+			points[b+7] = p[v+idx_roughness] if idx_roughness != -1 else 0.75
 
-			# --- Rotation & Scale ---
-			var scale := Basis.from_scale(Vector3(exp(p[v+12]), exp(p[v+13]), exp(p[v+14])))
-			var rotation := Basis(Quaternion(p[v+16], p[v+17], p[v+18], p[v+15])).transposed()
+			var scale := Basis.from_scale(Vector3(exp(p[v+idx_scale0]), exp(p[v+idx_scale0+1]), exp(p[v+idx_scale0+2])))
+			var rotation := Basis(Quaternion(p[v+idx_rot0+1], p[v+idx_rot0+2], p[v+idx_rot0+3], p[v+idx_rot0+0])).transposed()
 			var cov_3d := (scale * rotation).transposed() * (scale * rotation)
 
-			# 3. Normal & Roughness (With Pseudo-Normal Heuristic!)
-			var nx = p[v+3]; var ny = p[v+4]; var nz = p[v+5];
-			if nx == 0.0 and ny == 0.0 and nz == 0.0:
-				var s0 = p[v+12]; var s1 = p[v+13]; var s2 = p[v+14];
-				var min_s = min(s0, min(s1, s2))
-				var derived_normal: Vector3
-				if min_s == s0: derived_normal = rotation.x
-				elif min_s == s1: derived_normal = rotation.y
-				else: derived_normal = rotation.z
-				derived_normal = derived_normal.normalized()
-				nx = derived_normal.x; ny = derived_normal.y; nz = derived_normal.z;
+			points[b+8]  = cov_3d.x[0]
+			points[b+9]  = cov_3d.y[0]
+			points[b+10] = cov_3d.z[0]
+			points[b+11] = p[v+idx_metallic] if idx_metallic != -1 else 0.0
 
-			points[b+8] = nx
-			points[b+9] = ny
-			points[b+10] = nz
-			points[b+11] = p[v+10] if p[v+10] > 0.0 else 0.75 # Roughness
+			points[b+12] = cov_3d.y[1]
+			points[b+13] = cov_3d.z[1]
+			points[b+14] = cov_3d.z[2]
 
-			# 4. Covariance & Metallic
-			points[b+12] = cov_3d.x[0]
-			points[b+13] = cov_3d.y[0]
-			points[b+14] = cov_3d.z[0]
-			points[b+15] = p[v+9] # Metallic
+			var obj_id = 0.0
+			for k in point_cloud.split:
+				if v >= k: obj_id += 1.0
+			points[b+15] = obj_id
 
-			# 5. Covariance Part 2
-			points[b+16] = cov_3d.y[1]
-			points[b+17] = cov_3d.z[1]
-			points[b+18] = cov_3d.z[2]
-			points[b+19] = 0.0 # Pad
+			if idx_dc0 != -1:
+				points[b+16] = p[v+idx_dc0+0]
+				points[b+17] = p[v+idx_dc0+1]
+				points[b+18] = p[v+idx_dc0+2]
+			else:
+				points[b+16] = 0.0; points[b+17] = 0.0; points[b+18] = 0.0;
+				
+			if idx_rest0 != -1:
+				# Transpose PLY segregated (RRR...GGG...BBB) to GPU interleaved (RGB, RGB, RGB)
+				for k in range(15):
+					points[b+19 + k*3 + 0] = p[v+idx_rest0 + k + 0]  # Red
+					points[b+19 + k*3 + 1] = p[v+idx_rest0 + k + 15] # Green
+					points[b+19 + k*3 + 2] = p[v+idx_rest0 + k + 30] # Blue
+			else:
+				for k in range(45):
+					points[b+19+k] = 0.0
 
 		if should_terminate_reference[0]: return
 
-		# --------------------------------------------------------------
-		# Instead of calling device.buffer_update here (forbidden on workers)
-		# we just queue the byte data
-		# --------------------------------------------------------------
 		var byte_data : PackedByteArray = points.to_byte_array()
 		var actual_byte_size := STRUCT_SIZE * tile_size * 4
 		if byte_data.size() > actual_byte_size:
-			byte_data.resize(actual_byte_size)   # void return in Godot 4.3+
+			byte_data.resize(actual_byte_size)
 
 		var byte_offset := i * STRUCT_SIZE * stride * 4
 		var byte_size   := actual_byte_size
@@ -142,19 +142,14 @@ static func load_gaussian_splats(
 		upload_size.append(byte_size)
 		upload_mutex.unlock()
 
-	, ceili(point_cloud.size / stride + 1.0)) # +1.0 to force float division
+	, ceili(point_cloud.size / stride + 1.0))
 
-	# Wait for all worker threads to finish processing
 	WorkerThreadPool.wait_for_group_task_completion(task_id)
 
-	# Early-out if loading was cancelled
 	if should_terminate_reference[0]:
 		callback.call()
 		return
 
-	# ------------------------------------------------------------------
-	# Upload everything on the rendering thread (the only place allowed)
-	# ------------------------------------------------------------------
 	var upload_on_render_thread := func():
 		if should_terminate_reference[0]: return
 

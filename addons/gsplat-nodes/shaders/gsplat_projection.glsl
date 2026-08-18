@@ -8,15 +8,30 @@
 #define SORT_PARTITION_SIZE      (SORT_PARTITION_DIVISION * SORT_WORKGROUP_SIZE)
 #define MAX_OBJECT_COUNT         16
 
+#define SH_C0 0.28209479177387814
+#define SH_C1 0.4886025119029199
+#define SH_C2_0 1.0925484305920792
+#define SH_C2_1 1.0925484305920792
+#define SH_C2_2 0.31539156525252005
+#define SH_C2_3 1.0925484305920792
+#define SH_C2_4 0.5462742152960396
+#define SH_C3_0 0.5900435899266435
+#define SH_C3_1 2.890611442640554
+#define SH_C3_2 0.4570457994644658
+#define SH_C3_3 0.3731763325901154
+#define SH_C3_4 0.4570457994644658
+#define SH_C3_5 1.445305721320277
+#define SH_C3_6 0.5900435899266435
+
 layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 
-// Perfect 20-float alignment
+// 64-Float memory aligned block
 struct Splat {
     vec4 pos_and_opacity;
-    vec4 color_and_id;
     vec4 normal_and_roughness;
     vec4 cov_and_metallic;
-    vec4 cov2_and_pad;
+    vec4 cov2_and_id;
+    vec4 sh_coeffs[12]; // 48 SH floats
 };
 
 struct RasterizeData {
@@ -36,6 +51,36 @@ layout(std430, set = 0, binding = 5) restrict writeonly buffer GridDimensionsBuf
 layout(std140, set = 0, binding = 6) restrict uniform Uniforms { vec3 camera_pos; float model_scale; ivec2 dims; float time; };
 layout(std140, set = 0, binding = 7) restrict uniform Transforms { mat4 transforms[MAX_OBJECT_COUNT]; };
 layout(push_constant) restrict readonly uniform PushConstants { mat4 view_matrix; mat4 projection_matrix; };
+
+vec3 get_sh_vec3(in Splat splat, int index) {
+    int start = index * 3;
+    float r = splat.sh_coeffs[start / 4][start % 4];
+    float g = splat.sh_coeffs[(start + 1) / 4][(start + 1) % 4];
+    float b = splat.sh_coeffs[(start + 2) / 4][(start + 2) % 4];
+    return vec3(r, g, b);
+}
+
+vec3 get_color(in vec3 view_dir, in Splat splat) {
+    const float x = view_dir.x, y = view_dir.y, z = view_dir.z;
+    const float xx = x*x, yy = y*y, zz = z*z, xy = x*y, yz = y*z, xz = x*z;
+    return max(vec3(0), 0.5 
+        + get_sh_vec3(splat, 0) * SH_C0
+        - get_sh_vec3(splat, 1) * SH_C1 * y
+        + get_sh_vec3(splat, 2) * SH_C1 * z
+        - get_sh_vec3(splat, 3) * SH_C1 * x
+        + get_sh_vec3(splat, 4) * SH_C2_0 * xy
+        - get_sh_vec3(splat, 5) * SH_C2_1 * yz
+        + get_sh_vec3(splat, 6) * SH_C2_2 * (2.0*zz - xx - yy)
+        - get_sh_vec3(splat, 7) * SH_C2_3 * xz
+        + get_sh_vec3(splat, 8) * SH_C2_4 * (xx - yy)
+        - get_sh_vec3(splat, 9) * SH_C3_0 * y * (3.0*xx - yy)
+        + get_sh_vec3(splat, 10) * SH_C3_1 * x * yz
+        - get_sh_vec3(splat, 11) * SH_C3_2 * y * (4.0*zz - xx - yy)
+        + get_sh_vec3(splat, 12) * SH_C3_3 * z * (2.0*zz - 3.0*xx - 3.0*yy)
+        - get_sh_vec3(splat, 13) * SH_C3_4 * x * (4.0*zz - xx - yy)
+        + get_sh_vec3(splat, 14) * SH_C3_5 * z * (xx - yy)
+        - get_sh_vec3(splat, 15) * SH_C3_6 * x * (xx - 3.0*yy));
+}
 
 vec3 project_covariance(in mat3 covariance_3d, in float scale_modifier, in vec3 mean, in ivec2 dims) {
     const mat3 cov_3d = covariance_3d * scale_modifier*scale_modifier;
@@ -66,13 +111,13 @@ void main() {
     barrier();
 
     const Splat splat = splat_buffer[id];
-    uint instance_id = uint(splat.color_and_id.w + 0.5);
+    uint instance_id = uint(splat.cov2_and_id.w + 0.5);
     mat4 model_matrix = transforms[instance_id];
 
     mat3 cov_mx = mat3(
         splat.cov_and_metallic.x, splat.cov_and_metallic.y, splat.cov_and_metallic.z,
-        splat.cov_and_metallic.y, splat.cov2_and_pad.x, splat.cov2_and_pad.y,
-        splat.cov_and_metallic.z, splat.cov2_and_pad.y, splat.cov2_and_pad.z
+        splat.cov_and_metallic.y, splat.cov2_and_id.x, splat.cov2_and_id.y,
+        splat.cov_and_metallic.z, splat.cov2_and_id.y, splat.cov2_and_id.z
     );
 
     mat3 object_linear = mat3(model_matrix);
@@ -107,8 +152,12 @@ void main() {
     mat3 normal_matrix = transpose(inverse(object_linear));
     vec3 world_normal = normalize(normal_matrix * splat.normal_and_roughness.xyz);
 
+    // Compute Color via SH Math! (PBR models will gracefully fall back to base color since their f_rest is 0)
+    vec3 view_dir = normalize(world_pos.xyz - camera_pos);
+    vec3 computed_color = get_color(view_dir, splat);
+
     RasterizeData data;
-    data.color_opacity = vec4(splat.color_and_id.rgb, splat_opacity);
+    data.color_opacity = vec4(computed_color, splat_opacity);
     data.normal_roughness = vec4(world_normal, splat.normal_and_roughness.w);
     data.conic_metallic = vec4(vec3(covariance.z, -covariance.y, covariance.x) / det, splat.cov_and_metallic.w);
     data.pos_image_xy = vec4(image_pos, world_pos.xy);
