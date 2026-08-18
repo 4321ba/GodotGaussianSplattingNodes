@@ -152,9 +152,14 @@ void main() {
     mat3 normal_matrix = transpose(inverse(object_linear));
     vec3 world_normal = normalize(normal_matrix * splat.normal_and_roughness.xyz);
 
-    // Compute Color via SH Math! (PBR models will gracefully fall back to base color since their f_rest is 0)
-    vec3 view_dir = normalize(world_pos.xyz - camera_pos);
-    vec3 computed_color = get_color(view_dir, splat);
+	// --- Local Space Spherical Harmonics ---
+    // 1. Get the View Direction in World Space
+    vec3 world_view_dir = world_pos.xyz - camera_pos;
+    // 2. Transform the View Direction backward into the model's Local Space
+    // We use the inverse of the object's linear transform matrix (rotation/scale)
+    vec3 local_view_dir = normalize(inverse(object_linear) * world_view_dir);
+    // 3. Evaluate the baked Spherical Harmonics using the Local View Direction!
+    vec3 computed_color = get_color(local_view_dir, splat);
 
     RasterizeData data;
     data.color_opacity = vec4(computed_color, splat_opacity);
