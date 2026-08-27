@@ -15,7 +15,7 @@
 #abstract[
   = Kivonat
 
-  TODO
+  //TODO
   
   Napjainkban igen komoly fejlődésen mentek keresztül az inverz grafikai módszerek, amelyek
   a képalkotás folyamatát megfordítva végeznek 3D rekonstrukciót képi információk alapján.
@@ -33,7 +33,7 @@
   = Abstract
 
 
-  TODO
+  //TODO
   
   Nowadays, inverse graphics methods have undergone a very serious development, which perform 3D reconstruction based on image information by reversing the process of image creation. Among them, 3D Gaussian Splatting (3DGS) has received a lot of attention, which reconstructs the scene in the form of a radiance field represented as a special point cloud supplemented with Gaussian normal distributions. The rendering of this representation can be performed very efficiently, in a way similar to the rasterization of classical 3D models. 3DGS representation is becoming very widespread, and industry standards are already starting to appear.
   
@@ -47,65 +47,91 @@
 
 = Bevezetés
 
-Valahova a féléves beosztásokat: mi volt önlab1, mi dipterv1, mi dipterv2
-
-Dipterv referencia: @diplomaterv
+//TODO Valahova a féléves beosztásokat: mi volt önlab1, mi dipterv1, mi dipterv2
+//Dipterv referencia: @diplomaterv
 
 == Inverz renderelés
 
+Inverz renderelésnek azt nevezzük, amikor képekből állítunk elő 3D modelleket. Lehet például egy adott objektum körbefotózva sok szögből, vagy egy labor körbevideózva. Ez egy bonyolult folyamat, és sokféle módszer létezik rá.
+
 == Gaussian Splatting
+
+A Gaussian Splatting egy inverz rendering módszer, aminél a jelenetet gausszi eloszlású átlátszósággal rendelkező 3D foltokkal próbáljuk a lehető legjobban leírni. Képekből előállítani a modellt elég erőforrásigényes, viszont a modellek megjelenítése megfelelő minőség esetén kifejezetten közel is tud lenni a valósághoz. Nagy előnye, hogy a megjelenítőt sima, standard grafikus pipeline-nal is lehet implementálni, és valós időben, 100-as nagyságrendű FPS-sel renderelhető. 
 
 == Godot
 
+A Godot Engine egy játékmotor, nyílt forráskódú, és az elmúlt években jelentős növekedésnek örvendett. Megtalálhatóak benne a legfontosabb eszközök egy játék fejlesztéséhez, viszont a teljes motor egy nagyon könnyű, lightweight megvalósításnak örvend: a motor egyetlen futtatható fájllal futtatható, installációt nem igényel, és a teljes mérete 200MB alatt van.
+
+A 4-es verzióban a következő generációs renderer Vulkan alapú, és ennek bővítésére, és a Vulkan-hoz történő viszonylag alacsony szintű hozzáférésre is különféle lehetőségeket nyújt.
+
 == Gaussian Splatting a Godot-ban
+
+Alapból a Godot rendererje(i) sima, háromszöghálós modellek megjelenítésére optimalizált, a Gaussian Splatting nincs a hivatalosan támogatott feature-ök között. Található viszont egy Godot-ban implementált Gaussian Splatting megjelenítő az interneten. // TODO hivatkozás, meg a többi helyre is
 
 == Motiváció
 
+Amennyiben az engine-be jobban integrálnánk gaussian splatting modelleket, képesek lehetnénk őket nem csak megjeleníteni, hanem a háromszöghálós modellek mellett, akár egyszerre, használni őket játékok készítésére.
+
 == A diplomaterv további szerkezete
 
+A továbbiakban bemutatom a témában megtalálható forrásokat, implementációkat, és leírom az általam elvégzett munka tervét, majd a megvalósítását, és a megvalósítás értékelését. Végül összegzem a leírtakat.
 
 = Irodalomkutatás
 
 == Gaussian Splatting témájú cikkek
 
-=== Eredeti cikk
+=== 3D Gaussian Splatting for Real-Time Radiance Field Rendering
 
-Referencia: @kerbl-2023-3dgs
+A Gaussian Splattinget az @kerbl-2023-3dgs cikk vezette be, ezzel nagy sikert aratva. Az általuk készített megoldás a képekből történő paraméteroptimalizációra, amivel a modelleket (pontfelhők paramétereit) lehetett elkészíteni, kifejezetten jól lett megírva, dicsérték.
 
 === Relightolhatóság
 
+A relightolhatóság game engine-ek esetén egy különösen fontos dolog, mivel ezzel lehet előre nem meghatározott mozgás esetén is életszerűbb megvilágítással ellátni a pontfelhőket. A @scolari2025mesh2splat forrásban megjelölt program segít ilyen, újralightolható pontfelhőket generálni háromszöghálós modellekből. A diplomaterv során az újralightolhatóságot ilyen modelleken tesztelem.
+
 === Időbeliség
+
+Külön érdekesség lehet, ha időben is változik a felvett jelenet, ilyenkor a pontfelhő időbeli transzformációját is el lehet tárolni. Erről szól a TODO cikk.
 
 === Szabványos GLTF formátum
 
-blogpost: @gltf-szabvany
+Az adatokat valamilyen módon el is kell tárolni, erre sokféle megoldás született. Különféle kulcsszavakkal rendelkező `.ply` fájlok, `.splat` fájlok, és egyéb fájformátumok is használatban vannak. Nem rég jött ki a témában egy GLTF szabvány @gltf-szabvany is, amit a Khronos Group kezel.
 
-=== Egyéb cikkek, ...
+=== Generatív AI és inverz módszerek a képszintézisben
 
-Gen AI, inverz módszerek EA diáiról jó referenciák: @genai-inverzrendering-ea
+A témában jól összegyűjtött információk forrása lehet többek között a BME-n nemrég indult szabadon választható, Generatív AI és inverz módszerek a képszintézisben című tárgy honlapja és diasorai, ami a @genai-inverzrendering-ea\-nél érhetők el.
 
-nerf, ilyesmi, megemlítése
+//TODO egyéb referenciák a diasorokról? nerf, ilyesmi, megemlítése
 
 == Más játékmotorok, Gaussian Splatting integrációjuk
 
-Unity, Unreal, stb. hogy áll? Vannak pluginok? Miért a Godot?
+Érdemes lehet utánanézni, hogy a Unity, és Unreal játékmotorok hogyan állnak a témához, gaussian splatting modellek megjelenítésére, és egy játékba történő integrálására milyen lehetőségek vannak. Mennyire támogatott az eredeti kiadók (Unity, Epic) által, illetve milyen plugin-ok / addon-ok elérhetőek, és ezek milyen minőségűek.
+
+Én azért a Godot mellett döntöttem, mivel Free / Open Source filozófiájával, és minimalista méretével, szemléletével ő állt hozzám a legközelebb. Az integrációt valószínűsíthetően mindegyik engine esetén el fogja valaki végezni.
 
 == Gaussian Splatting implementációk Godot-ban
 
-=== Retr0 valami (GodotGaussianSplatting)
+Mivel az engine, és a Gaussian Splatting téma is népszerű, ezért már találhatóak hasonló témájú implementációk.
 
-=== A másik, amelyik nemigen ment jól
+=== GodotGaussianSplatting by 2Retr0
+<OriginalGGSVFejezet>
 
-=== A kínai csávóé
+@OriginalGodotGaussianSplattingViewer volt az eredeti implementáció, ami egy Gaussian Splatting modellek megtekintésére szolgáló megjelenítő. Ez egy modell megjelenítését és körüljárását támogatta.
 
-amelyik aközben jelent meg, miközben írtam a diplomatervet
+=== godot-gaussian-splatting by haztro
 
-fontos az alkalmazkodóképesség, és a kollaboráció, azt véltem megfelelő megoldásnak, hogyha összedolgozunk, és merge-eljük a projekteket
+Ez egy másik implementáció, amelyik a projekt kezdetekor alulmaradt a fentebbitől. Nemrég kibővítette a készítője, célszerű lenne megint kipróbálni. @MasikGodotGaussianSplattingViewer // TODO
+
+=== godot-gaussian-splatting ReconWorldLab
+
+Ez @kinai-repo az implementáció már a diplomaterv írása közben bukkant fel. Ez már, az előzőekkel szemben, képes több modellt megjeleníteni, és transzformációt applikálni rájuk. Ez az implementáció a @OriginalGGSVFejezet. fejezetben bemutatott implementáción alapul. Mivel a céljaink nagyjából megegyeznek, úgy döntöttem, felveszem vele a kapcsolatot, és kollaborációt kezdeményezek. Ezt véltem a megfelelő megoldásnak, mivel így nem végezzük el kétszer ugyanazt a munkát, és mindketten tudjuk használni az eredményeket.
+//fontos az alkalmazkodóképesség, és a kollaboráció, azt véltem megfelelő megoldásnak, hogyha összedolgozunk, és merge-eljük a projekteket
 
 == Választott módszer, technológia
 
+A választott módszer a @OriginalGGSVFejezet\-ben leírt projekt kibővítése, illetve a @kinai-repo repository kiegészítése, a feladatlapban leírtak implementálásával.
 
-
+//TODO
+/*
 = Tervezés
 
 == Fájlformátumok bemutatása
@@ -122,7 +148,7 @@ fontos az alkalmazkodóképesség, és a kollaboráció, azt véltem megfelelő 
 
 == Mesh2Splat
 
-citation ott van a githubjukon
+citation ott van a githubjukon @scolari2025mesh2splat, relightolhatóság fejezet ??
 
 === Linuxon futtatás PR-ja
 
@@ -143,20 +169,21 @@ végül egy másikat mergeeltek
 == Architektúra
 
 Milyen osztályok vannak, mik singleton/autoload-ok, milyen shaderek hívódnak meg, és ezeknek mik a felelősségi körei
-
+*/
 = Önálló munka bemutatása
 
-Hogy érdemes taglalni? Lehet időrendben (problémák felmerülésének, logikus megoldásának sorrendjében)? Vagy témánként (pl ha időben két külön helyen jött elő a dinamikus láthatóságváltoztatás, akkor azt vonjam össze)? Vagy fájlonként?
+//TODO
+//Hogy érdemes taglalni? Lehet időrendben (problémák felmerülésének, logikus megoldásának sorrendjében)? Vagy témánként (pl ha időben két külön helyen jött elő a dinamikus láthatóságváltoztatás, akkor azt vonjam össze)? Vagy fájlonként?
 
-== A GDScript nyelv
+//== A GDScript nyelv
 
-== A GLSL nyelv
+//== A GLSL nyelv
 
-== Részek (??) bemutatása
+//== Részek (??) bemutatása
 
-=== GDScript oldali rész
+//=== GDScript oldali rész
 
-=== Shaderek
+//=== Shaderek
 
 
 == Önlab 1 alatt végzett megoldás felvázolása
@@ -412,11 +439,15 @@ Ami következményként nehézséget okozott, az a stuttering kiküszöbölése,
 
 A bemeneti adatformátum a `.ply`, illetve ennek egy speciális esete. Eredetileg a megjelenítő projekt csak olyan modelleket tudott megjeleníteni, amiknek a 62 property-je mind szerepel, és egy konkrét sorrendben van:
 
-```x, y, z, nx, ny, nz, f_dc_0, f_dc_1, f_dc_2, f_rest_0, f_rest_1, f_rest_2, f_rest_3, f_rest_4, f_rest_5, f_rest_6, f_rest_7, f_rest_8, f_rest_9, f_rest_10, f_rest_11, f_rest_12, f_rest_13, f_rest_14, f_rest_15, f_rest_16, f_rest_17, f_rest_18, f_rest_19, f_rest_20, f_rest_21, f_rest_22, f_rest_23, f_rest_24, f_rest_25, f_rest_26, f_rest_27, f_rest_28, f_rest_29, f_rest_30, f_rest_31, f_rest_32, f_rest_33, f_rest_34, f_rest_35, f_rest_36, f_rest_37, f_rest_38, f_rest_39, f_rest_40, f_rest_41, f_rest_42, f_rest_43, f_rest_44, opacity, scale_0, scale_1, scale_2, rot_0, rot_1, rot_2, rot_3```
+```
+x, y, z, nx, ny, nz, f_dc_0, f_dc_1, f_dc_2, f_rest_0, f_rest_1, f_rest_2, f_rest_3, f_rest_4, f_rest_5, f_rest_6, f_rest_7, f_rest_8, f_rest_9, f_rest_10, f_rest_11, f_rest_12, f_rest_13, f_rest_14, f_rest_15, f_rest_16, f_rest_17, f_rest_18, f_rest_19, f_rest_20, f_rest_21, f_rest_22, f_rest_23, f_rest_24, f_rest_25, f_rest_26, f_rest_27, f_rest_28, f_rest_29, f_rest_30, f_rest_31, f_rest_32, f_rest_33, f_rest_34, f_rest_35, f_rest_36, f_rest_37, f_rest_38, f_rest_39, f_rest_40, f_rest_41, f_rest_42, f_rest_43, f_rest_44, opacity, scale_0, scale_1, scale_2, rot_0, rot_1, rot_2, rot_3
+```
 
 Ez akkor ütközött problémába, amikor egy másik forrásból származó modellt szerettem volna megjeleníteni, ami `.splat` formátumban volt. Addig nem probléma, hogy az online [Supersplat](https://superspl.at/editor) segítségével át lehet konvertálni ezt `.ply` fájllá, viszont ebből a modellből hiányoztak bizonyos property-k, 14 volt összesen, és a meglevők sem megfelelő sorrendben voltak:
 
-```x, y, z, opacity, rot_0, rot_1, rot_2, rot_3, f_dc_0, f_dc_1, f_dc_2, scale_0, scale_1, scale_2```
+```
+x, y, z, opacity, rot_0, rot_1, rot_2, rot_3, f_dc_0, f_dc_1, f_dc_2, scale_0, scale_1, scale_2
+```
 
 Így módosítottam a beolvasó részt, hogy 0-ként olvassa a hiányzó adatokat, illetve a megfelelő pozícióba tegye a property-ket. Ez azért működik, mert ami hiányzik, az a 45 db spherical harmonikusokhoz szükséges érték, amiket lehet 0-ra inicializálni, illetve a normálvektor, amit pedig nem használ fel a beolvasó.
 
@@ -614,7 +645,7 @@ Felkerül végre??
 == További teendők a Dipterv 2-ig (végleges doksiig)
 <tovabbiteendok-dipterv2>
 
-- Godotos relightolás esetén fixálni a spotlightnál: a 3d pozíció nem jól van beállítva pixelenként
+- KÉSZ: Godotos relightolás esetén fixálni a spotlightnál: a 3d pozíció nem jól van beállítva pixelenként
 - Relightolható branch (a saját relightolásos) működjön a nem relightolt dolgokkal egyszerre, ennek visszamerge-elése a mainbe, esetleg PR a kínai csávónak (ha nyitott rá)
 - GLTF szabvány implementálása, tesztelés vele
 - a WhenHamstersAttackTD @when-hamsters-attack-td játék átírása félig (vagy teljesen) GSplatos modellek használatára (esetleg tanszéki terem mint background?, vagy azzal is egy példafelhasználás?)
@@ -641,16 +672,18 @@ Sokat tanultunk a dipterv alatt, megismerkedtünk ezzel, azzal, godot rendering 
 
 a plugin használható, viszonylag jó integrációval, fenn van (??) az asset store-ban, hozzátettem bizonyos fejlesztéseket, mások meg itt és itt érhetők el, ... (külön asset store item a relightolható mesh-esnek??, ha nem merge-eli majd?)
 
+// TODO minden bibliography item fel lett használva valahol?
+
 #bibliography("bibliography.yml")
 
 #show: appendix
 
 TODO AI nyilatkozat majd ide!
 
-= Még több lorem
-#lorem(200)
+//= Még több lorem
+//#lorem(200)
 
-== Na még egy kicsi
-#lorem(40)
+//== Na még egy kicsi
+//#lorem(40)
 
 // vim:spelllang=hu:spell

@@ -60,3 +60,48 @@ kinai-repo:
   title: ReconWorldLab implementációja
   url: https://github.com/ReconWorldLab/godot-gaussian-splatting
   date: 2026-05-28
+
+scolari2025mesh2splat:
+  type: Web
+  author: Stefano Scolari
+  title: "Mesh2Splat: Fast mesh to 3D Gaussian splat conversion"
+  date: 2026-05-31
+  url: "https://github.com/electronicarts/mesh2splat"
+  note: "Extended and updated version of the author's Master's thesis at KTH."
+
+OriginalGodotGaussianSplattingViewer:
+  type: web
+  title: GodotGaussianSplatting by 2Retr0
+  url: https://github.com/2Retr0/GodotGaussianSplatting
+  date: 2026-05-31
+
+MasikGodotGaussianSplattingViewer:
+  type: web
+  title: GodotGaussianSplatting by haztro
+  url: https://github.com/haztro/godot-gaussian-splatting
+  date: 2026-05-31
+
+GaussianSplattingIntroVideo:
+  type: web
+  title: THIS is the Biggest Thing Since CGI by Corridor Crew
+  url: https://www.youtube.com/watch?v=X8yRlA7jqEQ
+  date: 2026-07-30
+
+GLTFExtSpec:
+  type: web
+  title: GSplatting extension for glTF
+  url: https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_gaussian_splatting
+  date: 2026-08-04
+
+GLTFExtSuperSplatDoc:
+  type: web
+  title: PlayCanvas documentation of the glTF splatting format
+  url: https://developer.playcanvas.com/user-manual/gaussian-splatting/formats/glb/
+  date: 2026-08-04
+
+SplatTransformCMDLine:
+  type: web
+  title: PlayCanvas SplatTransform CMDLine tool
+  url: https://github.com/playcanvas/splat-transform
+  date: 2026-08-04
+  
