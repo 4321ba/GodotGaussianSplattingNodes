@@ -679,6 +679,7 @@ Felkerül végre??
 - fejezetek sorrendje
 - irodalomjegyzék vs lábjegyzet
 - kedvezményes tanrend?
+- terv szerint heti kb 5 oldal finomítása
 
 = Összefoglaló
 
