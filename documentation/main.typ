@@ -15,7 +15,7 @@
 #abstract[
   = Kivonat
 
-  //TODO
+  TODO
   
   Napjainkban igen komoly fejlődésen mentek keresztül az inverz grafikai módszerek, amelyek
   a képalkotás folyamatát megfordítva végeznek 3D rekonstrukciót képi információk alapján.
@@ -33,7 +33,7 @@
   = Abstract
 
 
-  //TODO
+  TODO
   
   Nowadays, inverse graphics methods have undergone a very serious development, which perform 3D reconstruction based on image information by reversing the process of image creation. Among them, 3D Gaussian Splatting (3DGS) has received a lot of attention, which reconstructs the scene in the form of a radiance field represented as a special point cloud supplemented with Gaussian normal distributions. The rendering of this representation can be performed very efficiently, in a way similar to the rasterization of classical 3D models. 3DGS representation is becoming very widespread, and industry standards are already starting to appear.
   
@@ -47,8 +47,9 @@
 
 = Bevezetés
 
-//TODO Valahova a féléves beosztásokat: mi volt önlab1, mi dipterv1, mi dipterv2
-//Dipterv referencia: @diplomaterv
+TODO Valahova a féléves beosztásokat: mi volt önlab1, mi dipterv1, mi dipterv2
+
+Dipterv referencia: @diplomaterv
 
 == Inverz renderelés
 
@@ -100,7 +101,7 @@ Az adatokat valamilyen módon el is kell tárolni, erre sokféle megoldás szül
 
 A témában jól összegyűjtött információk forrása lehet többek között a BME-n nemrég indult szabadon választható, Generatív AI és inverz módszerek a képszintézisben című tárgy honlapja és diasorai, ami a @genai-inverzrendering-ea\-nél érhetők el.
 
-//TODO egyéb referenciák a diasorokról? nerf, ilyesmi, megemlítése
+TODO egyéb referenciák a diasorokról? nerf, ilyesmi, megemlítése
 
 == Más játékmotorok, Gaussian Splatting integrációjuk
 
@@ -121,7 +122,7 @@ Mivel az engine, és a Gaussian Splatting téma is népszerű, ezért már talá
 
 Ez egy másik implementáció, amelyik a projekt kezdetekor alulmaradt a fentebbitől. Nemrég kibővítette a készítője, célszerű lenne megint kipróbálni. @MasikGodotGaussianSplattingViewer // TODO
 
-=== godot-gaussian-splatting ReconWorldLab
+=== godot-gaussian-splatting by ReconWorldLab
 
 Ez @kinai-repo az implementáció már a diplomaterv írása közben bukkant fel. Ez már, az előzőekkel szemben, képes több modellt megjeleníteni, és transzformációt applikálni rájuk. Ez az implementáció a @OriginalGGSVFejezet. fejezetben bemutatott implementáción alapul. Mivel a céljaink nagyjából megegyeznek, úgy döntöttem, felveszem vele a kapcsolatot, és kollaborációt kezdeményezek. Ezt véltem a megfelelő megoldásnak, mivel így nem végezzük el kétszer ugyanazt a munkát, és mindketten tudjuk használni az eredményeket.
 //fontos az alkalmazkodóképesség, és a kollaboráció, azt véltem megfelelő megoldásnak, hogyha összedolgozunk, és merge-eljük a projekteket
@@ -130,8 +131,8 @@ Ez @kinai-repo az implementáció már a diplomaterv írása közben bukkant fel
 
 A választott módszer a @OriginalGGSVFejezet\-ben leírt projekt kibővítése, illetve a @kinai-repo repository kiegészítése, a feladatlapban leírtak implementálásával.
 
-//TODO
-/*
+TODO
+
 = Tervezés
 
 == Fájlformátumok bemutatása
@@ -169,21 +170,26 @@ végül egy másikat mergeeltek
 == Architektúra
 
 Milyen osztályok vannak, mik singleton/autoload-ok, milyen shaderek hívódnak meg, és ezeknek mik a felelősségi körei
-*/
+
+== Relightolás logikája (hova?)
+
+
+
 = Önálló munka bemutatása
 
-//TODO
-//Hogy érdemes taglalni? Lehet időrendben (problémák felmerülésének, logikus megoldásának sorrendjében)? Vagy témánként (pl ha időben két külön helyen jött elő a dinamikus láthatóságváltoztatás, akkor azt vonjam össze)? Vagy fájlonként?
+TODO
 
-//== A GDScript nyelv
+Hogy érdemes taglalni? Lehet időrendben (problémák felmerülésének, logikus megoldásának sorrendjében)? Vagy témánként (pl ha időben két külön helyen jött elő a dinamikus láthatóságváltoztatás, akkor azt vonjam össze)? Vagy fájlonként?
 
-//== A GLSL nyelv
+== A GDScript nyelv
 
-//== Részek (??) bemutatása
+== A GLSL nyelv
 
-//=== GDScript oldali rész
+== Részek (??) bemutatása
 
-//=== Shaderek
+=== GDScript oldali rész
+
+=== Shaderek
 
 
 == Önlab 1 alatt végzett megoldás felvázolása
@@ -604,6 +610,22 @@ Ezen kívül viszont, alapból a @relightolhato_godotshaded. ábra jóval jobban
   , caption: [Suzanne, a Blender majom megvilágítva Godot által egy spotlight-tal is (még bugos)]
 ) <relightolhato_spotlight>
 
+== Dipterv 2 alatt végzett munka 
+
+=== Relightolható bugfix
+
+=== GLTF import
+
+sh fix, PR a kínai csávónak
+
+=== Gömbi harmonikusok transzformációjának megjavítása
+
+Issue fix-szel a kínai csávónak
+
+=== Játékfejlesztés nagyházi mint példafelhasználás (vagy ez legyen az értékelés fejezetben??)
+
+TODO még meg kell csinálni
+
 == Kitérő: Typst
 
 A diplomaterv dokumentumának elkészítéséhez a Typst nevű nyelvet használom, ami egy modern LaTeX megfelelő. Dani nevű szobatársam segítségével konvertáltuk a sablonokat (főleg ő), ez elérhető itt: @typst-bme-dipterv-sablon.
@@ -630,9 +652,9 @@ LaTeX:
 játék bemutatása, integrációja a pluginnal, mint példa felhasználás
 @when-hamsters-attack-td
 
-== Tanszék modelljének példafelhasználása
+//== Tanszék modelljének példafelhasználása
 
-mire? Legyen valami kis konkrét demo belőle? Itt lehetne demozni, ha a háttér GSplates, míg a WhenHamstersAttackTD-nél, ha a karakterek GSplatesek
+//mire? Legyen valami kis konkrét demo belőle? Itt lehetne demozni, ha a háttér GSplates, míg a WhenHamstersAttackTD-nél, ha a karakterek GSplatesek
 
 == Asset library plugin
 
@@ -642,37 +664,29 @@ Felkerül végre??
 
 == Még mit lehetne értékelésnek, eredménynek?
 
-== További teendők a Dipterv 2-ig (végleges doksiig)
+== További teendők a Dipterv 2-ig (végleges doksi leadásig)
 <tovabbiteendok-dipterv2>
 
-- KÉSZ: Godotos relightolás esetén fixálni a spotlightnál: a 3d pozíció nem jól van beállítva pixelenként
-- Relightolható branch (a saját relightolásos) működjön a nem relightolt dolgokkal egyszerre, ennek visszamerge-elése a mainbe, esetleg PR a kínai csávónak (ha nyitott rá)
-- GLTF szabvány implementálása, tesztelés vele
-- a WhenHamstersAttackTD @when-hamsters-attack-td játék átírása félig (vagy teljesen) GSplatos modellek használatára (esetleg tanszéki terem mint background?, vagy azzal is egy példafelhasználás?)
+- a WhenHamstersAttackTD @when-hamsters-attack-td játék átírása félig (vagy teljesen) GSplatos modellek használatára
 - ezen dokumentum finomítása, véglegesítése
   - irodalomjegyzék vs lábjegyzet? Melyiket mennyire? Mind mehet irodalomjegyzékbe, nem baj ha nagyon sok?
+- TODO-k kijavítása, eltüntetése itt is és a kódban is
+- minden kép, táblázat és kódrészlet be van számozva? és rendesen referálva?
+- commit history-t, ai chat history-t, teams chatet visszaolvasni, hogy ne hagyjak ki semmit, amiről lehet írni
 
-== TODO a dipterv1 doksi leadásáig!
+*!!!kérdések:*
+- kódolás rész kb elég, feladatkiírásban kb az összes dolgot megcsináltam (tömörített gltf???), kell még valami kódolás szempontjából, vagy elég lesz, ha leírom őket szépen?
+- fejezetek sorrendje
+- irodalomjegyzék vs lábjegyzet
+- kedvezményes tanrend?
 
-- kódblokkok számozásának kipróbálása az önlabos doksi szövegében
-- írni az ebben a félévben végzett munkáról
-  - ehhez pedig számozott képeket beszúrni, kipróbálni a számozást fejezetek között is (melyik számozás legyen (6 vs 4.1, ábrához)? - ennek eldöntése, formázással bajlódás majd ráér később)
-  - képaláírások, kép forrásának jelölése hogyan?
-- referenciák a képekre, kódblokkokra, más fejezetekre a doksin belül
-- bemutató diasor
-  - előző diasorból kiindulva, 1-2 diát megtartva
-  - a félév során elvégzett lépések, munkák 1-1 dián
-  - typst egy dián, sablonról, elkészített dokumentációról szót ejteni
-  - utsó dián a @tovabbiteendok-dipterv2\-nál taglaltak felsorolása, konzultálni ezekről a konzulenssel, időpontot kérni ezen dokumentum átnézésére, és finomítására
-  - további dolgok időbeosztása a nyáron, konzultációk hogyan, ilyesmi 
-  
 = Összefoglaló
 
 Sokat tanultunk a dipterv alatt, megismerkedtünk ezzel, azzal, godot rendering pipeline, gaussian splatting, fájlformátumok, typst, stb
 
 a plugin használható, viszonylag jó integrációval, fenn van (??) az asset store-ban, hozzátettem bizonyos fejlesztéseket, mások meg itt és itt érhetők el, ... (külön asset store item a relightolható mesh-esnek??, ha nem merge-eli majd?)
 
-// TODO minden bibliography item fel lett használva valahol?
+TODO minden bibliography item fel lett használva valahol?
 
 #bibliography("bibliography.yml")
 
@@ -680,10 +694,10 @@ a plugin használható, viszonylag jó integrációval, fenn van (??) az asset s
 
 TODO AI nyilatkozat majd ide!
 
-//= Még több lorem
-//#lorem(200)
+= Még több lorem
+#lorem(200)
 
-//== Na még egy kicsi
-//#lorem(40)
+== Na még egy kicsi
+#lorem(40)
 
 // vim:spelllang=hu:spell
