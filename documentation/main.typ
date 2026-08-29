@@ -520,7 +520,7 @@ Az @tablazat_teszt. táblázatnál láthatóak a node-hoz, illetve a resource-ho
 ) <editor_ikonok>
 
 #figure(
-  table( columns:2,
+  table(  columns:2,
   [GaussianSplatNode], [GaussianResource], 
   [Piros, átfedő pöttyök], [Sárga, kisebb sugarú pöttyök]
   )
@@ -663,6 +663,10 @@ Felkerül végre??
 == Instancing mérése felhasznált memóriával
 
 == Még mit lehetne értékelésnek, eredménynek?
+
+objektív szempontok szerint összehasonlítani a többféle implementációt (2 féle relightolás, kínai vs saját branch, stb.)
+
+értékelés lehet fentebb, összefonva a renderer bemutatással pl, és akár külön (nagy)fejezet a WHATD
 
 == További teendők a Dipterv 2-ig (végleges doksi leadásig)
 <tovabbiteendok-dipterv2>
