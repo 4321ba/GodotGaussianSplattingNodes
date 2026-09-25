@@ -5,7 +5,7 @@ var main_scene = preload("res://scenes/main_scene.tscn")
 func _ready() -> void:
 	$CanvasLayer/ColorRect/VBoxContainer/VBoxContainer/SfxCheckButton.button_pressed = not AudioServer.is_bus_mute(AudioServer.get_bus_index("Sfx"))
 	$CanvasLayer/ColorRect/VBoxContainer/VBoxContainer/MusicCheckButton.button_pressed = Music.playing
-	
+	"""
 	# 1. Instantiate the game scene
 	var background_world = main_scene.instantiate()
 	
@@ -22,7 +22,6 @@ func _ready() -> void:
 	#background_world.get_node("GridMap").mesh_library = null
 	#background_world.get_node("GridMap").bake_navigation = false
 	#background_world.get_node("GridMap").free()
-	
 	# 3. Replace the Camera Controller with a simple auto-rotator
 	# We target the "Pivot" node (the parent of Camera3D) so it orbits the center
 	var cam = background_world.get_node_or_null("Pivot/Camera3D")
@@ -31,12 +30,12 @@ func _ready() -> void:
 	if cam:
 		# Create a new script programmatically
 		var auto_rotate = GDScript.new()
-		auto_rotate.source_code = """
+		auto_rotate.source_code = ""
 extends Node3D
 func _process(delta: float) -> void:
 	# Rotate slowly around the Y axis (Orbit)
 	get_parent().rotate_y(0.05 * delta)
-		"""
+		""
 		auto_rotate.reload()
 		
 		# Apply the new script, effectively deleting the old input-based one
@@ -49,6 +48,7 @@ func _process(delta: float) -> void:
 		cam.set_process_unhandled_input(false)
 		
 	add_child(background_world)
+	"""
 	
 	$CanvasLayer/ColorRect/VBoxContainer/VBoxContainer/PlayButton.grab_focus()
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://d2xp46f0m2mfb"]
+[gd_scene format=3 uid="uid://d2xp46f0m2mfb"]
 
 [ext_resource type="Script" uid="uid://cqbpapg8a5rpn" path="res://scenes/main_menu.gd" id="1_l6cm7"]
 
@@ -7,12 +7,12 @@ font_size = 64
 shadow_size = 6
 shadow_color = Color(0, 0, 0, 0.627451)
 
-[node name="MainMenu" type="Node3D"]
+[node name="MainMenu" type="Node3D" unique_id=81150706]
 script = ExtResource("1_l6cm7")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=808108393]
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=868405564]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -20,7 +20,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.12156863, 0.105882354, 0.039215688, 0.45882353)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/ColorRect"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/ColorRect" unique_id=392033249]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -34,55 +34,55 @@ offset_bottom = 117.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TitleLabel" type="Label" parent="CanvasLayer/ColorRect/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CanvasLayer/ColorRect/VBoxContainer" unique_id=1962194463]
 layout_mode = 2
 text = "When Hamsters Attack TD"
 label_settings = SubResource("LabelSettings_l6cm7")
 
-[node name="Control" type="Control" parent="CanvasLayer/ColorRect/VBoxContainer"]
+[node name="Control" type="Control" parent="CanvasLayer/ColorRect/VBoxContainer" unique_id=452838607]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/ColorRect/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/ColorRect/VBoxContainer" unique_id=454087870]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 10
 
-[node name="PlayButton" type="Button" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer"]
+[node name="PlayButton" type="Button" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer" unique_id=974600100]
 layout_mode = 2
 text = "Play"
 
-[node name="ControlsButton" type="Button" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer"]
+[node name="ControlsButton" type="Button" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer" unique_id=129079137]
 layout_mode = 2
 text = "Controls"
 
-[node name="QuitButton" type="Button" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer"]
+[node name="QuitButton" type="Button" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer" unique_id=1711871721]
 layout_mode = 2
 text = "Quit"
 
-[node name="Control" type="Control" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer"]
+[node name="Control" type="Control" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer" unique_id=2036831969]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 
-[node name="SettingsLabel" type="Label" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer"]
+[node name="SettingsLabel" type="Label" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer" unique_id=185350183]
 layout_mode = 2
 text = "Settings"
 horizontal_alignment = 1
 
-[node name="MusicCheckButton" type="CheckButton" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer"]
+[node name="MusicCheckButton" type="CheckButton" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer" unique_id=436782155]
 layout_mode = 2
 button_pressed = true
 text = "Music"
 
-[node name="SfxCheckButton" type="CheckButton" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer"]
+[node name="SfxCheckButton" type="CheckButton" parent="CanvasLayer/ColorRect/VBoxContainer/VBoxContainer" unique_id=435753177]
 layout_mode = 2
 button_pressed = true
 text = "Sound Effects
 "
 
-[node name="ControlsContainer" type="VBoxContainer" parent="CanvasLayer/ColorRect"]
+[node name="ControlsContainer" type="VBoxContainer" parent="CanvasLayer/ColorRect" unique_id=1790637276]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -97,16 +97,16 @@ offset_bottom = 165.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ControlsLabel" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer"]
+[node name="ControlsLabel" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer" unique_id=1066637908]
 layout_mode = 2
 text = "Controls"
 horizontal_alignment = 1
 
-[node name="Control" type="Control" parent="CanvasLayer/ColorRect/ControlsContainer"]
+[node name="Control" type="Control" parent="CanvasLayer/ColorRect/ControlsContainer" unique_id=1926259723]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="GridContainer" type="GridContainer" parent="CanvasLayer/ColorRect/ControlsContainer"]
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/ColorRect/ControlsContainer" unique_id=173439674]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -114,74 +114,74 @@ theme_override_constants/h_separation = 40
 theme_override_constants/v_separation = 10
 columns = 2
 
-[node name="ControlsLabel2" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel2" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=1588803373]
 layout_mode = 2
 text = "Move Camera"
 horizontal_alignment = 2
 
-[node name="ControlsLabel3" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel3" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=972387145]
 layout_mode = 2
 text = "Arrows"
 
-[node name="ControlsLabel4" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel4" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=1257532536]
 layout_mode = 2
 text = "Select Tower"
 horizontal_alignment = 2
 
-[node name="ControlsLabel5" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel5" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=41877752]
 layout_mode = 2
 text = "1, 2 and 3"
 
-[node name="ControlsLabel6" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel6" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=1361674586]
 layout_mode = 2
 text = "Place Tower"
 horizontal_alignment = 2
 
-[node name="ControlsLabel7" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel7" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=767765373]
 layout_mode = 2
 text = "Left Click"
 
-[node name="ControlsLabel8" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel8" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=2026252463]
 layout_mode = 2
 text = "Sell Tower"
 horizontal_alignment = 2
 
-[node name="ControlsLabel9" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel9" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=1308621731]
 layout_mode = 2
 text = "Right Click"
 
-[node name="ControlsLabel10" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel10" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=2122859430]
 layout_mode = 2
 text = "Open Menu"
 horizontal_alignment = 2
 
-[node name="ControlsLabel11" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel11" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=1309669200]
 layout_mode = 2
 text = "Escape"
 
-[node name="ControlsLabel12" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel12" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=735824579]
 layout_mode = 2
 text = "Fast Forward"
 horizontal_alignment = 2
 
-[node name="ControlsLabel13" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel13" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=1385390084]
 layout_mode = 2
 text = "Tab"
 
-[node name="ControlsLabel14" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel14" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=26885980]
 layout_mode = 2
 text = "Start Wave"
 horizontal_alignment = 2
 
-[node name="ControlsLabel15" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer"]
+[node name="ControlsLabel15" type="Label" parent="CanvasLayer/ColorRect/ControlsContainer/GridContainer" unique_id=315887766]
 layout_mode = 2
 text = "Space"
 
-[node name="Control2" type="Control" parent="CanvasLayer/ColorRect/ControlsContainer"]
+[node name="Control2" type="Control" parent="CanvasLayer/ColorRect/ControlsContainer" unique_id=1305416001]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="ReturnButton" type="Button" parent="CanvasLayer/ColorRect/ControlsContainer"]
+[node name="ReturnButton" type="Button" parent="CanvasLayer/ColorRect/ControlsContainer" unique_id=799390965]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 4

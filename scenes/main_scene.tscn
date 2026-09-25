@@ -10,8 +10,10 @@
 [ext_resource type="Script" uid="uid://du8prrjs63trs" path="res://scenes/health_and_money.gd" id="7_c16ls"]
 [ext_resource type="Script" uid="uid://dn4b07kkgn5ty" path="res://scenes/game_ui.gd" id="8_18nlu"]
 [ext_resource type="Shader" uid="uid://b8sw7g724ayoe" path="res://scenes/vignette.gdshader" id="9_6wevv"]
-[ext_resource type="Script" uid="uid://dm8qmvv3mqfng" path="res://addons/gsplat-nodes/scripts/splat_cloud_3d.gd" id="11_mngbo"]
-[ext_resource type="Resource" uid="uid://c432m28jw6ku5" path="res://models/bonsai_withsh_centered.ply" id="12_mngbo"]
+[ext_resource type="Script" uid="uid://4a1tigyn700t" path="res://scenes/gs_pool.gd" id="11_e1cbu"]
+[ext_resource type="Resource" uid="uid://er7hjx0gwuf8" path="res://models/teddy_wobottom.ply" id="12_r6p65"]
+[ext_resource type="Resource" uid="uid://i4pi2ia2aju6" path="res://models/bonsai_wobottom.ply" id="13_r6p65"]
+[ext_resource type="Resource" uid="uid://d2iqlbb2n4y35" path="res://models/toyota_wtire.ply" id="14_si52b"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_w2twt"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -1133,11 +1135,12 @@ theme_override_constants/separation = 20
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7, 0)
 size = Vector3(40, 2, 32)
 
-[node name="SplatCloud3D" type="Node3D" parent="." unique_id=1794599938]
-transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0.6361928, 0)
-script = ExtResource("11_mngbo")
-splat_data = ExtResource("12_mngbo")
-metadata/_custom_type_script = "uid://dm8qmvv3mqfng"
+[node name="GSPool" type="Node3D" parent="." unique_id=377590511]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5184596, 0)
+script = ExtResource("11_e1cbu")
+infantry_resource = ExtResource("12_r6p65")
+tank_resource = ExtResource("13_r6p65")
+vtb_resource = ExtResource("14_si52b")
 
 [connection signal="pressed" from="CanvasLayer/GameUI/MarginContainer/VBoxContainer/Control/DeathWinMenu/MainMenuButton" to="CanvasLayer/GameUI" method="_on_main_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/GameUI/MarginContainer/VBoxContainer/Control/DeathWinMenu/RestartButton" to="CanvasLayer/GameUI" method="_on_restart_button_pressed"]

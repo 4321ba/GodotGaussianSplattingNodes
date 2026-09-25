@@ -6,7 +6,7 @@ const WORKGROUP_SIZE := 512 # Same as defined in `radix_sort_upsweep.glsl`
 const RADIX := 256 # Same as defined in `radix_sort_upsweep.glsl`
 const PARTITION_DIVISION := 8 # Same as defined in `radix_sort_upsweep.glsl`
 const PARTITION_SIZE := PARTITION_DIVISION * WORKGROUP_SIZE # Same as defined in `radix_sort_upsweep.glsl`
-const MAX_OBJECT_COUNT := 16 # number of gsplat object transforms, same as in gsplat_projection.glsl
+const MAX_OBJECT_COUNT := 64 # number of gsplat object transforms, same as in gsplat_projection.glsl
 signal loaded
 
 var context : RenderingContext

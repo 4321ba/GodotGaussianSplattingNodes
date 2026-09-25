@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://444yk5an5o40"]
+[gd_scene format=3 uid="uid://444yk5an5o40"]
 
 [ext_resource type="PackedScene" uid="uid://dxwtrm8kv41cy" path="res://scenes/enemy.tscn" id="1_omfc3"]
 [ext_resource type="ArrayMesh" uid="uid://dtd6srna6thgk" path="res://models/Units/hamster_body.obj" id="2_7ayth"]
@@ -11,17 +11,21 @@ albedo_color = Color(0.5411765, 0.011764706, 0.011764706, 1)
 material = SubResource("StandardMaterial3D_15bfx")
 size = Vector3(0.1, 0.1, 0.1)
 
-[node name="Enemy" node_paths=PackedStringArray("body_to_bob", "legs") instance=ExtResource("1_omfc3")]
+[node name="Enemy" unique_id=1441710992 node_paths=PackedStringArray("body_to_bob", "legs") instance=ExtResource("1_omfc3")]
 speed = 4.0
 use_explosion_death = false
-body_to_bob = NodePath("MeshInstance3D")
+body_to_bob = NodePath("SplatRoot")
 legs = NodePath("MeshInstance3D/MeshInstance3D")
 
-[node name="MeshInstance3D" parent="." index="0"]
+[node name="MeshInstance3D" parent="." index="0" unique_id=1362322141]
+visible = false
 mesh = ExtResource("2_7ayth")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" index="0"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" index="0" unique_id=418649065]
 mesh = ExtResource("3_15bfx")
 
-[node name="GPUParticles3D" parent="." index="4"]
+[node name="GPUParticles3D" parent="." index="4" unique_id=1777751934]
 draw_pass_1 = SubResource("BoxMesh_ynq50")
+
+[node name="SplatRoot" parent="." index="6" unique_id=490273008]
+transform = Transform3D(-3, 0, -2.6226832e-07, 0, 3, 0, 2.6226832e-07, 0, -3, 0, 0, 0)

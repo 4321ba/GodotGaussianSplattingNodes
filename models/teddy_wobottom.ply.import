@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://er7hjx0gwuf8"
+path="res://.godot/imported/teddy_wobottom.ply-38afbb35ae298aadc4a9903bf1eafd27.res"
+
+[deps]
+
+source_file="res://models/teddy_wobottom.ply"
+dest_files=["res://.godot/imported/teddy_wobottom.ply-38afbb35ae298aadc4a9903bf1eafd27.res"]
+
+[params]
+

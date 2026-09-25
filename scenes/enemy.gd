@@ -2,6 +2,13 @@ extends CharacterBody3D
 
 @onready var nav_agent = $NavigationAgent3D
 @onready var enemy_spawner = $"/root/MainScene/EnemySpawner"
+@onready var splat_root = $SplatRoot
+
+# --- Tell the script what type of GS model to request ---
+@export_enum("infantry", "tank", "vtb") var enemy_type: String = "infantry"
+var my_splat: Node3D = null
+var my_remote_transform: RemoteTransform3D = null
+# --------------------------------------------------------
 
 @export var speed = 3.0
 @export var max_health = 10.0
@@ -27,7 +34,19 @@ func distance_to_goal():
 func _ready() -> void:
 	health = max_health
 	nav_agent.target_position = $"/root/MainScene/Goal".global_position
-
+	
+	var pool = get_node_or_null("/root/MainScene/GSPool")
+	if pool:
+		my_splat = pool.get_splat(enemy_type)
+		if my_splat:
+			# 1. Create a RemoteTransform3D
+			my_remote_transform = RemoteTransform3D.new()
+			
+			# 2. Attach it to the mesh (so it inherits bobbing/sinking)
+			splat_root.add_child(my_remote_transform)
+			
+			# 3. Point it at our pooled splat!
+			my_remote_transform.remote_path = my_remote_transform.get_path_to(my_splat)
 
 func _process(delta: float) -> void:
 	# Only animate if moving
@@ -63,7 +82,7 @@ func _physics_process(_delta: float) -> void:
 func _on_navigation_agent_3d_target_reached() -> void:
 	print("I've got in!")
 	HealthAndMoney.i.remove_health(damage_when_achieved_goal)
-	queue_free()
+	_cleanup_and_free()
 
 
 @onready var health_bar_red: Sprite3D = $HealthBar/Red
@@ -131,9 +150,24 @@ func die():
 		tween.chain().tween_property(mesh_to_animate, "position:y", mesh_to_animate.position.y - 1.0, 0.2)
 		
 	
-	tween.finished.connect(queue_free) # audio finishes before this
+	# --- CHANGED THIS: Route the finish signal to our custom cleanup function ---
+	tween.finished.connect(_cleanup_and_free) 
+	#tween.finished.connect(queue_free) # audio finishes before this
 	#await get_tree().create_timer(1.0).timeout
 	#queue_free()
+
+func _cleanup_and_free():
+	if my_splat:
+		# Destroy the remote link so it stops following us
+		if my_remote_transform:
+			my_remote_transform.remote_path = NodePath("")
+			my_remote_transform.queue_free()
+			
+		var pool = get_node_or_null("/root/MainScene/GSPool")
+		if pool:
+			pool.return_splat(my_splat, enemy_type)
+			
+	queue_free()
 
 
 

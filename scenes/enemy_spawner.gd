@@ -18,7 +18,7 @@ var rounds: Array[String] = [
 #	"v",
 #	"iiiiiiii    tttttttt    vvvvvvvvvvvvvvvvvvvvv",
 #	"tttttvvvvvvvvvvvvvvvvvvvvv",
-#	"i v t",
+	"i v t",
 	# --- PHASE 1: RECRUITMENT (Rounds 1-5) ---
 	"i   i   i   i   i",                  # Round 1: Intro (50 Total HP)
 	"i i i i i i",                         # Round 2: Tighter spacing

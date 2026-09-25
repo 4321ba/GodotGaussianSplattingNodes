@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://i4pi2ia2aju6"
+path="res://.godot/imported/bonsai_wobottom.ply-6bd687479181e517ffe273ab8b25d03c.res"
+
+[deps]
+
+source_file="res://models/bonsai_wobottom.ply"
+dest_files=["res://.godot/imported/bonsai_wobottom.ply-6bd687479181e517ffe273ab8b25d03c.res"]
+
+[params]
+

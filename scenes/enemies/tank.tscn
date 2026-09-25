@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://gmx78jmjt6jt"]
+[gd_scene format=3 uid="uid://gmx78jmjt6jt"]
 
 [ext_resource type="PackedScene" uid="uid://dxwtrm8kv41cy" path="res://scenes/enemy.tscn" id="1_64ke4"]
 [ext_resource type="ArrayMesh" uid="uid://duu47ullbeknu" path="res://models/Units/OBJ/Tank/Tank-1.obj" id="2_tcl4h"]
@@ -12,21 +12,27 @@ albedo_color = Color(0.6392157, 0.8666667, 0.5137255, 1)
 material = SubResource("StandardMaterial3D_64ke4")
 size = Vector3(0.1, 0.1, 0.1)
 
-[node name="Enemy" node_paths=PackedStringArray("heads_to_bob") instance=ExtResource("1_64ke4")]
+[node name="Enemy" unique_id=1627533840 node_paths=PackedStringArray("heads_to_bob") instance=ExtResource("1_64ke4")]
+enemy_type = "tank"
 speed = 1.5
 max_health = 80.0
 damage_when_achieved_goal = 2
 heads_to_bob = [NodePath("MeshInstance3D/MeshInstance3D")]
 
-[node name="MeshInstance3D" parent="." index="0"]
+[node name="MeshInstance3D" parent="." index="0" unique_id=1362322141]
 mesh = ExtResource("2_tcl4h")
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D" index="0"]
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D" index="0" unique_id=777682541]
+visible = false
 mesh = ExtResource("3_tc3py")
 skeleton = NodePath("../..")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" index="1"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" index="1" unique_id=146627058]
+visible = false
 mesh = ExtResource("4_ay1nl")
 
-[node name="GPUParticles3D" parent="." index="4"]
+[node name="GPUParticles3D" parent="." index="4" unique_id=1777751934]
 draw_pass_1 = SubResource("BoxMesh_tcl4h")
+
+[node name="SplatRoot" parent="." index="6" unique_id=490273008]
+transform = Transform3D(-8.742278e-08, 0, 2, 0, 2, 0, -2, 0, -8.742278e-08, 0, 0.5, 0)
