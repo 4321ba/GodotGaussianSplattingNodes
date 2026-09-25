@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://bo2f4qmjfi4ru"
+path="res://.godot/imported/Beach_OuterCorner.ply-244aca5ee5ed134991fc0061ef5a1abc.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Beach_OuterCorner.ply"
+dest_files=["res://.godot/imported/Beach_OuterCorner.ply-244aca5ee5ed134991fc0061ef5a1abc.res"]
+
+[params]
+

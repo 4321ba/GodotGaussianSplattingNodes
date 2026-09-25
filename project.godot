@@ -14,20 +14,30 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="GodotGSAddonProject"
-run/main_scene="res://demo.tscn"
+config/name="WhenHamstersAttackTD"
+run/main_scene="uid://d2xp46f0m2mfb"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
+Music="*res://sounds/music.tscn"
 GsplatRenderedImage="*uid://bnccylo4e2qjw"
 
 [display]
 
-window/size/viewport_width=1600
-window/size/viewport_height=900
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gsplat-nodes/plugin.cfg")
+
+[global_group]
+
+enemies=""
+
+[navigation]
+
+3d/default_cell_height=0.05
+3d/default_edge_connection_margin=0.52

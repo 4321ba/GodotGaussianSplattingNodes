@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3 uid="uid://444yk5an5o40"]
+
+[ext_resource type="PackedScene" uid="uid://dxwtrm8kv41cy" path="res://scenes/enemy.tscn" id="1_omfc3"]
+[ext_resource type="ArrayMesh" uid="uid://dtd6srna6thgk" path="res://models/Units/hamster_body.obj" id="2_7ayth"]
+[ext_resource type="ArrayMesh" uid="uid://bnuqecxp5ja1o" path="res://models/Units/hamster_legs.obj" id="3_15bfx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_15bfx"]
+albedo_color = Color(0.5411765, 0.011764706, 0.011764706, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ynq50"]
+material = SubResource("StandardMaterial3D_15bfx")
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Enemy" node_paths=PackedStringArray("body_to_bob", "legs") instance=ExtResource("1_omfc3")]
+speed = 4.0
+use_explosion_death = false
+body_to_bob = NodePath("MeshInstance3D")
+legs = NodePath("MeshInstance3D/MeshInstance3D")
+
+[node name="MeshInstance3D" parent="." index="0"]
+mesh = ExtResource("2_7ayth")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" index="0"]
+mesh = ExtResource("3_15bfx")
+
+[node name="GPUParticles3D" parent="." index="4"]
+draw_pass_1 = SubResource("BoxMesh_ynq50")

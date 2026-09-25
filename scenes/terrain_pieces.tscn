@@ -1,0 +1,150 @@
+[gd_scene load_steps=26 format=3 uid="uid://0k83gqn7a78r"]
+
+[ext_resource type="Texture2D" uid="uid://ca0eiutb4ritm" path="res://models/Textures/Terrain.png" id="1_fuc7b"]
+[ext_resource type="Script" uid="uid://dsw38peqjukr2" path="res://scenes/terrain_pieces.gd" id="1_shchp"]
+[ext_resource type="ArrayMesh" uid="uid://771xmxqurbjx" path="res://models/Terrain/OBJ/Airport.obj" id="1_shovv"]
+[ext_resource type="ArrayMesh" uid="uid://bwrd3chhsar8a" path="res://models/Terrain/OBJ/Base.obj" id="2_fuc7b"]
+[ext_resource type="ArrayMesh" uid="uid://1c21f23shtc2" path="res://models/Terrain/OBJ/Beach.obj" id="3_i33ca"]
+[ext_resource type="Texture2D" uid="uid://3agyodoit6r3" path="res://models/Terrain/OBJ/Forest.png" id="3_sae30"]
+[ext_resource type="ArrayMesh" uid="uid://bwrafmiivx8b4" path="res://models/Terrain/OBJ/Grass.obj" id="4_b2uu4"]
+[ext_resource type="ArrayMesh" uid="uid://f1bdf23lx02m" path="res://models/Terrain/OBJ/Beach_InnerCorner.obj" id="4_shchp"]
+[ext_resource type="ArrayMesh" uid="uid://b1hms1us7gokk" path="res://models/Terrain/OBJ/Beach_OuterCorner.obj" id="5_sae30"]
+[ext_resource type="ArrayMesh" uid="uid://dfnbrw5pv5gn6" path="res://models/Terrain/OBJ/Bridge.obj" id="6_b2uu4"]
+[ext_resource type="ArrayMesh" uid="uid://b66hp6fvbchal" path="res://models/Terrain/OBJ/City.obj" id="7_sw2c4"]
+[ext_resource type="ArrayMesh" uid="uid://uj3ek30dn16s" path="res://models/Terrain/OBJ/Forest.obj" id="8_frcqx"]
+[ext_resource type="ArrayMesh" uid="uid://c13pcbrl33bbl" path="res://models/Terrain/OBJ/Mountain_High.obj" id="9_duke1"]
+[ext_resource type="ArrayMesh" uid="uid://ctgeog1hu3ifx" path="res://models/Terrain/OBJ/Mountain_Low.obj" id="10_x0tkp"]
+[ext_resource type="ArrayMesh" uid="uid://dfguskk4jb864" path="res://models/Terrain/OBJ/QG.obj" id="11_40lfm"]
+[ext_resource type="ArrayMesh" uid="uid://gdcqve4ikha" path="res://models/Terrain/OBJ/River.obj" id="12_n2g8o"]
+[ext_resource type="ArrayMesh" uid="uid://stm20wi0a00d" path="res://models/Terrain/OBJ/Road.obj" id="13_oba7d"]
+[ext_resource type="ArrayMesh" uid="uid://d1vsjg0ni26oc" path="res://models/Terrain/OBJ/Road_Corner.obj" id="14_vv7mw"]
+[ext_resource type="ArrayMesh" uid="uid://dgc72pnwxqt06" path="res://models/Terrain/OBJ/Sea.obj" id="15_b0dbp"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sw2c4"]
+albedo_texture = ExtResource("3_sae30")
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_sae30"]
+vertices = PackedVector3Array(-0.75, 0.4, -0.75, -0.75, 0.4, 0.75, 0.75, 0.4, 0.75, 0.75, 0.4, -0.75)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+geometry_parsed_geometry_type = 1
+cell_height = 0.05
+agent_radius = 0.25
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_sae30"]
+data = PackedVector3Array(-1, -0.14999999, 1, 1, -0.14999999, 1, -1, -0.14999999, -1, -1, -0.14999999, -1, 1, -0.14999999, 1, 1, -0.14999999, -1, -1, -0.14999999, -1, 1, -0.14999999, -1, -1, 0.14999999, -1, -1, 0.14999999, -1, 1, -0.14999999, -1, 1, 0.14999999, -1, -1, 0.14999999, -1, 1, 0.14999999, -1, -1, 0.14999999, 1, -1, 0.14999999, 1, 1, 0.14999999, -1, 1, 0.14999999, 1, -1, 0.14999999, 1, 1, 0.14999999, 1, -1, -0.14999999, 1, -1, -0.14999999, 1, 1, 0.14999999, 1, 1, -0.14999999, 1, 1, 0.14999999, -1, 1, -0.14999999, -1, 1, 0.14999999, 1, 1, 0.14999999, 1, 1, -0.14999999, -1, 1, -0.14999999, 1, -1, -0.14999999, -1, -1, 0.14999999, -1, -1, -0.14999999, 1, -1, -0.14999999, 1, -1, 0.14999999, -1, -1, 0.14999999, 1)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_sw2c4"]
+vertices = PackedVector3Array(-0.25, 0.4, 0.75, -0.25, 0.4, 0.5, -0.5, 0.4, 0.5, -0.75, 0.4, 0.75, 0.75, 0.4, -0.75, -0.75, 0.4, -0.75, 0, 0.4, -0.5, 0.5, 0.4, -0.5, 0.5, 0.4, -0.25, 0.75, 0.4, -0.25, -0.5, 0.4, 0, -0.25, 0.4, 0, 0.5, 0.4, 0.5, 0.25, 0.4, 0.5, 0.25, 0.4, 0.75, 0.75, 0.4, 0.75, 0.75, 0.4, 0, 0.5, 0.4, 0)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(7, 6, 4), PackedInt32Array(4, 6, 5), PackedInt32Array(8, 7, 9), PackedInt32Array(9, 7, 4), PackedInt32Array(2, 3, 10), PackedInt32Array(10, 3, 5), PackedInt32Array(11, 10, 6), PackedInt32Array(6, 10, 5), PackedInt32Array(13, 12, 14), PackedInt32Array(14, 12, 15), PackedInt32Array(17, 16, 12), PackedInt32Array(12, 16, 15)]
+geometry_parsed_geometry_type = 1
+cell_height = 0.05
+agent_radius = 0.25
+edge_max_error = 0.5
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sae30"]
+size = Vector3(2, 0.3, 2)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sae30"]
+radius = 0.04638672
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_shchp")
+palette_texture = ExtResource("1_fuc7b")
+
+[node name="Grass" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+material_override = SubResource("StandardMaterial3D_sw2c4")
+mesh = ExtResource("4_b2uu4")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Grass"]
+navigation_mesh = SubResource("NavigationMesh_sae30")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Grass"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.15, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Grass/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+shape = SubResource("ConcavePolygonShape3D_sae30")
+
+[node name="Airport" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+mesh = ExtResource("1_shovv")
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+mesh = ExtResource("2_fuc7b")
+
+[node name="Beach" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = ExtResource("3_i33ca")
+
+[node name="BeachInnerCorner" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = ExtResource("4_shchp")
+
+[node name="BeachOuterCorner" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = ExtResource("5_sae30")
+
+[node name="Bridge" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+mesh = ExtResource("6_b2uu4")
+
+[node name="City" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+mesh = ExtResource("7_sw2c4")
+
+[node name="Forest" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
+mesh = ExtResource("8_frcqx")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Forest"]
+navigation_mesh = SubResource("NavigationMesh_sw2c4")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Forest"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.65, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Forest/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+shape = SubResource("BoxShape3D_sae30")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Forest/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.012, 1, 0.229)
+shape = SubResource("CapsuleShape3D_sae30")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Forest/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.229, 1, -0.075)
+shape = SubResource("CapsuleShape3D_sae30")
+
+[node name="MountainHigh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = ExtResource("9_duke1")
+
+[node name="MountainLow" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+mesh = ExtResource("10_x0tkp")
+
+[node name="Qg" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0)
+mesh = ExtResource("11_40lfm")
+
+[node name="River" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+mesh = ExtResource("12_n2g8o")
+
+[node name="Road" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+mesh = ExtResource("13_oba7d")
+
+[node name="RoadCorner" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+mesh = ExtResource("14_vv7mw")
+
+[node name="Sea" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+mesh = ExtResource("15_b0dbp")
+
+[node name="GrassNonWalkable" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+material_override = SubResource("StandardMaterial3D_sw2c4")
+mesh = ExtResource("4_b2uu4")

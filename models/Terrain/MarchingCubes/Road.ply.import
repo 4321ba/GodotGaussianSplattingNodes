@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://bh18784t52vly"
+path="res://.godot/imported/Road.ply-193bff02c222815ea532fa2fe47793aa.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Road.ply"
+dest_files=["res://.godot/imported/Road.ply-193bff02c222815ea532fa2fe47793aa.res"]
+
+[params]
+

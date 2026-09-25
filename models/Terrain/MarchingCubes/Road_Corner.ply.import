@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://ct0qtu3857a7b"
+path="res://.godot/imported/Road_Corner.ply-451caf4a6de54db715071f835b8ff089.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Road_Corner.ply"
+dest_files=["res://.godot/imported/Road_Corner.ply-451caf4a6de54db715071f835b8ff089.res"]
+
+[params]
+

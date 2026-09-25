@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://dbsdpctafuyih"
+path="res://.godot/imported/Mountain_High.ply-07be9a59ffe1a77d685ab4bdf5ea837b.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Mountain_High.ply"
+dest_files=["res://.godot/imported/Mountain_High.ply-07be9a59ffe1a77d685ab4bdf5ea837b.res"]
+
+[params]
+

@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://bh4hg0wvegvqk"
+path="res://.godot/imported/Airport.ply-009ddcbb28650a9579ed7ff9598bd2cc.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Airport.ply"
+dest_files=["res://.godot/imported/Airport.ply-009ddcbb28650a9579ed7ff9598bd2cc.res"]
+
+[params]
+

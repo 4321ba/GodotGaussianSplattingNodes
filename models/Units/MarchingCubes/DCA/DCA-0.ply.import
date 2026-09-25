@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://bts28y5iscej5"
+path="res://.godot/imported/DCA-0.ply-24edc5067f6b75326d9632b7fbc79dcb.res"
+
+[deps]
+
+source_file="res://models/Units/MarchingCubes/DCA/DCA-0.ply"
+dest_files=["res://.godot/imported/DCA-0.ply-24edc5067f6b75326d9632b7fbc79dcb.res"]
+
+[params]
+

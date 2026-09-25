@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://b87aj7dfhf5py"
+path="res://.godot/imported/Recon-1.ply-1f9e5b74cb2f70810dfced3cae61db62.res"
+
+[deps]
+
+source_file="res://models/Units/MarchingCubes/Recon/Recon-1.ply"
+dest_files=["res://.godot/imported/Recon-1.ply-1f9e5b74cb2f70810dfced3cae61db62.res"]
+
+[params]
+

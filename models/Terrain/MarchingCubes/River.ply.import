@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://b6xrgthnvedp1"
+path="res://.godot/imported/River.ply-2f7385f6299c565fbade8a4d90ec2389.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/River.ply"
+dest_files=["res://.godot/imported/River.ply-2f7385f6299c565fbade8a4d90ec2389.res"]
+
+[params]
+

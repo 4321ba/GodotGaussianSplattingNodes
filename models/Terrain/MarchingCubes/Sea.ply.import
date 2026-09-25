@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://di8erxca7gy48"
+path="res://.godot/imported/Sea.ply-8e313f4db09cbef3cca339cb34ae9bc0.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Sea.ply"
+dest_files=["res://.godot/imported/Sea.ply-8e313f4db09cbef3cca339cb34ae9bc0.res"]
+
+[params]
+

@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://bqflfgh4xmb8a"
+path="res://.godot/imported/Rocket-1.ply-4394f853ad0e51af0f9b3679c6eaef18.res"
+
+[deps]
+
+source_file="res://models/Units/MarchingCubes/Rocket/Rocket-1.ply"
+dest_files=["res://.godot/imported/Rocket-1.ply-4394f853ad0e51af0f9b3679c6eaef18.res"]
+
+[params]
+

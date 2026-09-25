@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://4jdwaeqmdqug"
+path="res://.godot/imported/AAir-0.ply-77cb5a4735418eea143eca6c9a3876ee.res"
+
+[deps]
+
+source_file="res://models/Units/MarchingCubes/AAir/AAir-0.ply"
+dest_files=["res://.godot/imported/AAir-0.ply-77cb5a4735418eea143eca6c9a3876ee.res"]
+
+[params]
+

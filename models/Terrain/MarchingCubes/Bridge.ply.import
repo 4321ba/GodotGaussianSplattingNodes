@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://6vbwbt4u7mo4"
+path="res://.godot/imported/Bridge.ply-9c34d6138ccb3e1f4b501ff167f159d5.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Bridge.ply"
+dest_files=["res://.godot/imported/Bridge.ply-9c34d6138ccb3e1f4b501ff167f159d5.res"]
+
+[params]
+

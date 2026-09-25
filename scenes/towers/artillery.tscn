@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://wf3d1gfbhvnu"]
+
+[ext_resource type="PackedScene" uid="uid://cbb34kgqlgqf6" path="res://scenes/tower.tscn" id="1_168w3"]
+[ext_resource type="ArrayMesh" uid="uid://blu2tkujku77" path="res://models/Units/OBJ/Artillery/Artillery-0.obj" id="2_qlmn4"]
+[ext_resource type="Texture2D" uid="uid://b543joxavdfn" path="res://models/Textures/Units_Red.png" id="3_rvg6h"]
+[ext_resource type="ArrayMesh" uid="uid://fqd3qjmye877" path="res://models/Units/OBJ/Artillery/Artillery-2.obj" id="4_pgb12"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_brhcf"]
+albedo_texture = ExtResource("3_rvg6h")
+
+[node name="Tower" node_paths=PackedStringArray("turret_visuals") instance=ExtResource("1_168w3")]
+id = 2
+shooting_range = 10.0
+fire_rate = 0.4
+damage = 30
+turret_visuals = NodePath("MeshInstance3D/MeshInstance3D")
+
+[node name="MeshInstance3D" parent="." index="0"]
+mesh = ExtResource("2_qlmn4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" index="0"]
+material_override = SubResource("StandardMaterial3D_brhcf")
+mesh = ExtResource("4_pgb12")
+
+[node name="GPUParticles3D" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 1.8, 0)

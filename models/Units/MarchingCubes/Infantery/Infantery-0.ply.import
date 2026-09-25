@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://wfgv7d7kilrp"
+path="res://.godot/imported/Infantery-0.ply-96d80d7fc6cd8e786d5dba0ca3e34ed7.res"
+
+[deps]
+
+source_file="res://models/Units/MarchingCubes/Infantery/Infantery-0.ply"
+dest_files=["res://.godot/imported/Infantery-0.ply-96d80d7fc6cd8e786d5dba0ca3e34ed7.res"]
+
+[params]
+

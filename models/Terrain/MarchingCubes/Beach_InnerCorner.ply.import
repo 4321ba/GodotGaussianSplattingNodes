@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://w53c4q4fseqh"
+path="res://.godot/imported/Beach_InnerCorner.ply-b2ecb6d96481690e3ef98c9a4bec092b.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Beach_InnerCorner.ply"
+dest_files=["res://.godot/imported/Beach_InnerCorner.ply-b2ecb6d96481690e3ef98c9a4bec092b.res"]
+
+[params]
+

@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://bdtkafoh4cnn2"
+path="res://.godot/imported/Artillery-2.ply-3286d16f90353abfc8f6ef8736d2ad96.res"
+
+[deps]
+
+source_file="res://models/Units/MarchingCubes/Artillery/Artillery-2.ply"
+dest_files=["res://.godot/imported/Artillery-2.ply-3286d16f90353abfc8f6ef8736d2ad96.res"]
+
+[params]
+

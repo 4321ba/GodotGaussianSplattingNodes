@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://bfunme15rwuns"
+path="res://.godot/imported/Mountain_Low.ply-4b7b7de6de90ffe5801e6b1786bf5c9c.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Mountain_Low.ply"
+dest_files=["res://.godot/imported/Mountain_Low.ply-4b7b7de6de90ffe5801e6b1786bf5c9c.res"]
+
+[params]
+

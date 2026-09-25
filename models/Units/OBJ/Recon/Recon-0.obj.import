@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://csxl3454jn23r"
+path="res://.godot/imported/Recon-0.obj-62523f5105c539ca01f5ec7f870fb340.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Recon-0.obj-62523f5105c539ca01f5ec7f870fb340.mesh"]
+
+source_file="res://models/Units/OBJ/Recon/Recon-0.obj"
+dest_files=["res://.godot/imported/Recon-0.obj-62523f5105c539ca01f5ec7f870fb340.mesh", "res://.godot/imported/Recon-0.obj-62523f5105c539ca01f5ec7f870fb340.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

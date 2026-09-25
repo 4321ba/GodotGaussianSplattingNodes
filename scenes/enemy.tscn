@@ -1,0 +1,85 @@
+[gd_scene load_steps=13 format=3 uid="uid://dxwtrm8kv41cy"]
+
+[ext_resource type="Script" uid="uid://dkxttr3gyltx3" path="res://scenes/enemy.gd" id="1_md0e3"]
+[ext_resource type="AudioStream" uid="uid://b0t3iwm6h2l7b" path="res://sounds/death.ogg" id="2_md0e3"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8tegq"]
+
+[sub_resource type="Gradient" id="Gradient_7p1mj"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_md0e3"]
+gradient = SubResource("Gradient_7p1mj")
+width = 128
+height = 32
+
+[sub_resource type="Gradient" id="Gradient_md0e3"]
+colors = PackedColorArray(1, 0, 0, 1, 1, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_4ra3w"]
+gradient = SubResource("Gradient_md0e3")
+width = 120
+height = 24
+use_hdr = true
+
+[sub_resource type="Curve" id="Curve_7p1mj"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_md0e3"]
+curve = SubResource("Curve_7p1mj")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7p1mj"]
+emission_shape = 1
+emission_sphere_radius = 0.4
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 4.0
+scale_curve = SubResource("CurveTexture_md0e3")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7p1mj"]
+albedo_color = Color(0.5411765, 0.6117647, 0.011764706, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_md0e3"]
+material = SubResource("StandardMaterial3D_7p1mj")
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Enemy" type="CharacterBody3D" groups=["enemies"]]
+script = ExtResource("1_md0e3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_8tegq")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_height_offset = 0.1
+
+[node name="HealthBar" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+
+[node name="Black" type="Sprite3D" parent="HealthBar"]
+billboard = 1
+render_priority = -1
+texture = SubResource("GradientTexture2D_md0e3")
+
+[node name="Red" type="Sprite3D" parent="HealthBar"]
+billboard = 1
+texture = SubResource("GradientTexture2D_4ra3w")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.904101, 0)
+emitting = false
+one_shot = true
+explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_7p1mj")
+draw_pass_1 = SubResource("BoxMesh_md0e3")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_md0e3")
+bus = &"Sfx"
+
+[connection signal="target_reached" from="NavigationAgent3D" to="." method="_on_navigation_agent_3d_target_reached"]
+[connection signal="velocity_computed" from="NavigationAgent3D" to="." method="_on_navigation_agent_3d_velocity_computed"]

@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://cy6q0b7ivo5ti"
+path="res://.godot/imported/City.ply-0a5322b2387a2ee000c4c4de7f5fe248.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/City.ply"
+dest_files=["res://.godot/imported/City.ply-0a5322b2387a2ee000c4c4de7f5fe248.res"]
+
+[params]
+

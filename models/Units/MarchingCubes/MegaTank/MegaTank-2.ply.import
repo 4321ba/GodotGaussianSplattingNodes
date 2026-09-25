@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://q5cqhdpp1vao"
+path="res://.godot/imported/MegaTank-2.ply-e2feb868983b97d60000694b3c727dec.res"
+
+[deps]
+
+source_file="res://models/Units/MarchingCubes/MegaTank/MegaTank-2.ply"
+dest_files=["res://.godot/imported/MegaTank-2.ply-e2feb868983b97d60000694b3c727dec.res"]
+
+[params]
+

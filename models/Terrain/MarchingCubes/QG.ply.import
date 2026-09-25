@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://cor2ddyenjmyh"
+path="res://.godot/imported/QG.ply-4cbbedfcdfde03831309274dfaae8e28.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/QG.ply"
+dest_files=["res://.godot/imported/QG.ply-4cbbedfcdfde03831309274dfaae8e28.res"]
+
+[params]
+

@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://okoul8otbw4d"]
+
+[ext_resource type="PackedScene" uid="uid://cbb34kgqlgqf6" path="res://scenes/tower.tscn" id="1_2tyhw"]
+[ext_resource type="ArrayMesh" uid="uid://csxl3454jn23r" path="res://models/Units/OBJ/Recon/Recon-0.obj" id="2_k3gcy"]
+
+[node name="Tower" instance=ExtResource("1_2tyhw")]
+id = 0
+fire_rate = 1.5
+
+[node name="MeshInstance3D" parent="." index="0"]
+mesh = ExtResource("2_k3gcy")
+
+[node name="GPUParticles3D" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 1.2, 0)
+
+[node name="AudioStreamPlayer3D" parent="." index="3"]
+volume_db = -6.0

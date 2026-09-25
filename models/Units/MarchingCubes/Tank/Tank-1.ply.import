@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://cqtygfeexlo6k"
+path="res://.godot/imported/Tank-1.ply-cfe111b82fc62200d8f6a289ccf23e8b.res"
+
+[deps]
+
+source_file="res://models/Units/MarchingCubes/Tank/Tank-1.ply"
+dest_files=["res://.godot/imported/Tank-1.ply-cfe111b82fc62200d8f6a289ccf23e8b.res"]
+
+[params]
+

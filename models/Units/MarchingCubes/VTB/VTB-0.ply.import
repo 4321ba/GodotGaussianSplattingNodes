@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://csusxasccqpd"
+path="res://.godot/imported/VTB-0.ply-3bc3e979da4b7c6335620fe33d951cbe.res"
+
+[deps]
+
+source_file="res://models/Units/MarchingCubes/VTB/VTB-0.ply"
+dest_files=["res://.godot/imported/VTB-0.ply-3bc3e979da4b7c6335620fe33d951cbe.res"]
+
+[params]
+

@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://c0ibf23lmud0y"
+path="res://.godot/imported/Beach.ply-10ebb965b8fc22de68b87a87685c6690.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Beach.ply"
+dest_files=["res://.godot/imported/Beach.ply-10ebb965b8fc22de68b87a87685c6690.res"]
+
+[params]
+

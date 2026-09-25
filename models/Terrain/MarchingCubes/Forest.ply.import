@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://d1vv5x0ww84iq"
+path="res://.godot/imported/Forest.ply-842bc5dae4d846e1a334191934fa0730.res"
+
+[deps]
+
+source_file="res://models/Terrain/MarchingCubes/Forest.ply"
+dest_files=["res://.godot/imported/Forest.ply-842bc5dae4d846e1a334191934fa0730.res"]
+
+[params]
+

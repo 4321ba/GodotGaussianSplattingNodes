@@ -1,0 +1,14 @@
+[remap]
+
+importer="gsplat.ply.importer"
+type="Resource"
+uid="uid://di27h8bekcwmn"
+path="res://.godot/imported/Bazooka-0.ply-98cb17d4b3684f024f76aebaa49734e7.res"
+
+[deps]
+
+source_file="res://models/Units/MarchingCubes/Bazooka/Bazooka-0.ply"
+dest_files=["res://.godot/imported/Bazooka-0.ply-98cb17d4b3684f024f76aebaa49734e7.res"]
+
+[params]
+
