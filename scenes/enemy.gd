@@ -114,7 +114,7 @@ func die():
 	remove_from_group("enemies")
 	$CollisionShape3D.set_deferred("disabled", true)
 
-	var mesh_to_animate = $MeshInstance3D
+	var mesh_to_animate = $SplatRoot
 	
 	var tween = create_tween()
 	if use_explosion_death:
@@ -136,7 +136,7 @@ func die():
 		
 		tween.set_parallel(true)
 		tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-		tween.tween_property(mesh_to_animate, "rotation:z", deg_to_rad(-90), 0.3)
+		tween.tween_property(mesh_to_animate, "rotation:x", deg_to_rad(90), 0.3)
 		
 		# B. Slide Forward (Momentum)
 		# We move the root node (self) forward by 0.5 meters to simulate skidding
