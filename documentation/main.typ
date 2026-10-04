@@ -1,14 +1,13 @@
 #page(margin:0pt)[
 #image("Gaussian-splatting-integracioja-Godot-Feladatkiiras-1.pdf")
 ]
-// TODO margó tükrözés rendesen, ha 2 oldalasat szeretnék, és ide a feladatkiíráshoz is a megfelelő margó! Illetve a legvégén: jól legyenek párosítva az oldalak, ha tényleg 2 oldalasat csinálok (tartalomjegyzék-tartalomjegyzék, absztrakt-abstract, stb.)
 #import "template.typ": template, abstract, appendix
 
 #show: template.with(
   title: "Gaussian splatting integrációja Godot környezetben",
   student: "Vértesaljai Bálint",
   consulent: ("Dr. Vaitkus Márton"),
-  //date: datetime(year: 2020, month: 4, day: 1),
+  date: datetime(year: 2026, month: 12, day: 10),
   date_format: "[year]. [month]. [day].",
 )
 
@@ -46,8 +45,6 @@
 
 
 = Bevezetés
-
-TODO Valahova a féléves beosztásokat: mi volt önlab1, mi dipterv1, mi dipterv2
 
 Dipterv referencia: @diplomaterv
 
@@ -652,10 +649,6 @@ LaTeX:
 játék bemutatása, integrációja a pluginnal, mint példa felhasználás
 @when-hamsters-attack-td
 
-//== Tanszék modelljének példafelhasználása
-
-//mire? Legyen valami kis konkrét demo belőle? Itt lehetne demozni, ha a háttér GSplates, míg a WhenHamstersAttackTD-nél, ha a karakterek GSplatesek
-
 == Asset library plugin
 
 Felkerül végre??
@@ -668,7 +661,20 @@ objektív szempontok szerint összehasonlítani a többféle implementációt (2
 
 értékelés lehet fentebb, összefonva a renderer bemutatással pl, és akár külön (nagy)fejezet a WHATD
 
-== További teendők a Dipterv 2-ig (végleges doksi leadásig)
+= Összefoglaló
+
+Sokat tanultunk a dipterv alatt, megismerkedtünk ezzel, azzal, godot rendering pipeline, gaussian splatting, fájlformátumok, typst, stb
+
+a plugin használható, viszonylag jó integrációval, fenn van (??) az asset store-ban, hozzátettem bizonyos fejlesztéseket, mások meg itt és itt érhetők el, ... (külön asset store item a relightolható mesh-esnek??, ha nem merge-eli majd?)
+
+
+#bibliography("bibliography.yml")
+
+#show: appendix
+
+
+
+= További teendők a Dipterv 2-ig (végleges doksi leadásig)
 <tovabbiteendok-dipterv2>
 
 - a WhenHamstersAttackTD @when-hamsters-attack-td játék átírása félig (vagy teljesen) GSplatos modellek használatára
@@ -679,30 +685,31 @@ objektív szempontok szerint összehasonlítani a többféle implementációt (2
 - commit history-t, ai chat history-t, teams chatet visszaolvasni, hogy ne hagyjak ki semmit, amiről lehet írni
 
 *!!!kérdések:*
-- kódolás rész kb elég, feladatkiírásban kb az összes dolgot megcsináltam (tömörített gltf???), kell még valami kódolás szempontjából, vagy elég lesz, ha leírom őket szépen?
-- fejezetek sorrendje
+- kódolás rész kész, más nem kell
+- fejezetek sorrendje!
 - irodalomjegyzék vs lábjegyzet
-- kedvezményes tanrend?
-- terv szerint heti kb 5 oldal finomítása
+- kedvezményes tanrend nem kell
+- terv szerint heti kb 5 oldal finomítása, mostmár inkább 10 xd (október eleje)
 
-= Összefoglaló
+== Egyéb TODO-k
 
-Sokat tanultunk a dipterv alatt, megismerkedtünk ezzel, azzal, godot rendering pipeline, gaussian splatting, fájlformátumok, typst, stb
 
-a plugin használható, viszonylag jó integrációval, fenn van (??) az asset store-ban, hozzátettem bizonyos fejlesztéseket, mások meg itt és itt érhetők el, ... (külön asset store item a relightolható mesh-esnek??, ha nem merge-eli majd?)
+ TODO margó tükrözés rendesen, ha 2 oldalasat szeretnék, és ide a feladatkiíráshoz is a megfelelő margó! Illetve a legvégén: jól legyenek párosítva az oldalak, ha tényleg 2 oldalasat csinálok (tartalomjegyzék-tartalomjegyzék, absztrakt-abstract, stb.)
 
+
+TODO Valahova a féléves beosztásokat: mi volt önlab1, mi dipterv1, mi dipterv2
+
+TODO Daninak a sablonban levő módosításokat elküldeni, ha már kb fix
+
+TODO jól elkülöníthető amit ténylegesen én csináltam, meg amit átvettem/amiről csak írok? ne időrendi sorrendben menjek a cuccokon végig, hanem logikai sorrendben.
+ 
 TODO minden bibliography item fel lett használva valahol?
 
-#bibliography("bibliography.yml")
+Az egészet beadni AI-nak pl nyelvtani javításra
 
-#show: appendix
+időben elküldeni az egészet reviewra (pl november eleje-közepe)
 
-TODO AI nyilatkozat majd ide!
+*TODO AI nyilatkozat majd ide!*
 
-= Még több lorem
-#lorem(200)
-
-== Na még egy kicsi
-#lorem(40)
 
 // vim:spelllang=hu:spell

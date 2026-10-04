@@ -61,7 +61,7 @@
 
     Hozzájárulok, hogy a jelen munkám alapadatait (szerző(k), cím, angol és
     magyar nyelvű tartalmi kivonat, készítés éve, konzulens(ek) neve) a BME VIK
-    nyilvánosan hozzáférhető elektronikus formában, a munka teljes szövege pedig
+    az interneten nyilvánosan hozzáférhetővé tegye, a munka teljes szövege pedig
     a BME Címtárban regisztrált személyek számára elérhető legyen. Kijelentem,
     hogy a benyújtott munka és annak elektronikus verziója megegyezik.
     Dékáni engedéllyel titkosított diplomatervek esetén a dolgozat szövege csak
