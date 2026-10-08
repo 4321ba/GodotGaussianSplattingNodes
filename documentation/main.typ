@@ -130,7 +130,7 @@ A választott módszer a @OriginalGGSVFejezet\-ben leírt projekt kibővítése,
 
 TODO
 
-= Tervezés
+= Technológiák bemutatása (Tervezés volt)
 
 == Fájlformátumok bemutatása
 
@@ -158,7 +158,23 @@ végül egy másikat mergeeltek
 
 === Megjelenítés compositor effect-tel
 
+
+
+== A GDScript nyelv
+
+== A GLSL nyelv
+
+= Tervezés
+
+TODO
+
+Hogy érdemes taglalni? Lehet időrendben (problémák felmerülésének, logikus megoldásának sorrendjében)? Vagy témánként (pl ha időben két külön helyen jött elő a dinamikus láthatóságváltoztatás, akkor azt vonjam össze)? Vagy fájlonként?
+
+Nem időrendben, az biztos. Talán a legjobb lenne kilapítani az időrendi nagyfejezeteket, és csak témánként csoportosítani. 1:1 fájlonként nem lehet jól végigmenni, mert annyiféle branch van, meg a témák általában fájlokon keresztül mennek. Tehát témák mint alfejezetek.
+
 == Követelmények
+
+ez nem biztos, hogy ide a legjobb, de valahova mehetne
 
 === Funkcionális
 
@@ -171,16 +187,7 @@ Milyen osztályok vannak, mik singleton/autoload-ok, milyen shaderek hívódnak 
 == Relightolás logikája (hova?)
 
 
-
 = Önálló munka bemutatása
-
-TODO
-
-Hogy érdemes taglalni? Lehet időrendben (problémák felmerülésének, logikus megoldásának sorrendjében)? Vagy témánként (pl ha időben két külön helyen jött elő a dinamikus láthatóságváltoztatás, akkor azt vonjam össze)? Vagy fájlonként?
-
-== A GDScript nyelv
-
-== A GLSL nyelv
 
 == Részek (??) bemutatása
 
@@ -623,6 +630,11 @@ Issue fix-szel a kínai csávónak
 
 TODO még meg kell csinálni
 
+
+== Instancing mérése felhasznált memóriával
+
+ez az instancing mellé menjen
+
 == Kitérő: Typst
 
 A diplomaterv dokumentumának elkészítéséhez a Typst nevű nyelvet használom, ami egy modern LaTeX megfelelő. Dani nevű szobatársam segítségével konvertáltuk a sablonokat (főleg ő), ez elérhető itt: @typst-bme-dipterv-sablon.
@@ -641,23 +653,27 @@ kód blokkok, számozás, képek számozása (?), bibliography beszúró GUI iz�
 LaTeX:
 20 package a fordításhoz, hosszú build time, csúnya szintaktika, végtelen mennyiségű fájl amik elég nehezen átláthatók, fordításkor is teleszemeteli a dolgot
 
-= Önálló munka értékelése, eredmények
+= Plugin alkalmazásai, eredmények (volt: Önálló munka értékelése, eredmények)
 
+
+== Autó szimulátor önlab1ből
 
 == When Hamsters Attack TD
 
 játék bemutatása, integrációja a pluginnal, mint példa felhasználás
 @when-hamsters-attack-td
 
+erről részletesen beszélni (pl object pooling, animáció alkalmazása, ilyenek)
+
 == Asset library plugin
 
 Felkerül végre??
 
-== Instancing mérése felhasznált memóriával
-
 == Még mit lehetne értékelésnek, eredménynek?
 
 objektív szempontok szerint összehasonlítani a többféle implementációt (2 féle relightolás, kínai vs saját branch, stb.)
+
+igen pl a relightolást jól össze lehet hasonlítani, mert az 3 teljesen különböző megoldás
 
 értékelés lehet fentebb, összefonva a renderer bemutatással pl, és akár külön (nagy)fejezet a WHATD
 
