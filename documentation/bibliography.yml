@@ -19,6 +19,27 @@ kerbl-2023-3dgs:
   serial-number: "2308.04079"
   url: "https://arxiv.org/abs/2308.04079"
 
+
+4dgs-wu-time:
+  type: article
+  title: "4D Gaussian Splatting for Real-Time Dynamic Scene Rendering"
+  author:
+    - Wu, Guanjun
+    - Yi, Taoran
+    - Fang, Jiemin
+    - Xie, Lingxi
+    - Zhang, Xiaopeng
+    - Wei, Wei
+    - Liu, Wenyu
+    - Tian, Qi
+    - Wang, Xinggang
+  date: 2024
+  archive: arXiv
+  archive-class: cs.CV
+  serial-number: "2310.08528"
+  url: "https://arxiv.org/abs/2310.08528"
+
+  
 gltf-szabvany:
   type: web
   title: Khronos Announces glTF Gaussian Splatting Extension
@@ -104,4 +125,10 @@ SplatTransformCMDLine:
   title: PlayCanvas SplatTransform CMDLine tool
   url: https://github.com/playcanvas/splat-transform
   date: 2026-08-04
+
+klausi-godotgs:
+  type: web
+  title: Gaussian splatting, native to Godot
+  url: https://klausi3d.github.io/godotGS/latest/
+  date: 2026-10-10
   

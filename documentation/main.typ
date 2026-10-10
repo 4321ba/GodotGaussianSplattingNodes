@@ -46,33 +46,35 @@
 
 = Bevezetés
 
-Dipterv referencia: @diplomaterv
+== Számítógépes grafika
+
+A számítógépes grafika gyűjtőfogalom alá tartozik mindenféle olyan technológia, amely a számítógép képernyőjén 2D, illetve 3D modelleket képes megjeleníteni, alakzatokat, jeleneteket képes kirajzolni. #footnote[https://en.wikipedia.org/wiki/Computer_graphics_(computer_science)] Ezek a játékipartól kezdve az orvosi képalkotásig sok helyen felhasználásra kerülnek. Erősen kapcsolódó területek még a gépi látás, amikor a számítógép a kész képet értelmezi, a 3D modellek manipulációja, illetve többek között a mesterséges intelligencia modellekre, képekre történő alkalmazása is.
 
 == Inverz renderelés
 
-Inverz renderelésnek azt nevezzük, amikor képekből állítunk elő 3D modelleket. Lehet például egy adott objektum körbefotózva sok szögből, vagy egy labor körbevideózva. Ez egy bonyolult folyamat, és sokféle módszer létezik rá.
+Inverz renderelésnek azt a módszert nevezzük, amikor már kész képekből állítunk elő 3D modelleket. Tulajdonképpen megpróbáljuk rekonstruálni, milyen alakzat volt ott. @genai-inverzrendering-ea Ezek a kész képek lehetnek például egy adott objektumról készült fotók sok, különböző szögből, vagy egy beltér körbevideózva. Ez a rekonstrukció egy bonyolult folyamat, és sokféle módszer létezik rá. A különböző inverz renderelési módszerek napjaink egyik erősen kutatott témáját teszik ki. @kerbl-2023-3dgs
 
 == Gaussian Splatting
 
-A Gaussian Splatting egy inverz rendering módszer, aminél a jelenetet gausszi eloszlású átlátszósággal rendelkező 3D foltokkal próbáljuk a lehető legjobban leírni. Képekből előállítani a modellt elég erőforrásigényes, viszont a modellek megjelenítése megfelelő minőség esetén kifejezetten közel is tud lenni a valósághoz. Nagy előnye, hogy a megjelenítőt sima, standard grafikus pipeline-nal is lehet implementálni, és valós időben, 100-as nagyságrendű FPS-sel renderelhető. 
+A Gaussian Splatting egy inverz rendering módszer, aminél a jelenetet Gauss-i eloszlású átlátszósággal rendelkező 3D foltokkal próbáljuk a lehető legjobban leírni. @kerbl-2023-3dgs Képekből előállítani a 3D modellt elég erőforrásigényes, viszont a modellek megjelenítése megfelelő minőség esetén kifejezetten közeli tud lenni a valósághoz. Nagy előnye, hogy a megjelenítőt sima, standard grafikus csővezetékkel is lehetséges implementálni, és valós időben, 100-as nagyságrendű FPS-sel renderelhető. 
 
 == Godot
 
-A Godot Engine egy játékmotor, nyílt forráskódú, és az elmúlt években jelentős növekedésnek örvendett. Megtalálhatóak benne a legfontosabb eszközök egy játék fejlesztéséhez, viszont a teljes motor egy nagyon könnyű, lightweight megvalósításnak örvend: a motor egyetlen futtatható fájllal futtatható, installációt nem igényel, és a teljes mérete 200MB alatt van.
+A Godot Engine #footnote[https://godotengine.org/] egy szabad és nyílt forráskódú játékmotor, és az elmúlt években jelentős növekedésnek örvendett. #footnote[https://gameworldobserver.com/2026/07/29/unity-is-no-longer-the-leader-godot-has-become-the-most-popular-engine-at-gmtk-game-jam-2026] Megtalálhatóak benne a legfontosabb eszközök egy játék fejlesztéséhez, viszont a teljes motor az ellenfeleihez képest egy nagyon könnyű, lightweight megvalósítással rendelkezik: a motor egyetlen futtatható fájl elindításával használható, installációt nem igényel, és a teljes mérete 200MB alatt van. Így indításkor, és használat közben is, alap feladatok esetén legalábbis sokkal gyorsabb.
 
-A 4-es verzióban a következő generációs renderer Vulkan alapú, és ennek bővítésére, és a Vulkan-hoz történő viszonylag alacsony szintű hozzáférésre is különféle lehetőségeket nyújt.
+A 4-es fő verzióban a következő generációs renderer Vulkan alapú, és ennek bővítésére, illetve a Vulkan-hoz történő viszonylag alacsony szintű hozzáférésre is különféle lehetőségeket nyújt, még a beépített scriptnyelvből is.
 
 == Gaussian Splatting a Godot-ban
 
-Alapból a Godot rendererje(i) sima, háromszöghálós modellek megjelenítésére optimalizált, a Gaussian Splatting nincs a hivatalosan támogatott feature-ök között. Található viszont egy Godot-ban implementált Gaussian Splatting megjelenítő az interneten. // TODO hivatkozás, meg a többi helyre is
+A Godot rendererjei, architektúrája alapértelmezetten a szokványos, háromszöghálós modellek megjelenítésére van optimalizálva, a Gaussian Splatting nincs a hivatalosan támogatott feature-ök között. Harmadik féltől származó Gaussian Splatting megjelenítők, pluginok viszont folyamatosan jelennek meg az interneten, ezeket a @gsplat-in-godot fejezetben részletezem.
 
 == Motiváció
 
-Amennyiben az engine-be jobban integrálnánk gaussian splatting modelleket, képesek lehetnénk őket nem csak megjeleníteni, hanem a háromszöghálós modellek mellett, akár egyszerre, használni őket játékok készítésére.
+A motorba történő megfelelő integráció esetén lehetőség lenne Gaussian Splatting modelleket rendes, háromszöghálós modellekkel együtt megjeleníteni, a háromszöghálós modellekhez hasonlóan a 3D térben transzformálni, és ezekkel akár demókat, prototípusokat, illetve eszközöket, játékokat készíteni.
 
 == A diplomaterv további szerkezete
 
-A továbbiakban bemutatom a témában megtalálható forrásokat, implementációkat, és leírom az általam elvégzett munka tervét, majd a megvalósítását, és a megvalósítás értékelését. Végül összegzem a leírtakat.
+A továbbiakban bemutatom a témában megtalálható forrásokat, implementációkat, és leírom az általam elvégzett munka tervét, majd a megvalósítását, és a megvalósítás felhasználását. Végül összegzem a leírtakat. TODO picit bővebben kifejteni
 
 = Irodalomkutatás
 
@@ -80,53 +82,73 @@ A továbbiakban bemutatom a témában megtalálható forrásokat, implementáci�
 
 === 3D Gaussian Splatting for Real-Time Radiance Field Rendering
 
-A Gaussian Splattinget az @kerbl-2023-3dgs cikk vezette be, ezzel nagy sikert aratva. Az általuk készített megoldás a képekből történő paraméteroptimalizációra, amivel a modelleket (pontfelhők paramétereit) lehetett elkészíteni, kifejezetten jól lett megírva, dicsérték.
+A Gaussian Splatting (GS) technológiát az @kerbl-2023-3dgs cikk vezette be, ami ezután felkapott téma lett. A szerzők többek között különböző Neural radiance field (NeRF) #footnote[https://en.wikipedia.org/wiki/Neural_radiance_field] implementációkhoz hasonlították a saját implementációjukat, túlszárnyalva azokat pontosságban, és valósidejű megjelenítésben. Az általuk készített megoldás nem csak megjelenítést tartalmaz, hanem a képekből történő paraméteroptimalizációt is, ami a GS modelleket, pontfelhők paramétereit állítja elő.
 
 === Relightolhatóság
 
-A relightolhatóság game engine-ek esetén egy különösen fontos dolog, mivel ezzel lehet előre nem meghatározott mozgás esetén is életszerűbb megvilágítással ellátni a pontfelhőket. A @scolari2025mesh2splat forrásban megjelölt program segít ilyen, újralightolható pontfelhőket generálni háromszöghálós modellekből. A diplomaterv során az újralightolhatóságot ilyen modelleken tesztelem.
+Az eredeti cikk nézetiránytól függő színeket lehetővé tett a kiterjedt pontoknak, viszont ezek beégetett színek, azaz egy adott modell egy adott irányból mindig ugyanúgy fog kinézni, fényektől függetlenül. Ez egy teljes 3D jelenet rekonstrukciójánál egy teljesen jó eredményt adó megoldás, viszont egy-egy különálló, dinamikus transzformációval rendelkező modell esetén nem mindig ad az elvártnak megfelelő eredményt. Ez különösen fontos lehet egy játékmotor esetén, ahol általában fények is vannak egy jelenetben, és a GS modell nem odaillőnek tűnhet, ha nem reagál a fényekre az elvárt módon.
+
+Ennek megoldására többféle lehetőség van, más-más előnyökkel és hátrányokkal. A @scolari2025mesh2splat forrásban megjelölt program segít bizonyos fajta, újravilágítható pontfelhőket generálni háromszöghálós modellekből, ennek a fájlformátumnak a részletezése a @religtholhato-ply-format fejezetben található. Ezen kívül a @kinai-repo implementációban is található újravilágítás opció, ami jelentősen különbözik a fentebbi fájlformátum alkalmazásától.
 
 === Időbeliség
 
-Külön érdekesség lehet, ha időben is változik a felvett jelenet, ilyenkor a pontfelhő időbeli transzformációját is el lehet tárolni. Erről szól a TODO cikk.
+Külön izgalmas feladat, ha időben is változik a felvett jelenet, ilyenkor a pontfelhő időbeli transzformációját is el lehet tárolni, és ugyanazt a mozgó jelenetet akár több szemszögből, vagy mozgó szemszögből visszajátszani. Különböző pontfelhők utólagos szerkesztésére is lehetőség van. Erről szól a @4dgs-wu-time cikk.
 
 === Szabványos GLTF formátum
 
-Az adatokat valamilyen módon el is kell tárolni, erre sokféle megoldás született. Különféle kulcsszavakkal rendelkező `.ply` fájlok, `.splat` fájlok, és egyéb fájformátumok is használatban vannak. Nem rég jött ki a témában egy GLTF szabvány @gltf-szabvany is, amit a Khronos Group kezel.
+A Gaussian Splatting modelleket valamilyen módon el kell tárolni. Erre sokféle megoldás született: különféle kulcsszavakkal rendelkező `.ply` fájlok, `.splat` fájlok, és egyéb fájformátumok is használatban vannak. 2026 februárjában jött ki a témában egy GLTF-kiterjesztés szabvány @gltf-szabvany is, amit a Khronos Group kezel. Ennek előnye, hogy pontszerű pontok halmazaként a GS megjelenítést nem támogató programok is meg képesek jeleníteni a modelleket, a visszafelé kompatibilitás miatt. Ennek a szabványnak az implementálása a feladatkiírásomban is szerepel.
 
 === Generatív AI és inverz módszerek a képszintézisben
 
-A témában jól összegyűjtött információk forrása lehet többek között a BME-n nemrég indult szabadon választható, Generatív AI és inverz módszerek a képszintézisben című tárgy honlapja és diasorai, ami a @genai-inverzrendering-ea\-nél érhetők el.
+A témában jól összegyűjtött információk forrása lehet többek között a Budapesti Műszaki és Gazdaságtudományi Egyetemen Dr. Vaitkus Márton által nemrég indított szabadon választható, Generatív AI és inverz módszerek a képszintézisben című tárgy honlapja és diasorai, amik a @genai-inverzrendering-ea forrásnál érhetőek el.
 
-TODO egyéb referenciák a diasorokról? nerf, ilyesmi, megemlítése
+== Gaussian Splatting integrációk más játékmotorokban
 
-== Más játékmotorok, Gaussian Splatting integrációjuk
+Gaussian Splatting implementációk a főbb játékmotorok mindegyikénél megjelent #footnote[https://www.polyvia3d.com/guides/gaussian-splatting-unity-unreal].
 
-Érdemes lehet utánanézni, hogy a Unity, és Unreal játékmotorok hogyan állnak a témához, gaussian splatting modellek megjelenítésére, és egy játékba történő integrálására milyen lehetőségek vannak. Mennyire támogatott az eredeti kiadók (Unity, Epic) által, illetve milyen plugin-ok / addon-ok elérhetőek, és ezek milyen minőségűek.
+=== Unity
 
-Én azért a Godot mellett döntöttem, mivel Free / Open Source filozófiájával, és minimalista méretével, szemléletével ő állt hozzám a legközelebb. Az integrációt valószínűsíthetően mindegyik engine esetén el fogja valaki végezni.
+Nem található a Unity-hoz hivatalos GS támogatás, vagy hivatalos plugin. Található viszont több, harmadik fél által készített plugin: a UnityGaussianSplatting #footnote[https://github.com/aras-p/UnityGaussianSplatting/tree/main] kimondottan széles körben használt a csillagok mennyisége alapján, míg a gsplat-unity #footnote[https://github.com/wuyize25/gsplat-unity] frissebb, és szintén az előző kódbázison alapszik.
+
+=== Unreal Engine
+
+Unreal esetén sem találtam hivatalos, Epic által ösztönzött megvalósítást, található viszont ugyanúgy többféle harmadik fél által implementált megjelenítő. A Luma UE Plugin #footnote[https://lumaai.notion.site/Luma-Unreal-Engine-Plugin-0-41-8005919d93444c008982346185e933a1] és az XScene-UEPlugin #footnote[https://github.com/xverse-engine/XScene-UEPlugin/tree/main/UEPlugin] is egy szélesebb ökoszisztéma részeként jelenik meg, míg az unreal-splat #footnote[https://github.com/JI20/unreal-splat] egy fapados, egyszerű implementáció benyomását kelti.
 
 == Gaussian Splatting implementációk Godot-ban
+<gsplat-in-godot>
 
-Mivel az engine, és a Gaussian Splatting téma is népszerű, ezért már találhatóak hasonló témájú implementációk.
+A Gaussian Splatting integráció minden népszerű játékmotornál egy releváns feladat. Én a témaválasztásnál a Godot Engine mellett döntöttem, mivel ez a motor áll hozzám a legközelebb, a szabad és nyílt forráskódú megvalósításával, és a könnyűségével, bloat-mentességével.
 
-=== GodotGaussianSplatting by 2Retr0
+Mivel a motor, és a Gaussian Splatting téma is népszerű, ezért több, hasonló témájú implementáció is található, és a projektem lefolyása során folyamatosan jelennek meg az újabb megvalósítások. Külön feladat az ezen projektek felfedezése, és releváns esetben a kapcsolatfelvétel, kollaboráció.
+
+=== GodotGaussianSplatting 2Retr0-tól
 <OriginalGGSVFejezet>
 
-@OriginalGodotGaussianSplattingViewer volt az eredeti implementáció, ami egy Gaussian Splatting modellek megtekintésére szolgáló megjelenítő. Ez egy modell megjelenítését és körüljárását támogatta.
+2Retr0 GS megjelenítője @OriginalGodotGaussianSplattingViewer az eredetileg leginkább használt implementáció. Ez egy darab GS modellt képes Godot-ban megjeleníteni, és egy repülő kamerával lehet körüljárni a modellt.
 
-=== godot-gaussian-splatting by haztro
+=== godot-gaussian-splatting haztro-tól
 
-Ez egy másik implementáció, amelyik a projekt kezdetekor alulmaradt a fentebbitől. Nemrég kibővítette a készítője, célszerű lenne megint kipróbálni. @MasikGodotGaussianSplattingViewer // TODO
+Egy másik implementáció haztro-tól származik @MasikGodotGaussianSplattingViewer, amelyik viszont a projekt kezdetekor történő kipróbáláskor alulmaradt a @OriginalGGSVFejezet. fejezetben taglalt implementációtól. 2026-ban viszont további fejlesztéseket hajtottak rajta végre, ami a másik megjelenítőről nem mondható el.
 
-=== godot-gaussian-splatting by ReconWorldLab
+=== godot-gaussian-splatting ReconWorldLab-tól
 
-Ez @kinai-repo az implementáció már a diplomaterv írása közben bukkant fel. Ez már, az előzőekkel szemben, képes több modellt megjeleníteni, és transzformációt applikálni rájuk. Ez az implementáció a @OriginalGGSVFejezet. fejezetben bemutatott implementáción alapul. Mivel a céljaink nagyjából megegyeznek, úgy döntöttem, felveszem vele a kapcsolatot, és kollaborációt kezdeményezek. Ezt véltem a megfelelő megoldásnak, mivel így nem végezzük el kétszer ugyanazt a munkát, és mindketten tudjuk használni az eredményeket.
-//fontos az alkalmazkodóképesség, és a kollaboráció, azt véltem megfelelő megoldásnak, hogyha összedolgozunk, és merge-eljük a projekteket
+<kinai-repo-fejezet>
+
+Ez az implementáció @kinai-repo már a diplomaterv írása közben bukkant fel. Ez már, az előzőekkel szemben, képes több modellt megjeleníteni, és transzformációt alkalmazni rájuk. Ez az plugin a @OriginalGGSVFejezet. fejezetben bemutatott implementáción alapul. Az idő előrehaladtával több, előrehaladott fejlesztést is elvégzett a készítő: többek között többféle renderer támogatása, újravilágítás, és collision generálás.
+
+=== godotGS klausi3D-től
+
+Ez @klausi-godotgs egy szintén újonnan, 2026-ban feltűnt implementáció. Az architektúra viszont más, mint a fentebbieknél: ez a megvalósítás a teljes játékmotort forkolta, és kifejezetten nagy mennyiségű munka látható a repository-ban: több 100-as nagyságrendű issue-k, commit-ok és deployment-ek. Mindez annak ellenére, hogy az egyetlen contributor látható, és egyetlen csillaggal rendelkezik a repository. TODO ez használatkor is érződik??
+
+Ez a projekt kívülről nagyon AI-first projektnek tűnik, és az egyetlen ember által AI segítségével ennyi idő alatt elvégzett minőségi munka mennyisége elgondolkozásra, és kíváncsiságra késztet a szakma jövőjével kapcsolatban.
 
 == Választott módszer, technológia
 
 A választott módszer a @OriginalGGSVFejezet\-ben leírt projekt kibővítése, illetve a @kinai-repo repository kiegészítése, a feladatlapban leírtak implementálásával.
+
+
+Mivel a céljaink nagyjából megegyeznek, úgy döntöttem, felveszem vele a kapcsolatot, és kollaborációt kezdeményezek. Ezt véltem a megfelelő megoldásnak, mivel így nem végezzük el kétszer ugyanazt a munkát, és mindketten tudjuk használni az eredményeket.
+//fontos az alkalmazkodóképesség, és a kollaboráció, azt véltem megfelelő megoldásnak, hogyha összedolgozunk, és merge-eljük a projekteket
 
 TODO
 
@@ -139,6 +161,8 @@ TODO
 ==== Sima, gömbi harmonikusos
 
 ==== Relightolható
+
+<religtholhato-ply-format>
 
 === Splat
 
@@ -710,7 +734,7 @@ a plugin használható, viszonylag jó integrációval, fenn van (??) az asset s
 == Egyéb TODO-k
 
 
- TODO margó tükrözés rendesen, ha 2 oldalasat szeretnék, és ide a feladatkiíráshoz is a megfelelő margó! Illetve a legvégén: jól legyenek párosítva az oldalak, ha tényleg 2 oldalasat csinálok (tartalomjegyzék-tartalomjegyzék, absztrakt-abstract, stb.)
+ TODO margó tükrözés rendesen, ha 2 oldalasat szeretnék, és a feladatkiíráshoz is a megfelelő margó! Illetve a legvégén: jól legyenek párosítva az oldalak, ha tényleg 2 oldalasat csinálok (tartalomjegyzék-tartalomjegyzék, absztrakt-abstract, stb.)
 
 
 TODO Valahova a féléves beosztásokat: mi volt önlab1, mi dipterv1, mi dipterv2
@@ -719,13 +743,30 @@ TODO Daninak a sablonban levő módosításokat elküldeni, ha már kb fix
 
 TODO jól elkülöníthető amit ténylegesen én csináltam, meg amit átvettem/amiről csak írok? ne időrendi sorrendben menjek a cuccokon végig, hanem logikai sorrendben.
  
-TODO minden bibliography item fel lett használva valahol?
+TODO minden bibliography item fel lett használva valahol? footnote vs bibliography jól van kb elválasztva? (nincs többször ugyanaz a footnote, de a bibliography-k tényleg fontos h bibliography-k legyenek?)
 
 Az egészet beadni AI-nak pl nyelvtani javításra
 
 időben elküldeni az egészet reviewra (pl november eleje-közepe)
 
-*TODO AI nyilatkozat majd ide!*
+tervezett ütemterv:
+- végigmenni az egész szövegen ami van, megfelelő sorrendbe tenni a dolgokat, kb legyen meg a szöveg, struktúra
+- AI táblázat betétele
+- újra végigfutni mindenen, absztraktok, dolgozat szerkezete, egyéb TODO-k letisztázása
+- AI nyelvtani korrekció tesztje (viabilis megoldás-e, minél több hiba, magyartalan szöveg javítása)
+- fentebbi todo-k átfutása, hogy van-e valami releváns
+- elküldeni a konzulensnek, még mivel érdemes kiegészíteni, átrendezés, ilyesmi stb.
+- legyen meg a szövegmennyiség kg-ra
+- újabb nyelvtani ellenőrzés
+
+beadás után nyomtatás, + a diasor elkészítése míg amíg jól emlékszem a dokumentumra!
+
+
+ötletek a méret növelésére:
+- nerf megemlítése / kijjebb fejtése
+- irodalomkutatáshoz screenshotok, kipróbálni a dolgokat amiket referálok, illetve még írni róluk
+
+*TODO AI táblázat majd ide!*
 
 
 // vim:spelllang=hu:spell
