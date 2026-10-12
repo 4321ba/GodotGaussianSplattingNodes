@@ -132,3 +132,8 @@ klausi-godotgs:
   url: https://klausi3d.github.io/godotGS/latest/
   date: 2026-10-10
   
+kollaboracio-kezdemenyezese:
+  type: web
+  title: Collaboration request
+  url: https://github.com/ReconWorldLab/godot-gaussian-splatting/issues/1
+  date: 2026-10-12

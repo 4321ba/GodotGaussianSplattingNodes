@@ -138,21 +138,19 @@ Ez az implementáció @kinai-repo már a diplomaterv írása közben bukkant fel
 
 === godotGS klausi3D-től
 
-Ez @klausi-godotgs egy szintén újonnan, 2026-ban feltűnt implementáció. Az architektúra viszont más, mint a fentebbieknél: ez a megvalósítás a teljes játékmotort forkolta, és kifejezetten nagy mennyiségű munka látható a repository-ban: több 100-as nagyságrendű issue-k, commit-ok és deployment-ek. Mindez annak ellenére, hogy az egyetlen contributor látható, és egyetlen csillaggal rendelkezik a repository. TODO ez használatkor is érződik??
+<godotgs-fejezet>
 
-Ez a projekt kívülről nagyon AI-first projektnek tűnik, és az egyetlen ember által AI segítségével ennyi idő alatt elvégzett minőségi munka mennyisége elgondolkozásra, és kíváncsiságra késztet a szakma jövőjével kapcsolatban.
+Ez @klausi-godotgs egy szintén újonnan, 2026-ban feltűnt implementáció. Az architektúra viszont más, mint a fentebbieknél: ez a megvalósítás a teljes játékmotort forkolta, és kifejezetten nagy mennyiségű munka látható a repository-ban: több 100-as nagyságrendű issue-k, commit-ok és deployment-ek. Mindez annak ellenére, hogy az egyetlen contributor látható, és egyetlen csillaggal rendelkezik a repository. A sok befektetett energia a használatkor is érződik, például az extenzív mennyiségű debug információn, illetve az elérhető opciók, változtatható paraméterek számán is.
 
-== Választott módszer, technológia
+Ez a projekt kívülről meglehetősen AI-first projektnek tűnik, és az egyetlen ember által AI segítségével ennyi idő alatt elvégzett minőségi munka mennyisége elgondolkozásra, és kíváncsiságra késztet a szakma jövőjével kapcsolatban.
 
-A választott módszer a @OriginalGGSVFejezet\-ben leírt projekt kibővítése, illetve a @kinai-repo repository kiegészítése, a feladatlapban leírtak implementálásával.
+== Választott módszer
 
+Mivel a projekt kezdetekor a @kinai-repo-fejezet. és a @godotgs-fejezet. fejezetben leírt projektek még nem léteztek, ezért a választott módszer a @OriginalGGSVFejezet\-ben leírt projekt kibővítése úgy, hogy a feladatkiírásban szereplő integrációs problémák megoldásra kerüljenek.
 
-Mivel a céljaink nagyjából megegyeznek, úgy döntöttem, felveszem vele a kapcsolatot, és kollaborációt kezdeményezek. Ezt véltem a megfelelő megoldásnak, mivel így nem végezzük el kétszer ugyanazt a munkát, és mindketten tudjuk használni az eredményeket.
-//fontos az alkalmazkodóképesség, és a kollaboráció, azt véltem megfelelő megoldásnak, hogyha összedolgozunk, és merge-eljük a projekteket
+Eközben, amint felbukkant a @kinai-repo-fejezet. fejezetben leírt projekt, kollaborációt kezdeményeztem @kollaboracio-kezdemenyezese, amelyet a másik fél elfogadott. Ezt megkönnyítette, hogy mindketten a @OriginalGGSVFejezet\-beli kódbázisból indultunk ki, így sok része a kódnak megegyezett. Némely fejlesztéseket én végeztem el, némelyeket ő, melyeket többé-kevésbé átvettünk egymástól. Ezt könnyen lehetővé tette az, hogy mindhárom kódbázis MIT licensszel rendelkezik, így lényegében a licensz és a copyright bemásolásával bármelyik kódot bárki felhasználhatja, még akár zárt forráskódú projektben is #footnote[https://en.wikipedia.org/wiki/MIT_License]. Így például a feladatkiírásban szereplő feladatok megoldásával is, több Pull Request-et készítettem neki. Ezeket az elvégzett munkákat, és kollaborációkat az @onallo-munka-bemutatasa. nagyfejezetben részletezem.
 
-TODO
-
-= Technológiák bemutatása (Tervezés volt)
+= Technológiák bemutatása
 
 == Fájlformátumok bemutatása
 
@@ -212,6 +210,8 @@ Milyen osztályok vannak, mik singleton/autoload-ok, milyen shaderek hívódnak 
 
 
 = Önálló munka bemutatása
+
+<onallo-munka-bemutatasa>
 
 == Részek (??) bemutatása
 
