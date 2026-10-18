@@ -137,3 +137,37 @@ kollaboracio-kezdemenyezese:
   title: Collaboration request
   url: https://github.com/ReconWorldLab/godot-gaussian-splatting/issues/1
   date: 2026-10-12
+  
+file-formats-websource:
+  type: web
+  title: "Gaussian Splat Formats: PLY vs SPZ vs SOG vs KSplat"
+  url: https://swyvl.io/blog/gaussian-splat-formats-ply-spz-ksplat/
+  date: 2026-10-17
+  
+gltf-spec:
+  type: web
+  title: glTF™ 2.0 Specification
+  url: https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html
+  date: 2026-10-18
+
+morgenstern2024compact:
+  type: Proceedings
+  title: Compact 3D Scene Representation via Self-Organizing Gaussian Grids
+  author:
+    - Wieland Morgenstern
+    - Florian Barthel
+    - Anna Hilsmann
+    - Peter Eisert
+  booktitle: Computer Vision -- ECCV 2024
+  date: 2025
+  publisher: Springer Nature Switzerland
+  location: Cham
+  pages: 18-34
+  doi: 10.1007/978-3-031-73013-9_2
+  url: https://fraunhoferhhi.github.io/Self-Organizing-Gaussians/
+  
+splattransform-gh:
+  type: web
+  title: SplatTransform
+  url: https://github.com/playcanvas/splat-transform
+  date: 2026-10-18

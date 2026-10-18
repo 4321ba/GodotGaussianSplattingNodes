@@ -86,6 +86,8 @@ A Gaussian Splatting (GS) technológiát az @kerbl-2023-3dgs cikk vezette be, am
 
 === Relightolhatóság
 
+<relightolhatosag-bemutatas-fejezet>
+
 Az eredeti cikk nézetiránytól függő színeket lehetővé tett a kiterjedt pontoknak, viszont ezek beégetett színek, azaz egy adott modell egy adott irányból mindig ugyanúgy fog kinézni, fényektől függetlenül. Ez egy teljes 3D jelenet rekonstrukciójánál egy teljesen jó eredményt adó megoldás, viszont egy-egy különálló, dinamikus transzformációval rendelkező modell esetén nem mindig ad az elvártnak megfelelő eredményt. Ez különösen fontos lehet egy játékmotor esetén, ahol általában fények is vannak egy jelenetben, és a GS modell nem odaillőnek tűnhet, ha nem reagál a fényekre az elvárt módon.
 
 Ennek megoldására többféle lehetőség van, más-más előnyökkel és hátrányokkal. A @scolari2025mesh2splat forrásban megjelölt program segít bizonyos fajta, újravilágítható pontfelhőket generálni háromszöghálós modellekből, ennek a fájlformátumnak a részletezése a @religtholhato-ply-format fejezetben található. Ezen kívül a @kinai-repo implementációban is található újravilágítás opció, ami jelentősen különbözik a fentebbi fájlformátum alkalmazásától.
@@ -96,7 +98,7 @@ Külön izgalmas feladat, ha időben is változik a felvett jelenet, ilyenkor a 
 
 === Szabványos GLTF formátum
 
-A Gaussian Splatting modelleket valamilyen módon el kell tárolni. Erre sokféle megoldás született: különféle kulcsszavakkal rendelkező `.ply` fájlok, `.splat` fájlok, és egyéb fájformátumok is használatban vannak. 2026 februárjában jött ki a témában egy GLTF-kiterjesztés szabvány @gltf-szabvany is, amit a Khronos Group kezel. Ennek előnye, hogy pontszerű pontok halmazaként a GS megjelenítést nem támogató programok is meg képesek jeleníteni a modelleket, a visszafelé kompatibilitás miatt. Ennek a szabványnak az implementálása a feladatkiírásomban is szerepel.
+A Gaussian Splatting modelleket valamilyen módon el kell tárolni. Erre sokféle megoldás született: különféle kulcsszavakkal rendelkező `.ply` fájlok, `.splat` fájlok, és egyéb fájformátumok is használatban vannak. Ezek részletesebb bemutatása a @fajlformatumok-fejezet. fejezetben szerepel. 2026 februárjában jött ki a témában egy GLTF-kiterjesztés szabvány @gltf-szabvany is, amit a Khronos Group kezel. Ennek előnye, hogy pontszerű pontok halmazaként a GS megjelenítést nem támogató programok is meg képesek jeleníteni a modelleket, a visszafelé kompatibilitás miatt. Ennek a szabványnak az implementálása a feladatkiírásomban is szerepel.
 
 === Generatív AI és inverz módszerek a képszintézisben
 
@@ -152,39 +154,162 @@ Eközben, amint felbukkant a @kinai-repo-fejezet. fejezetben leírt projekt, kol
 
 = Technológiák bemutatása
 
-== Fájlformátumok bemutatása
+A tervek és az önálló munka bemutatásához szükséges először a technológiai hátteret bemutatni. Ide tartoznak a pontfelhők lehetséges tárolási formátumai, a pontfelhőket manipulálni képes programok, illetve a Godot-ban szereplő programozási környezet.
 
-=== Ply
+== Fájlformátumok
+<fajlformatumok-fejezet>
 
-==== Sima, gömbi harmonikusos
+Ahhoz, hogy a pontfelhőket sorosítani tudjuk, elég pontonként az adott pont tulajdonságait eltárolni. Ezt az eltárolt paraméterek milyenségétől, a tömörítés jelenlététől és mértékétől, a pontok sorrendjétől, stream-elhetőségtől, illetve a formátum mögött álló cégektől, szervezetektől függően többféle szabvány szerint is megtehetjük. @file-formats-websource
 
-==== Relightolható
+=== PLY
+
+A `.ply` formátumot #footnote[https://en.wikipedia.org/wiki/PLY_(file_format)] először 1994-ben adták ki, és azóta is nagyrészt változatlan a keret. Könnyen lehet vele szöveges, vagy bináris formákban csúcsokat különböző, a fejlécben definiált tulajdonságokkal eltárolni.
+
+==== Eredeti, nézetirány-függő színekkel
+
+<nezetiranyfuggo-ply-fejezet>
+
+Egyszerűsége és flexibilitása miatt az eredeti @kerbl-2023-3dgs cikk a `.ply` formátumot választotta, így továbbra is ez az egyik legelterjedtebben használt formátum. A kiindulásként választott, @OriginalGGSVFejezet. fejezetben taglalt program is ezt a formátumot támogatja.
+
+A nézetirány-függő színekhez gömbi harmonikus (spherical harmonics, SH) #footnote[https://en.wikipedia.org/wiki/Spherical_harmonics] értékeket tárolunk el minden egyes ponthoz. A csúcsonként eltárolt értékek így, az összes szokásos nézetirány-függő paraméter használata esetén a következők @file-formats-websource:
+- 3 float: pozíció
+- 3 float: felületi normál (nincs használva, de kötelező)
+- 3 float: szín DC komponens (RGB)
+- 45 float: szín gömbi harmonikus komponensek ($45 = 3 dot (3+5+7)$)
+- 1 float: átlátszóság (szigmoid alkalmazása előtt)
+- 3 float: skálafaktorok a 3 tengely mentén
+- 4 float: elfordulás (kvaternió)
+
+Ez a formátum így minden egyes pontonként (blob-onként) 62 lebegőpontos számot tárol el, így egy teljes jelenet könnyen meghaladja az 1GB méretet a lemezen. Ez veszteség (lossiness) és könnyű beolvashatóság szempontjából tökéletes, viszont elfoglalt tárhely szempontjából nem jó. Ezen kívül egy olyan formátumot használunk GS pontfelhők tárolására, ami nem erre lett tervezve.
+
+==== Újravilágítható, PBR anyagtulajdonságokkal
 
 <religtholhato-ply-format>
 
-=== Splat
+Mivel a formátum könnyen bővíthető, módosítható, így egyszerűen lehetséges blob-onként más adatok eltárolása. Ezt használja ki a @mesh2splat-program-fejezet. fejezetben bemutatott program is, ami ugyanabban a formátumban, de más pontonkénti adatot tárol el, más céllal.
 
-=== GLTF
+Ezekkel az adatokkal a színeket nem az adott blob-ra történő ránézés iránya határozza meg egyedül, hanem a jelenetben szereplő fények, és egyéb faktorok is. Ennek kiterjedt irodalma van a standard grafika pipeline esetén fizikai alapú renderelés (physically based rendering, PBR) #footnote[https://en.wikipedia.org/wiki/Physically_based_rendering] néven, mivel a háromszögeket is lehet hasonló anyagtulajdonságok figyelembe vételével megvilágítani. Ennek a technikának a segítségével tudjuk a pontfelhőket is újravilágítani.
 
-== Mesh2Splat
+A csúcsonként eltárolt értékek a következők ezesetben:
+- 3 float: pozíció
+- 3 float: felületi normál, ezesetben használva is van
+- 3 float: szín DC komponens, albedó (RGB)
+- 1 float: PBR metallic érték
+- 1 float: PBR roughness érték
+- 1 float: átlátszóság (szigmoid alkalmazása előtt)
+- 3 float: skálafaktorok a 3 tengely mentén
+- 4 float: elfordulás (kvaternió)
 
-citation ott van a githubjukon @scolari2025mesh2splat, relightolhatóság fejezet ??
+Tehát a fő különbség a @nezetiranyfuggo-ply-fejezet. fejezetben taglalt formátumhoz képest az, hogy az alapértelmezett adatok (transzform, RGB+A) mellett a +45 darab SH érték helyett +2 darab PBR, illetve +3 darab normál érték nyújtja a blob színének a jelenetbeli variációjának lehetőségét.
 
-=== Linuxon futtatás PR-ja
+Itt fontos megemlíteni, hogy a @mesh2splat-program-fejezet\-beli program könnyen előállítja a PBR értékeket a bemeneti mesh-ből, ezeknek az értékeknek a visszakövetkeztetése valós, inverz módszerrel felvett adathalmaz esetén viszont elképzelhetően sokkal körülményesebb, és pontatlanabb eredményt ad. Tudomásom szerint erre a problémára nincsen univerzális, könnyen használható, és széles körben pontos eredményt adó módszer. Ez nem a konkrét formátum negatívuma, hanem a teljes, @relightolhatosag-bemutatas-fejezet. fejezetben taglalt újravilágításnak a megoldandó problémája.
 
-végül egy másikat mergeeltek
+=== SPLAT
 
-== Godot bővíthetősége, lehetőségek
+A tesztelések során bizonyos példamodellek a `.splat` formátumban voltak elérhetőek. Nincs formális specifikációja #footnote[https://www.polyvia3d.com/formats/splat], egy egyszerű formátum, ami által eltárolt adatok lényegileg a @nezetiranyfuggo-ply-fejezet\-beli `.ply` formátum adatainak felel meg, a SH értékeket elhagyva. A @supersplat-fejezet. fejezetben bemutatott szerkesztőprogram támogatja a formátum beolvasását, és `.ply` exportálást, az így kapott `.ply` fájl viszont némiképp eltér bizonyos más fájloktól, mivel nem garantált a paraméterek változatlan sorrendje, illetve az SH értékek nincsenek jelen.
 
-=== Megjelenítés FSQuad-ként
+=== GLTF/GLB
+
+A glTF @gltf-spec egy 3D jelenetek és modellek tárolására és átvitelére használt formátum. A Khronos Group adta ki #footnote[https://en.wikipedia.org/wiki/GlTF], és az egyik legelterjedtebb nyílt formátum erre a célra. 2017-ben, a 2.0 változat megjelenésekor Juan Linietsky, a Godot Engine egyik eredeti fejlesztője a legjobb, és legígéretesebb formátumnak tartotta #footnote[https://godotengine.org/article/we-should-all-use-gltf-20-export-3d-assets-game-engines/]. 2026-ra a @gltf-szabvany forrás a legelterjedtebb 3D asset átviteli formátumnak titulálta.
+
+A `.gltf` kiterjesztés a szöveges változatot, míg a `.glb` a bináris változatot jelenti, de tartalmilag ugyanaz van bennük. Alapesetben a bináris változat sem tartalmaz masszív tömörítést.
+
+Habár eredetileg szintén nem GS modellekre lett a formátum kitalálva, kiterjesztésekkel viszont könnyen bővíthető: ezt használja ki a @gltf-szabvany\-ban bemutatott szabvány is, ami támogatást nyújt a glTF fájlokban történő GS modellek tárolására. Ezt a csúcspontokhoz adott extra adatok segítségével teszi meg, így az extension-t nem támogató megjelenítők is meg tudják jeleníteni a modellt, csak a pontoknak nem lesz kiterjedésük, és az egyéb, extra adatok vesznek el.
+
+Ez alapesetben szintén nagyon nagy fájlméreteket eredményez, mivel nem tömörített formátumról beszélünk. Ezt megoldandó, a @gltf-szabvany kiterjesztés bemutatásakor már folyamatban volt a formátum bővítése, hogy tömörítést is végre lehessen hajtani. Az egyik említett módszer a @spz-fejezet. fejezetben bemutatott SPZ formátum beágyazása, amelyhez tartozó Pull Request a diplomaterv írásakor is egyeztetés, fejlesztés alatt áll #footnote[https://github.com/KhronosGroup/glTF/pull/2531].
+
+=== SPZ
+<spz-fejezet>
+
+Az `.spz` formátumot a Niantic fejlesztette, nyílt, jól dokumentált szabvány @file-formats-websource. Agresszívan tömörít, ami a fájlméretnek előnyös, archiválási célra viszont nem. A nyers `.ply` mellett jelenleg ez a másik legelterjedtebb formátum, más-más célra jók.
+
+=== SOG
+
+A formátumot a @morgenstern2024compact cikk vezette be, és az ötlet mögötte az, hogy a tulajdonságokat 2D képként tároljuk el, amire aztán használhatóak a már meglevő 2D képtömörítési módszerek (pl. JPG, PNG). Szintén agresszív tömörítést tud elérni, és kevesebb veszteséget, viszont nem túl elterjedten támogatott.
+
+== Konvertáló programok
+
+A különböző modellek betöltéséhez és manipulációjához különböző programok használatára is szükség volt. Ezeket itt részletezem.
+
+=== SuperSplat
+<supersplat-fejezet>
+
+A superspl.at egy könnyen használható, online szerkesztő #footnote[https://superspl.at/editor], konvertáló és publikációs felület, ami a modellek tisztításához, bizonyos blobok letörléséhez, bizonyos tárgyak környezettől történő elválasztásához kifejezetten hasznos volt számomra is. Be lehet tölteni sokféle fájlformátumot, meg lehet nézni a modellt, bizonyos részeket levágni, vagy éppen több modellt összekombinálni, majd az eredményt különböző formátumokba exportálni.
+
+Az @supersplat_teddy. ábrán az egyik modell talapzatának levágását illusztrálom. Természetesen pontosan a Z tengely irányába nézve, a tengely ábrázolt magasságában lebegve sokkal egyszerűbb a teljes talapzatot kijelölni, és levágni.
+
+#figure(
+  image("pictures/supersplat_teddy.png")
+  , caption: [A SuperSplat Editorban a Teddy modell talapzatának levágása]
+) <supersplat_teddy>
+
+=== Mesh2Splat
+<mesh2splat-program-fejezet>
+
+A Mesh2Splat az Electronic Arts GitHub felületén elérhető konvertáló program @scolari2025mesh2splat, a fejlesztő diplomatervéből nőtte ki magát. A célja, hogy a szokványos, háromszögekből álló modelleket átalakítsa GS modellekké. A felülete a @mesh2splat_suzanne. ábrán látható.
+
+Számunkra a @relightolhatosag-bemutatas-fejezet. fejezetben taglalt újravilágításhoz hasznos, szükséges, mivel az exportálás eredményeként a pacáknak (blob-oknak) PBR anyagtulajdonságokat is ad, a @religtholhato-ply-format. fejezetben leírt formátum részeként.
+
+#figure(
+  image("pictures/mesh2splat_suzanne.png")
+  , caption: [A Mesh2Splat konvertáló program betölti Suzanne-t]
+) <mesh2splat_suzanne>
+
+==== Linux port
+
+A programot cross-platform keretrendszerben írták meg, C++-t, OpenGL-t és ImGUI-t használ, viszont nem volt sosem tesztelve Linuxon. Így ahhoz, hogy könnyen használni tudjam, bizonyos módosításokat el kellett végezzek a programon. A legfőbb módosítások pár fájlnév nagybetűjének átírása, pár Windows-only include lecserélése, és a fájl tallózásnál az útvonalban egy javítás volt.
+
+A problémáról nyitottam egy issue-t #footnote[https://github.com/electronicarts/mesh2splat/issues/2], majd a maintainer kérésére egy pull request-et is #footnote[https://github.com/electronicarts/mesh2splat/pull/7]. Sajnos a változtatás végül nem lett merge-elve, feltételezhetően idő- vagy motivációhiány miatt, habár több embertől érkezett rá pozitív visszajelzés. Később egy másik contributor szintén elvégezte #footnote[https://github.com/electronicarts/mesh2splat/pull/22] a Linux támogatáshoz szükséges változtatásokat, amik már némiképp mások voltak, mivel a kódbázis is változott, és ez szerencsére merge-elve lett, így a projekt jelenleg már támogatja a Linuxon történő fordítást és futtatást is.
+
+=== SplatTransform
+
+A @gltf-szabvany által írt glTF GS extension nagyon szépen specifikálva volt, a specifikáció mellett viszont sehogyan sem sikerült találnom példafájlokat, amivel az implementációt tesztelni tudtam volna. Sajnos a @supersplat-fejezet. fejezetben bemutatott SuperSplat weblap nem támogatja, legalábbis egyelőre, a glTF exportot, így szükségem volt egy másik konverziós programra, amivel elő tudtam állítani a szükséges tesztfájlokat.
+
+Így esett a választásom a @splattransform-gh -nél fellelhető `splat-transform` nevű parancssori programra, ami pont arra jó, hogy GS modelleket lehet vele parancssorból konvertálni.
+
+Az installálás `npm`-en keresztül tűnt a legegyszerűbbnek, a használat pedig szerencsére nem igényelt komplex szintaktikát:
+
+```sh
+splat-transform input.ply output.gltf
+```
+
+
+== Használt programnyelvek ismertetése
+
+A feladat elvégzéséhez a Godot által nyújtott környezetet szükséges használni. Erre sokféle nyelvi opció van, de a legegyértelműbb választás az alábbi.
+
+=== A GDScript nyelv
+
+A Godot játékmotor alapértelmezetten rendelkezik egy saját nyelvvel, ami a Python-hoz hasonlít leginkább, némi apróbb módosításokkal. Könnyű megismerni, használni, viszont compute-intenzív feladatokra nem a leggyorsabb. Szerencsére a feladat során az ismétlődő, compute-intenzív részt úgyis GPU-oldali kód fogja végezni.
+
+Habár ez egy, a motoron belül futó scriptnyelv, a motor mégis sok funkciót elérhetővé tesz a nyelvből, így például egy vékony absztrakciós rétegen keresztül az alacsony szintű grafikus API-t is, ami általában Godot esetében Vulkan-t jelent. Ezt a RenderingDevice #footnote[https://docs.godotengine.org/en/stable/classes/class_renderingdevice.html#renderingdevice] nevű osztály segítségével teszi, és ezt tudjuk használni például a saját uniform buffer-ek, descriptor set-ek, és pipeline-ok létrehozására, menedzselésére.
+
+A nyelv szorosan integrálva van a játékmotorba, saját, jól használható szövegszerkesztővel, és sok egyéb quality-of-life feature-rel.
+
+=== A GDShader nyelv
+
+Godot-ban vertex és fragment shader-t leggyakrabban `.gdshader`-ként írnak#footnote[https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/shading_language.html], így ezt szükséges használnunk ahhoz, hogyha GPU-oldali kóddal szeretnénk testreszabni valaminek a megjelenését. A motor rendelkezik saját editorral is a nyelvhez. A nyelv leginkább a GLSL ES-hez hasonlít, egy pár különbséggel #footnote[https://docs.godotengine.org/en/stable/tutorials/shaders/converting_glsl_to_godot_shaders.html#doc-converting-glsl-to-godot-shaders], mint például azzal, hogy egy fájlba kerül a vertex és a fragment shader.
+
+=== A GLSL nyelv
+
+A `.glsl` nyelv eredetileg az OpenGL-hez készült, a GPU-n történő árnyalás programozásának könnyebbé tétele érdekében #footnote[https://en.wikipedia.org/wiki/OpenGL_Shading_Language]. A később megjelent Vulkan API-val is használható, és compute shader-öket is lehet vele írni. Godot-ban a compute shader-ök írására nem hoztak létre egy külön nyelvet, így ezeket közvetlenül GLSL-ben lehet írni #footnote[https://docs.godotengine.org/en/stable/tutorials/shaders/compute_shaders.html]. A szöveg szerkesztésére saját szövegszerkesztő szükséges, a motor csak a szintaktikai ellenőrzést, és a fordítást tudja nekünk elvégezni.
+
+== Godot bővítésének lehetőségei
+
+A motor hivatalosan nem támogatja a GS modellek megjelenítését, a pipeline-ja háromszöghálós modellek megjelenítésére lett kitalálva, és optimalizálva. Emiatt fontos kérdés, hogy milyen módon tudunk belenyúlni a pipeline-ba, hogy az általunk kiszámolt, gausszi pacás képet össze tudjuk kombinálni az engine által kiszámolt, háromszöghálós modellek nézetével. Ez nem egy egyértelmű feladat, és többféle módszer is rendelkezésünkre áll, előnyökkel és hátrányokkal.
+
+=== Megjelenítés teljes képernyős quad-ként
+<fsquad-fejezet>
+
+Godot 4.3 előtt az volt a legkézenfekvőbb megoldás a problémára, hogy a teljes képernyőre rajzolunk egy téglalapot, és erre tesszük rá az általunk megjeleníteni kívánt képet. Ez egy működő megoldás, picit nehézkes megfelelően létrehozni a textúrákat, és az erőforrások felszabadítása nem egyértelmű. Ezen kívül nekünk, GDScriptből, magas szintről szükséges minden alkalommal a frissítést meghívni, ami működik, de nem a legszebb megoldás.
+
+Ezt a megoldást implementálta a @OriginalGGSVFejezet. fejezetben bemutatott projekt, ami az én munkám kiindulópontját is adta.
 
 === Megjelenítés compositor effect-tel
 
+Godot 4.3-ban megjelent egy módszer, amivel a kompozitort lehet bővíteni, CompositorEffect néven #footnote[https://docs.godotengine.org/en/stable/classes/class_compositoreffect.html]. Ezzel gyönyörűen félbe lehet szakítani a renderelés menetét, és beilleszteni a saját adatainkat a megjelenítéshez. Viszont ennek is vannak limitációi, például újravilágítás esetén nem lehet a Godot deferred shading-jét használni a splat-os modellekhez, így itt az árnyalásra más módszert szükséges alkalmazni. A @fsquad-fejezet. fejezetbeli megoldással lehetséges a Godot beépített deferred shading-jét használni.
 
-
-== A GDScript nyelv
-
-== A GLSL nyelv
+A @kinai-repo-fejezet. fejezetben bemutatott projekt a @OriginalGGSVFejezet. fejezetbeli projektből kiindulás után áttért erre a módszerre, így a kollaboráció során az általam létrehozott kód egy része is ezt a megoldást használja.
 
 = Tervezés
 
@@ -646,6 +771,8 @@ Ezen kívül viszont, alapból a @relightolhato_godotshaded. ábra jóval jobban
 
 sh fix, PR a kínai csávónak
 
+linkelni a fájlformátumra ami fentebb van bemutatva, illetve leírni/megindokolni? hogy nem a tömörített, hanem a sima változat parszolását oldottam meg
+
 === Gömbi harmonikusok transzformációjának megjavítása
 
 Issue fix-szel a kínai csávónak
@@ -745,6 +872,8 @@ TODO jól elkülöníthető amit ténylegesen én csináltam, meg amit átvettem
  
 TODO minden bibliography item fel lett használva valahol? footnote vs bibliography jól van kb elválasztva? (nincs többször ugyanaz a footnote, de a bibliography-k tényleg fontos h bibliography-k legyenek?)
 
+TODO GH readme-be, illetve doksiba is (?) beírni, hogy melyik branch-en mi van. cleanup a githubon is, hogy értelmesen, jól nézzen ki.
+
 Az egészet beadni AI-nak pl nyelvtani javításra
 
 időben elküldeni az egészet reviewra (pl november eleje-közepe)
@@ -758,6 +887,7 @@ tervezett ütemterv:
 - elküldeni a konzulensnek, még mivel érdemes kiegészíteni, átrendezés, ilyesmi stb.
 - legyen meg a szövegmennyiség kg-ra
 - újabb nyelvtani ellenőrzés
+- valamit tartalmilag totál elírni, hogy azt megtalálja-e egy AI, hha valahol totál marhaság lenne
 
 beadás után nyomtatás, + a diasor elkészítése míg amíg jól emlékszem a dokumentumra!
 
