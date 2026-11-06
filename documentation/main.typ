@@ -295,6 +295,7 @@ Godot-ban vertex és fragment shader-t leggyakrabban `.gdshader`-ként írnak#fo
 A `.glsl` nyelv eredetileg az OpenGL-hez készült, a GPU-n történő árnyalás programozásának könnyebbé tétele érdekében #footnote[https://en.wikipedia.org/wiki/OpenGL_Shading_Language]. A később megjelent Vulkan API-val is használható, és compute shader-öket is lehet vele írni. Godot-ban a compute shader-ök írására nem hoztak létre egy külön nyelvet, így ezeket közvetlenül GLSL-ben lehet írni #footnote[https://docs.godotengine.org/en/stable/tutorials/shaders/compute_shaders.html]. A szöveg szerkesztésére saját szövegszerkesztő szükséges, a motor csak a szintaktikai ellenőrzést, és a fordítást tudja nekünk elvégezni.
 
 == Godot bővítésének lehetőségei
+<godotbovithetoseg-fejezet>
 
 A motor hivatalosan nem támogatja a GS modellek megjelenítését, a pipeline-ja háromszöghálós modellek megjelenítésére lett kitalálva, és optimalizálva. Emiatt fontos kérdés, hogy milyen módon tudunk belenyúlni a pipeline-ba, hogy az általunk kiszámolt, gausszi pacás képet össze tudjuk kombinálni az engine által kiszámolt, háromszöghálós modellek nézetével. Ez nem egy egyértelmű feladat, és többféle módszer is rendelkezésünkre áll, előnyökkel és hátrányokkal.
 
@@ -313,26 +314,33 @@ A @kinai-repo-fejezet. fejezetben bemutatott projekt a @OriginalGGSVFejezet. fej
 
 = Tervezés
 
-TODO
-
-Hogy érdemes taglalni? Lehet időrendben (problémák felmerülésének, logikus megoldásának sorrendjében)? Vagy témánként (pl ha időben két külön helyen jött elő a dinamikus láthatóságváltoztatás, akkor azt vonjam össze)? Vagy fájlonként?
-
-Nem időrendben, az biztos. Talán a legjobb lenne kilapítani az időrendi nagyfejezeteket, és csak témánként csoportosítani. 1:1 fájlonként nem lehet jól végigmenni, mert annyiféle branch van, meg a témák általában fájlokon keresztül mennek. Tehát témák mint alfejezetek.
+Ebben a fejezetben bemutatom a programmal, környezettel szemben támasztott elvárásokat, a megvalósítás érdekében használt architektúrát, és a projekt végrehajtásának menetét.
 
 == Követelmények
 
-ez nem biztos, hogy ide a legjobb, de valahova mehetne
+Mint minden programmal szemben, ezzel szemben is vannak követelmények támasztva. Ezeket csoportosítani tudjuk funkcionális, és nem funkcionális követelményekre.
 
 === Funkcionális
 
+Legfontosabb követelményként a megoldásnak végre kell tudnia hajtani a feladatkiírásban szereplő feladatokat, illetve ki kell tudnia elégíteni a feladatkiírásban explicit nem szereplő, de a belőle következő igényeket.
+
+Ennek alapján a játékmotornak funkcionálnia kell a bővítés után is, látható kell legyen a (potenciálisan több) GS modell a háromszöghálós modellek mellett mélységhelyesen, ezek szükség esetén mind legyenek képesek külön mozogni, akár programozhatóan reagálni a környezetükre, részt venni a fizikában, illetve bizonyos esetben a környező fény, fények által megvilágítódni.
+
+A program legyen képes különböző formátumú GS modelleket beolvasni, legalább a `.ply` és a `.gltf` / `.glb` fájlokat, mivel az előbbi a legelterjedtebb, az utóbbi pedig egy nagy szabványosító szervezet által jött létre, és a feladatkiírás explicit kéri.
+
 === Nem funkcionális
+
+A nem funkcionális követelmények közé sorolhatók, mint általában #footnote[https://hu.wikipedia.org/wiki/Nem_funkcion%C3%A1lis_k%C3%B6vetelm%C3%A9ny], a stabilitás, erőforráshasználat, sebesség, a megjelenítés minősége és a szélesebb hardver-támogatás is. Ezek közül az erőforráshasználat szerepel explicit a feladatkiírásban, az instancing vizsgálatával, megvalósításával. A projekt során a többi tulajdonságra is figyelek, amennyiben a scope keretein belül jelentősen fejleszthetők, azt elvégzem. De az elsődleges cél a funkcionalitáson van.
 
 == Architektúra
 
-Milyen osztályok vannak, mik singleton/autoload-ok, milyen shaderek hívódnak meg, és ezeknek mik a felelősségi körei
+A @godotbovithetoseg-fejezet. fejezetben bemutatott bővítési lehetőségtől függően többféle változata is lehetséges az architektúrának, és ezek közül mindkettőnek vannak előnyei és hátrányai, így mindkettővel dolgozok. Ez, és más körülmények miatt sajnos a kódbázis, és az addon különböző verziói más-más állapotban vannak. Ez azért szükséges, mivel például különböző változatait az újravilágításnak más-más verzióban, architektúrával lehet implementálni, így párhuzamosan több változat is szerepel. Ezután az egyéb feature-öket más-más kódbázisban implementálom, és a fontosabbakat portolom a másik kódbázisba is. Ez, attól eltekintve, hogy kényelmetlen, hasznos fejlődési lehetőség számomra. Ezeket az elvégzett tevékenységeket a @onallo-munka-bemutatasa. nagyfejezetben részletesen taglalom.
 
-== Relightolás logikája (hova?)
+A kép motorba való beillesztésén kívül az architektúra megegyezik, és a következőből áll. Van egy-egy GLSL shader a rendezésre, ez a @vulkan-radix-sort-gh\-ben megjelölt könyvtár módosított változata, mivel a @OriginalGGSVFejezet. fejezetben leírt program is azt használta. Ezután a splatokat további GLSL shaderökkel vetítjük, és rendereljük. Az árnyalók menedzselését egy GDScript oldali szkript végzi, hozza létre a pipeline-t, állítja be a uniformokat, és az egyéb buffereket. Ennek segítésére létezik egy kontextus objektum, ami elabsztrahál bizonyos alacsonyabb szintű műveleteket, hogy a kód olvashatóbb legyen. Ez is GDScriptben íródott. Ez az architektúra túlnyomórészt a @OriginalGGSVFejezet. fejezetben leírt programból származik, az én feladatom ennek a bővítése, karbantartása a feladatkiírásban leírt feladatok elvégzése során.
 
+== Projekt végrehajtása
+
+A projekt végrehajtása során körülbelül a feladatlap sorrendjében megyek végig a funkciókon, nézek utána az implementálás lehetőségeinek, és implementálom őket. Ez a végrehajtási sorrend nem feltétlenül egyezik meg az @onallo-munka-bemutatasa. fejezetben leírt sorrenddel, mivel ott logikus sorrendben szeretném bemutatni az elvégzett munkát, néhol időben egymástól távol elvégzett, de összetartozó feladatokat együtt csoportosítva.
 
 = Önálló munka bemutatása
 

@@ -171,3 +171,9 @@ splattransform-gh:
   title: SplatTransform
   url: https://github.com/playcanvas/splat-transform
   date: 2026-10-18
+  
+vulkan-radix-sort-gh:
+  type: web
+  title: Vulkan Radix Sort
+  url: https://github.com/jaesung-cs/vulkan_radix_sort
+  date: 2026-11-06
