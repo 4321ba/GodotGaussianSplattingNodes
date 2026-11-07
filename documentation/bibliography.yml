@@ -177,3 +177,11 @@ vulkan-radix-sort-gh:
   title: Vulkan Radix Sort
   url: https://github.com/jaesung-cs/vulkan_radix_sort
   date: 2026-11-06
+
+vitavehicle-gh:
+  type: web
+  title: 'VitaVehicle - "Realistic" Car Physics (g-rcp2/RCP4)'
+  url: https://github.com/jreo03/g-rcp2/tree/godot-4.0.3-conversion
+  date: 2026-11-07
+
+

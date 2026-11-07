@@ -56,7 +56,16 @@ Inverz renderelésnek azt a módszert nevezzük, amikor már kész képekből á
 
 == Gaussian Splatting
 
-A Gaussian Splatting egy inverz rendering módszer, aminél a jelenetet Gauss-i eloszlású átlátszósággal rendelkező 3D foltokkal próbáljuk a lehető legjobban leírni. @kerbl-2023-3dgs Képekből előállítani a 3D modellt elég erőforrásigényes, viszont a modellek megjelenítése megfelelő minőség esetén kifejezetten közeli tud lenni a valósághoz. Nagy előnye, hogy a megjelenítőt sima, standard grafikus csővezetékkel is lehetséges implementálni, és valós időben, 100-as nagyságrendű FPS-sel renderelhető. 
+A Gaussian Splatting egy inverz rendering módszer, aminél a jelenetet Gauss-i eloszlású átlátszósággal rendelkező 3D foltokkal próbáljuk a lehető legjobban leírni @kerbl-2023-3dgs. Képekből előállítani a 3D modellt elég erőforrásigényes, viszont a modellek megjelenítése megfelelő minőség esetén kifejezetten közeli tud lenni a valósághoz. Nagy előnye, hogy a megjelenítőt sima, standard grafikus csővezetékkel is lehetséges implementálni, és valós időben, 100-as nagyságrendű FPS-sel renderelhető.
+
+Az @gaussian_splatting_example_image. ábrán látható egy autó Gaussian Splatting alapon megjelenítve, a kép bal oldala jó minőségben, míg a kép jobb oldala olyan módon, hogy az egyedi, Gauss-i eloszlású 3D foltok külön-külön látsszanak. A kép a feladatkiírásból származik.
+
+
+#figure(
+  image("pictures/gaussian_splatting_example_image.png")
+  , caption: [A Gaussian Splatting szemléltetése egy autó modellel]
+) <gaussian_splatting_example_image>
+
 
 == Godot
 
@@ -126,7 +135,13 @@ Mivel a motor, és a Gaussian Splatting téma is népszerű, ezért több, hason
 === GodotGaussianSplatting 2Retr0-tól
 <OriginalGGSVFejezet>
 
-2Retr0 GS megjelenítője @OriginalGodotGaussianSplattingViewer az eredetileg leginkább használt implementáció. Ez egy darab GS modellt képes Godot-ban megjeleníteni, és egy repülő kamerával lehet körüljárni a modellt.
+2Retr0 GS megjelenítője @OriginalGodotGaussianSplattingViewer az eredetileg leginkább használt implementáció. Ez egy darab GS modellt képes Godot-ban megjeleníteni, és egy repülő kamerával lehet körüljárni a modellt. Az @originalggs_banana. képen látható egy példakép, ami egy banánt ábrázol, az alatta levő terítővel együtt.
+
+#figure(
+  image("pictures/originalggs_banana.png")
+  , caption: [A GodotGaussianSplatting megjelenítő megjelenít egy banánt]
+) <originalggs_banana>
+
 
 === godot-gaussian-splatting haztro-tól
 
@@ -347,8 +362,6 @@ A projekt végrehajtása során körülbelül a feladatlap sorrendjében megyek 
 = Önálló munka bemutatása
 <onallo-munka-bemutatasa>
 
-KÉPEK BEILLESZTÉSE AZ ÖNLAB1 PREZIBŐL pl!
-
 Az önlab 1-es GitHub repository-m itt @onlab-github-repo érhető el, a kóddal és a dokumentációval együtt.
 
 Adott a megtekintő program, amely be tud tölteni egy `.ply` kiterjesztésű splat-os modellt, és meg tudja azt jeleníteni a játékmotor keretein belül. Illetve adott példaként az autó-szimuláló program. Adottak továbbá splat-os modellek, amiket lehet használni.
@@ -368,6 +381,14 @@ Ennek megfelelően a féléves munka a következő részegységekre osztható:
 
 
 == Egyszerre több pontfelhő megjelenítése
+
+
+#figure(
+  image("pictures/multiple_objects.png")
+  , caption: [Egyszerre látható több pontfelhős modell]
+) <multiple_objects>
+
+a @multiple_objects. ábrán egyszerre látszik a mozdony és a környezete, amik egy fájlból származnak, illetve a bonsai fa teteje, ami egy másik fájlból származik. A transzformáció itt még nem működik, így nem lehet mozgatni sem a két modellt egymáshoz képest, az majd a @pontfelhok_transzformacioja_fejezet. fejezet témája lesz.
 
 A megjelenítő egy pontfelhő megjelenítésére volt felkészítve, nekünk viszont egy játékban jórészt több pontfelhőt is célszerű megjeleníteni: például az autó teste és a 4 kereke már eleve 5 külön objektum. Ehhez azt találtam ki, hogy a CPU-n összeuniózom a pontfelhőket, az adataikat, viszont elmentem azt is, hogy mely indexeknél vannak a határok. Ezután a GPU-ra feltöltéskor kihasználok egy float-ot, ami eddig padding célt szolgált, és minden feltöltött splat esetén egy ID-t is továbbítok, ami megmondja, hogy hányadik objektumhoz tartozik.
 
@@ -412,6 +433,15 @@ static func load_gaussian_splats(point_cloud : PlyFile, stride : int,
 ```
 
 == Pontfelhők transzformációja
+<pontfelhok_transzformacioja_fejezet>
+
+
+#figure(
+  image("pictures/object_transformation.png")
+  , caption: [A bonsai fa transzformálva van, míg a vonat helyben marad]
+) <object_transformation>
+
+a @object_transformation. ábrán ... és ... ...
 
 Miután a GPU-n már lehet tudni, hogy melyik splat melyik objektumhoz tartozik, így lehetséges objektumonként más transzformációt alkalmazni a splatokra. Ehhez létre kellett hozni, és fel kell tölteni egy új uniform buffert:
 ```py
@@ -499,7 +529,19 @@ itt vagy lentebb ki lehetne emelni azt a részt amit a kínai csávó is átvett
 
 Issue fix-szel a kínai csávónak (megreferálni a fejezetet lentebb?)
 
+ide egy screenshot a különbségről, pl az issue-ból !?
+
 == Automata objektum-megtalálás
+
+
+#figure(
+  image("pictures/automatic_node_discovery.png")
+  , caption: [Egy lehetséges SceneTree, ahol a SplatMesh-eket meg kell találni]
+) <automatic_node_discovery>
+
+TODO ábra legyen kisebb? vagy legalábbis kevésbé elmosott/pixeles.
+
+@automatic_node_discovery. ábrán látható egy ..., a @object_transformation. ábrának közel megfeleltethető: van egy, spline-on mozgó GS objektum, mellette kettő sima háromszöghálós modell ugyanazzal a transzformmal (hogy lehessen ellenőrizni a korrekt pozíciót), és van egy másik, közvetlenül a gyökér gyerekeként, így ő nincs transzformálva, de legalábbis dinamikusan biztos nem. Ennek a két objektumnak a globális transzformját kell összegyűjteni, hogy a pontfelhőket a megfelelő pozícióra lehessen helyezni.
 
 Jelenleg nem támogatott új objektumok létrehozása illetve eltüntetése, láthatóvá illetve láthatatlanná tétele futásidőben. Támogatott viszont az, hogy egy, a Godot Node-ok között is megtalálható objektumot a SceneTree-hez hozzáadva automatán be legyen töltve a splat-os objektum, és a megfelelő Node transzformációja legyen rá hattatva, figyelembe véve a szülő node-ok transzformációját is, így lehetséges valós időben mozgatni, transzformálni őket ugyanúgy, mint a sima modelleket.
 
@@ -551,6 +593,13 @@ func _process(delta: float) -> void:
 Fontos megemlíteni a szálakat, ugyanis a rasterizer függvényeit alapvetően a render thread-en hívjuk, ez az objektum-transzformációk feltöltése viszont, a kameratranszformációk lekérdezéséhez hasonlóan a "sima" thread-en történik.
 
 == Mélységhelyes összekombinálás
+
+#figure(
+  image("pictures/depth_combination.png")
+  , caption: [A mélység összekombinálásának tesztelése a vonatos jelenettel és beépített kapszulákkal]
+) <depth_combination>
+
+a @depth_combination. ábrán látható ...
 
 Ahhoz, hogy a képen össze lehessen fésülni a pontfelhős, és a sima megjelenítést, amelyek teljesen külön pipeline-on futnak, szükséges a pontfelhős megjelenítésnél is, a végső renderelt képen egy pixelenkénti mélységérték szerzése. Ennek segítségével legalább pixelenként el lehet dönteni, hogy a két renderelt kép közül melyik nyerjen. A sima pipeline-nál már eléri a játékmotor a mélységet, nekünk a splat-os megjelenítésnél kell ezt elérhetővé tennünk:
 
@@ -748,6 +797,16 @@ meg screenshotot csinálni hozzá, magyarázatot, esetleg megemlíteni a limitá
 
 === SPLAT adatfájl adatainak beolvasása
 
+
+#figure(
+  image("pictures/splat_format_buggy.png")
+  , caption: [Egy `.splat` formátumú buggy modell a SuperSplat editorban]
+) <splat_format_buggy>
+
+A @splat_format_buggy. ábrán látható a példamodell, amit be szerettem volna tölteni. A konverziót `.ply` formává a @supersplat-fejezet. fejezetben bemutatott SuperSplat editor elvégzi, viszont a pontos property-k, illetve a sorrendjük nem egyezik meg a korábban megszokottal.
+
+esetleg a teljes konkrét header-öket leírni ide? hogy hogy néz ki módosítás nélkül. Ez szerepel az eredeti, uncut screenshoton pl az önlab1 doksiban
+
 A bemeneti adatformátum a `.ply`, illetve ennek egy speciális esete. Eredetileg a megjelenítő projekt csak olyan modelleket tudott megjeleníteni, amiknek a 62 property-je mind szerepel, és egy konkrét sorrendben van:
 
 ```
@@ -799,7 +858,7 @@ linkelni a fájlformátumra ami fentebb van bemutatva, illetve leírni/megindoko
 
 == Kollaboráció a másik implementációval
 
-leírni a kezdeti kollab issue-t
+leírni a kezdeti kollab issue-t @kollaboracio-kezdemenyezese
 leírni hogy mit hol implementáltam, fejezetszámmal hivatkozva rá vissza
 
 megjelölni, hogy még mit vett át tőlem (amd bug fix, covarianciamátrix transzformációja a kiterjedéshez)
@@ -846,16 +905,41 @@ Hogyan lehet betenni egy már meglevő projektbe, mi az h godot addon, stb stb
 
 == Autó szimulátor, mint példafelhasználás
 
-leírni hogy mi ez a projekt, esetleg külön alfejezetben bemutatni
+leírni hogy mi ez a projekt, esetleg külön alfejezetben bemutatni @vitavehicle-gh
+
+@vitavehicle_car. ábrán az eredeti program látható
+
+#figure(
+  image("pictures/vitavehicle_car.png")
+  , caption: [Példa képernyőkép a VitaVehicle autószimulátorról]
+) <vitavehicle_car>
+
 
 A splat-os és az autós Godot projektek összefésülése egészen könnyen ment, a fájlok összemásolásán túl a `project.godot` fájlt kellett kompatibilissá tenni mindkét projekt részére, többek között a definiált (billentyűzet) bemenetet, és a globális scripteknek megfelelő scripteket (autoload) kellett átemelni. Szerencsére a `project.godot` egy szöveges fájlformátum, sima config fájlként viselkedik, így akár kézzel is könnyű volt az egyes bejegyzéseket átemelni, a maradék beállítást pedig könnyen megtaláltam az editorban.
 
 Továbbá mindkét projektben volt az alapértelmezett jelenet, aminek a node-jaihoz a szükséges scriptek hozzá voltak adva. Kis logikázás után úgy láttam, hogy a splat-os projekt gyökérnode-ja kell, hogy maradjon, többek között azért is, hogy a hozzáadott SplatMesh-eket megtalálja a jelenetben. Nem volt különösebb gond az autós projekttel, ha annak a gyökérnode-ját a splat-os projekt gyökérnode-ja gyerekeként tettem be.
 
+
+#figure(
+  image("pictures/vitavehicle_project_combination.png")
+  , caption: [A VitaVehicle projekt összekombinálása a GS megjelenítővel]
+) <vitavehicle_project_combination>
+
+A @vitavehicle_project_combination. ábrán együtt látható a pontfelhős és a háromszöghálós autó, tesztelve a korrekt pozíciót és reakciót a környezetre
+
+#figure(
+  image("pictures/vitavehicle_end_result.png")
+  , caption: [A kombinálás végső eredménye]
+) <vitavehicle_end_result>
+
+@vitavehicle_end_result. ábrán látható a kombinálás végső eredménye: két, külön irányítható GS modell alapú autó (külön forgó, kormányozható kerekekkel), illetve egy plüssmaci, ami fizikailag reagál az autókra: eltolható, ha nekimegyünk.
+
+
 === Stuttering bug
 
 Ami következményként nehézséget okozott, az a stuttering kiküszöbölése, amit az okozott, hogy az autós projektben a kamerát egy script állította, míg a splatos projektben ugyanezen (aktív) kamera transzformációját egy script továbbította a GPU-nak, és ez a két script valamiért nem meghatározott sorrendben futott. A process priority állításával a probléma megoldódott.
 
+képek inkább ez után a fejezet után? lehet h jobban fel lehetne osztani ezt a részt
 
 == When Hamsters Attack TD, mint példafelhasználás
 
@@ -866,6 +950,7 @@ játék bemutatása, integrációja a pluginnal, mint példa felhasználás
 
 erről részletesen beszélni (pl object pooling, animáció alkalmazása, ilyenek)
 
+képek teamsről pl? vagy új screenshotok csinálása? (vszeg ennek a gépnek a screenshots mappájában is megvan)
 
 == Asset library plugin
 
@@ -933,11 +1018,13 @@ tervezett ütemterv:
 - végigmenni az egész szövegen ami van, megfelelő sorrendbe tenni a dolgokat, kb legyen meg a szöveg, struktúra
 - AI táblázat betétele
 - újra végigfutni mindenen, absztraktok, dolgozat szerkezete, egyéb TODO-k letisztázása
+- képaláírások, kódaláírások rendben vannak? sehol sincs copy-paste ami nem oda tartozik?
 - AI nyelvtani korrekció tesztje (viabilis megoldás-e, minél több hiba, magyartalan szöveg javítása)
 - fentebbi todo-k átfutása, hogy van-e valami releváns
 - elküldeni a konzulensnek, még mivel érdemes kiegészíteni, átrendezés, ilyesmi stb.
 - legyen meg a szövegmennyiség kg-ra
 - újabb nyelvtani ellenőrzés
+- a/az az ábráknál / fejezetcímeknél kifejezetten! ezt már miután semmi átrendezés / új beszúrás nincs
 - valamit tartalmilag totál elírni, hogy azt megtalálja-e egy AI, hha valahol totál marhaság lenne
 
 beadás után nyomtatás, + a diasor elkészítése míg amíg jól emlékszem a dokumentumra!
