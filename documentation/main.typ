@@ -338,22 +338,16 @@ A @godotbovithetoseg-fejezet. fejezetben bemutatott bővítési lehetőségtől 
 
 A kép motorba való beillesztésén kívül az architektúra megegyezik, és a következőből áll. Van egy-egy GLSL shader a rendezésre, ez a @vulkan-radix-sort-gh\-ben megjelölt könyvtár módosított változata, mivel a @OriginalGGSVFejezet. fejezetben leírt program is azt használta. Ezután a splatokat további GLSL shaderökkel vetítjük, és rendereljük. Az árnyalók menedzselését egy GDScript oldali szkript végzi, hozza létre a pipeline-t, állítja be a uniformokat, és az egyéb buffereket. Ennek segítésére létezik egy kontextus objektum, ami elabsztrahál bizonyos alacsonyabb szintű műveleteket, hogy a kód olvashatóbb legyen. Ez is GDScriptben íródott. Ez az architektúra túlnyomórészt a @OriginalGGSVFejezet. fejezetben leírt programból származik, az én feladatom ennek a bővítése, karbantartása a feladatkiírásban leírt feladatok elvégzése során.
 
+Az egyéb bővítések, mint például a fájl importálásáért, az erőforrás (resource) definíciójáért, illetve a jelenetbe helyezhető node-leszármazottért felelős kódrészletek is mind GDScript-oldaliak. Ezeknek a felelőssége többé-kevésbé jól elhatárolt, és külön-külön fájlokban kapnak helyet. A fájlformátum beolvasása és az erőforrás definíciója és értelmezése már egy kevésbé elhatárolt terület például, ezek a felelősségi körök és célok az egyszerűség függvényében az implementáció közben könnyen meghatározhatóak, illetve módosíthatóak. A tényleges beolvasást, értelmezést végző kódrészlet az egyik objektumból a másikba könnyen átemelhető úgy, hogy a funkcionalitás ne változzon. Ez igaz az egyéb, nehezen meghatározható felelősségi körökre is.
+
 == Projekt végrehajtása
 
 A projekt végrehajtása során körülbelül a feladatlap sorrendjében megyek végig a funkciókon, nézek utána az implementálás lehetőségeinek, és implementálom őket. Ez a végrehajtási sorrend nem feltétlenül egyezik meg az @onallo-munka-bemutatasa. fejezetben leírt sorrenddel, mivel ott logikus sorrendben szeretném bemutatni az elvégzett munkát, néhol időben egymástól távol elvégzett, de összetartozó feladatokat együtt csoportosítva.
 
 = Önálló munka bemutatása
-
 <onallo-munka-bemutatasa>
 
-== Részek (??) bemutatása
-
-=== GDScript oldali rész
-
-=== Shaderek
-
-
-== Önlab 1 alatt végzett megoldás felvázolása
+KÉPEK BEILLESZTÉSE AZ ÖNLAB1 PREZIBŐL pl!
 
 Az önlab 1-es GitHub repository-m itt @onlab-github-repo érhető el, a kóddal és a dokumentációval együtt.
 
@@ -372,7 +366,8 @@ Ennek megfelelően a féléves munka a következő részegységekre osztható:
     - Stuttering: camera és transzformációs mátrix feltöltésének a process priority állítása lett a megoldás
     - Artifactos mélység: a shader kód párhuzamosan tölt be adatokat, és dolgozza fel őket, ehhez viszont szükséges shared bufferek használata
 
-=== Egyszerre több pontfelhő
+
+== Egyszerre több pontfelhő megjelenítése
 
 A megjelenítő egy pontfelhő megjelenítésére volt felkészítve, nekünk viszont egy játékban jórészt több pontfelhőt is célszerű megjeleníteni: például az autó teste és a 4 kereke már eleve 5 külön objektum. Ehhez azt találtam ki, hogy a CPU-n összeuniózom a pontfelhőket, az adataikat, viszont elmentem azt is, hogy mely indexeknél vannak a határok. Ezután a GPU-ra feltöltéskor kihasználok egy float-ot, ami eddig padding célt szolgált, és minden feltöltött splat esetén egy ID-t is továbbítok, ami megmondja, hogy hányadik objektumhoz tartozik.
 
@@ -416,7 +411,7 @@ static func load_gaussian_splats(point_cloud : PlyFile, stride : int,
 ...
 ```
 
-=== Pontfelhők transzformációja
+== Pontfelhők transzformációja
 
 Miután a GPU-n már lehet tudni, hogy melyik splat melyik objektumhoz tartozik, így lehetséges objektumonként más transzformációt alkalmazni a splatokra. Ehhez létre kellett hozni, és fel kell tölteni egy új uniform buffert:
 ```py
@@ -496,7 +491,15 @@ layout (std140, set = 0, binding = 7) restrict uniform Transforms {
 ...
 ```
 
-=== Automata objektum-megtalálás
+=== Kiterjedés irányainak transzformációja
+
+itt vagy lentebb ki lehetne emelni azt a részt amit a kínai csávó is átvett; megreferálni a lentebbi fejezetet? meg előtte leírni hogy miről is van szó
+
+=== Gömbi harmonikusok transzformációjának megjavítása
+
+Issue fix-szel a kínai csávónak (megreferálni a fejezetet lentebb?)
+
+== Automata objektum-megtalálás
 
 Jelenleg nem támogatott új objektumok létrehozása illetve eltüntetése, láthatóvá illetve láthatatlanná tétele futásidőben. Támogatott viszont az, hogy egy, a Godot Node-ok között is megtalálható objektumot a SceneTree-hez hozzáadva automatán be legyen töltve a splat-os objektum, és a megfelelő Node transzformációja legyen rá hattatva, figyelembe véve a szülő node-ok transzformációját is, így lehetséges valós időben mozgatni, transzformálni őket ugyanúgy, mint a sima modelleket.
 
@@ -547,7 +550,7 @@ func _process(delta: float) -> void:
 
 Fontos megemlíteni a szálakat, ugyanis a rasterizer függvényeit alapvetően a render thread-en hívjuk, ez az objektum-transzformációk feltöltése viszont, a kameratranszformációk lekérdezéséhez hasonlóan a "sima" thread-en történik.
 
-=== Mélységhelyes összekombinálás
+== Mélységhelyes összekombinálás
 
 Ahhoz, hogy a képen össze lehessen fésülni a pontfelhős, és a sima megjelenítést, amelyek teljesen külön pipeline-on futnak, szükséges a pontfelhős megjelenítésnél is, a végső renderelt képen egy pixelenkénti mélységérték szerzése. Ennek segítségével legalább pixelenként el lehet dönteni, hogy a két renderelt kép közül melyik nyerjen. A sima pipeline-nál már eléri a játékmotor a mélységet, nekünk a splat-os megjelenítésnél kell ezt elérhetővé tennünk:
 
@@ -594,15 +597,156 @@ void fragment() {
 }
 ```
 
-=== Projektek kombinálása
+== Addon készítése
 
-A splat-os és az autós Godot projektek összefésülése egészen könnyen ment, a fájlok összemásolásán túl a `project.godot` fájlt kellett kompatibilissá tenni mindkét projekt részére, többek között a definiált (billentyűzet) bemenetet, és a globális scripteknek megfelelő scripteket (autoload) kellett átemelni. Szerencsére a `project.godot` egy szöveges fájlformátum, sima config fájlként viselkedik, így akár kézzel is könnyű volt az egyes bejegyzéseket átemelni, a maradék beállítást pedig könnyen megtaláltam az editorban.
+leírni hogy milyen fájlokat kellett hova tenni át, autoload, registration script, stb
 
-Továbbá mindkét projektben volt az alapértelmezett jelenet, aminek a node-jaihoz a szükséges scriptek hozzá voltak adva. Kis logikázás után úgy láttam, hogy a splat-os projekt gyökérnode-ja kell, hogy maradjon, többek között azért is, hogy a hozzáadott SplatMesh-eket megtalálja a jelenetben. Nem volt különösebb gond az autós projekttel, ha annak a gyökérnode-ját a splat-os projekt gyökérnode-ja gyerekeként tettem be.
+== Pull vagy Push modell
 
-Ami következményként nehézséget okozott, az a stuttering kiküszöbölése, amit az okozott, hogy az autós projektben a kamerát egy script állította, míg a splatos projektben ugyanezen (aktív) kamera transzformációját egy script továbbította a GPU-nak, és ez a két script valamiért nem meghatározott sorrendben futott. A process priority állításával a probléma megoldódott.
+RenderedImage pull vs SplatMesh push
 
-=== Adatok beolvasása
+Az eredeti megoldás szerint a RenderedImage válogatta össze a jelenetből a kirajzolandó pontfelhő node-okat, és a transzformjaikat. Ezzel az új megoldással a pontfelhő node-ok maguk regisztrálhatnak, és jelentkezhetnek le a kirajzolásról.
+
+Ez azt is könnyűvé tette, hogy amennyiben a node láthatósága változik, akkor leregisztráljon, és ezzel eltűnjön ténylegesen a jelenetből. Ez része annak a törekvésnek, hogy a pontfelhők az editorba, illetve a játékba is jobban legyenek integrálva, azaz az editorba épített feature-ök (mint pl. a láthatóság) úgy működjenek rajtuk, mint ahogy a felhasználók várják. A nem látható pontfelhő az @lathatosag_lathato. ábrához képest a @lathatosag_nemlathato. ábrán láthatóan nem látható.
+
+#figure(
+  image("pictures/lathatosag_lathato.png")
+  , caption: [Látható a plüssmaci]
+) <lathatosag_lathato>
+
+
+#figure(
+  image("pictures/lathatosag_nemlathato.png")
+  , caption: [Nem látható a plüssmaci]
+) <lathatosag_nemlathato>
+
+Hozzá kell tenni, hogy ez a megoldás még nem volt a legcélravezetőbb: minden láthatóságváltoztatáskor a teljes éppen aktuálisan látható splatos adatot feltöltöttük a GPU-ra. Ez a @igazi_dinamikus_lathatosag. fejezetben került javításra.
+
+=== Dinamikus láthatóság
+
+a fentebbi fejezetből kiszedni az ide tartozó részt
+
+=== Kifinomultabb dinamikus láthatóság
+
+<igazi_dinamikus_lathatosag>
+
+A PR készítése közben a korábbi dinamikus láthatóság problémájából kiindulva biztosan úgy akartam újból megoldani a problémát, hogy láthatóság változtatásakor ne legyen szükség az összes splat adat újbóli feltöltésére. Ez elég könnyen meg is volt oldható úgy, hogy a transzformáció mellé (ami amúgy is minden mozdulatnál újra feltöltődik) pakoltam egy igaz-hamis értéket, ami alapján a shader el tudja dobni a hozzá tartozó splatokat, ezzel megvalósítva a nemláthatóságot.
+
+== Elsőosztályú polgárok
+
+További editorintegrációhoz egyéb apróságokat is elvégeztem, ilyen a @editor_ikonok. ábrán látható ikonok készítése a splat-os node-okhoz, illetve resource-okhoz, a betöltés és a tárolt adat szétcsatolása, és ezzel az editor automatikusan be is tudja tölteni az eddig számára ismeretlen file-t egy Godot resource-á. Ezzel például exportált buildekhez is automatikusan hozzá tudja tenni ezt a fájlt, és ott már nem kell a betöltést lefuttatnia.
+
+Az @tablazat_teszt. táblázatnál láthatóak a node-hoz, illetve a resource-hoz társított ikonok szöveges leírásai is. Ezzel tudom tesztelni a Typst táblázat captionjeit, illetve referenciáit.
+
+#figure(
+  image("pictures/editor_ikonok.png")
+  , caption: [A Node és a Resource saját ikonokat kaptak]
+) <editor_ikonok>
+
+#figure(
+  table(  columns:2,
+  [GaussianSplatNode], [GaussianResource], 
+  [Piros, átfedő pöttyök], [Sárga, kisebb sugarú pöttyök]
+  )
+  , caption: [Táblázat teszt]
+) <tablazat_teszt>
+
+=== Editor ikonok
+
+ide áthozni / kijjebb fejteni a fentebbi szöveg tartalmát
+
+=== Betöltés, és tárolt adat szétcsatolása
+
+meg ide
+
+== AMD bug kijavítása
+
+A tesztelések során figyelmes lettem egy AMD hardveren történő bug-ra, ezt a VulkanRadixSort könyvtárra vezettem vissza, és az eltérő subgroup méret okozhatta. A hibát én is kijavítottam, és láttam azt is, hogy upstream is kijavították már, csak az általam használt eredeti megjelenítő nem frissítette a dependency-t. Ezt jeleztem az ő repositoryjukban is, a megfelelő fixet megjelölve @amd-bug-upsteam-issue. A linkelt issue-ban találhatóak a további linkek a kapcsolódó fixekre.
+
+== CompositorEffect-es megoldás vizsgálata
+
+<compositoreffect> Biztos ez jó referencia? nem a fentebbi, bevezető fejezetet kéne?
+
+Godot 4.4-től már lehetőség van a rendering pipeline-ba jobban belenyúlni, CompositorEffect-eket írva. Az eddigi, eredeti megjelenítő egy QuadMesh-t jelenített meg egy MeshInstance3D-vel, ami lényegében mindig az igazi kamera előtt lebegett, így tudta a pontfelhőket megjeleníteni. Én még önlab alatt megcsináltam azt hozzá, hogy az átlátszóság alapján összeollózza az eredeti, sima raszteres kamera által adott képpel, ez viszont több helyen látszott, hogy egy elég összetákolt megoldás volt. Manuálisan kellett meghívni a saját renderelésünket, de csak akkor hogyha tényleg szükségünk volt a képre, különben elkezdett szaggatni az editor. A használt textúrák felszabadításának működése nem világos, illetve ablak átméretezésekor is le kell kezeljünk speciális dolgokat, ami nem egyértelmű, hogy teljes körűen sikerül.
+
+== Instancing
+
+Hogyha már itt voltam a feltöltésnél, úgy láttam, hogy a feladatkiírásban is szereplő instancinget is akkor a legmegfelelőbb implementálni. Ennél a splat-os modelleket kell különválasztani az objektumoktól.
+
+Eddig minden splat egy extra ID-t kapott, és az ID-edik transzformációs mátrixszal lett eltranszformálva, így megoldva azt, hogy az egyes objektumok máshogyan mozogjanak. Az optimalizációs lehetőség ott jön be, hogyha 1 db kocsi helyett 10 db van a jelenetben, akkor a hozzá tartozó százezer-millió nagyságrendű splat adatait nem szükséges 10-szer tárolni a GPU-n, hiszen ezek ugyanazok.
+
+A megoldás pedig nem nagyon nehéz: az ID buffer legyen kétszer akkora, és minden minden párban az egyik ID mondja meg a transzformációs mátrixot, a másik ID pedig a splatot. Így lehet egy modellnek több transzformációs mátrixa is, csak az ID bufferben kell kétszer benne lennie az összes splat ID-jének. Ez az `nvidia-smi` parancs használatával láthatóan jelentősen javította a memóriahasználatot: a @instancingelott. ábrán 1207MiB-t használt az instancing előtti állapot, míg az @instancingutan. ábrán 818MiB-t, a képeken látható 10-es nagyságrendű autómennyiséggel.
+
+
+#figure(
+  image("pictures/instancing_elott.png")
+  , caption: [Instancing előtti memóriahasználat]
+) <instancingelott>
+
+
+#figure(
+  image("pictures/instancing_utan.png")
+  , caption: [Instancing utáni memóriahasználat]
+) <instancingutan>
+
+=== Instancing hatásának mérése
+
+instancing mérése felhasznált memóriával
+
+ez az instancing mellé menjen
+
+=== Pull Request
+
+== Újravilágíthatóság
+
+A relightolhatóság egy komplex téma, de egy játékmotor esetén nagyon fontos. Alapból a gaussian splates modellek gyakran rendelkeznek gömbi harmonikusokkal kódolt nézeti irány-függő színekkel, splatonként. Ezzel lehet egyszerű tükröződéseket, csillanásokat szimulálni, és a modell tud színt változtatni annak függvényében, hogy melyik irányból nézzük.
+
+Ezzel szemben egy relightolható / újraszínezhető modell nem nézeti irányfüggő színeket tárol magában splatonként, hanem valamilyen fajta anyagtulajdonságokat, például PBR (roughness, metallic, normal stb.) értékeket. Ennek segítségével nem csak a nézeti iránytól függhet a szín, hanem a teljes, komplex jelenettől, kiemelt hangsúlyt fektetve a fényforrás(ok)ra. Ez egy játékban kifejezetten fontos, például ha egy splat-es modell irányt változtat, akkor a nap másik oldalát süti. Ennek megfelelően a színei is teljesen megváltoznak, amit leginkább ilyen módszerekkel lehet megvalósítani.
+
+A lehetőségek felmérésekor többféle megoldás is célravezetőnek tűnt, mindkettő a saját erősségeivel és gyengeségeivel. Végül arra jutottam, hogy mindkettőt megvalósítom, összehasonlítási céllal.
+
+=== Saját fényszámítással
+
+Az első lehetőség az, hogy mi adjuk át manuálisan a beszámítandó fényforrásokat, és mi számoljuk a színeket a megadott paraméterekből. A prototípust úgy csináltam, hogy egy irányfényforrást tudunk átadni. Ennek a hátránya a manuális fényforrás-összegyűjtés, illetve a shading eltérő lehet a többi, engine által shadelt mesh-étől. Hatalmas előnye viszont, hogy működik a @compositoreffect. fejezetben tagalt CompositorEffect-es megoldással.
+
+A @relightolhato_sajatshaded. ábrán is látható, hogy a megvilágítás működik, de a @relightolhato_godotshaded. ábrához képest azért alulmarad a többi megvilágítással való egyezőségben. Ezen az ambient light állításával némiképp szerintem lehetne segíteni, de ugyanolyan jó sosem lesz.
+
+
+#figure(
+  image("pictures/relightolhato_sajatshaded.png")
+  , caption: [Suzanne, a Blender majom megvilágítva általunk]
+) <relightolhato_sajatshaded>
+
+=== A Godot fényszámításával
+
+A Godot fényszámításának használatakor viszont elő kellett venni az eredeti, Fullscreen quad-os megoldást, mivel a Godot-nak ezen kereszül tudom átadni a PBR értékeket (egy textúrában), ami alapján ő fogja elvégezni a relightolást, a belül tárolt, gyorsítótárazott, stb. fények alapján. Így ez automatikusan tudna működni pontfényforrásokra és spotlightokra is (csak még egy bug miatt nem tud, lásd @tovabbiteendok-dipterv2), amint azt a @relightolhato_spotlight. ábra is mutatja.
+
+Még egy nagyon komoly hátránya ennek a megoldásnak, hogy ez leginkább egyáltalán nem tud félig átlátszó splat-okat kezelni (ami a gaussian splattingnél egy nagyon fontos tulajdonság), mivel a Godot-nak pixelenként csak egy színt, és PBR material tulajdonságokat lehet átadni. Az pedig nem túlzottan megoldható, hogy több félig átlátszó splat anyagtulajdonságait átlagoljuk, ezt adjuk át a Godot-nak, és továbbra is realisztikus / használható eredményt kapjunk ebből.
+
+Megjegyzendő, hogy a Mesh2Splat-tal generált modelleknél viszont nem fontos az, hogy az átlátszóságot jól kezeljük, mivel ezek a modellek jellemzően nem sok átlátszóságot tartalmaznak, szimpla modelleknél legalábbis.
+
+Ezen kívül viszont, alapból a @relightolhato_godotshaded. ábra jóval jobban belepasszol a jelenetbe, mint a @relightolhato_sajatshaded. ábra.
+
+#figure(
+  image("pictures/relightolhato_godotshaded.png")
+  , caption: [Suzanne, a Blender majom megvilágítva Godot által]
+) <relightolhato_godotshaded>
+
+
+#figure(
+  image("pictures/relightolhato_spotlight.png")
+  , caption: [Suzanne, a Blender majom megvilágítva Godot által egy spotlight-tal is (még bugos)]
+) <relightolhato_spotlight>
+
+==== Javítás nem irányfény esetére
+
+lepedő, asszem
+
+meg screenshotot csinálni hozzá, magyarázatot, esetleg megemlíteni a limitációkat, bugos széleket, az is növeli az oldalszámot
+
+== Fájlformátumok implementálása
+
+=== SPLAT adatfájl adatainak beolvasása
 
 A bemeneti adatformátum a `.ply`, illetve ennek egy speciális esete. Eredetileg a megjelenítő projekt csak olyan modelleket tudott megjeleníteni, amiknek a 62 property-je mind szerepel, és egy konkrét sorrendben van:
 
@@ -647,152 +791,31 @@ func parse(path : String) -> void:
 ```, caption: [Példa egy kódrészlet számozására]
 ) <parsefuggveny>
 
+=== GLTF adatfájl adatainak beolvasása
 
-== Dipterv 1 alatt végzett megoldás felvázolása
+sh fix a beolvasásnál, PR a kínai csávónak (link a lentebbi fejezetre)
 
-=== RenderedImage pull vs SplatMesh push
+linkelni a fájlformátumra ami fentebb van bemutatva, illetve leírni/megindokolni? hogy nem a tömörített, hanem a sima változat parszolását oldottam meg
 
-Az eredeti megoldás szerint a RenderedImage válogatta össze a jelenetből a kirajzolandó pontfelhő node-okat, és a transzformjaikat. Ezzel az új megoldással a pontfelhő node-ok maguk regisztrálhatnak, és jelentkezhetnek le a kirajzolásról.
+== Kollaboráció a másik implementációval
 
-Ez azt is könnyűvé tette, hogy amennyiben a node láthatósága változik, akkor leregisztráljon, és ezzel eltűnjön ténylegesen a jelenetből. Ez része annak a törekvésnek, hogy a pontfelhők az editorba, illetve a játékba is jobban legyenek integrálva, azaz az editorba épített feature-ök (mint pl. a láthatóság) úgy működjenek rajtuk, mint ahogy a felhasználók várják. A nem látható pontfelhő az @lathatosag_lathato. ábrához képest a @lathatosag_nemlathato. ábrán láthatóan nem látható.
+leírni a kezdeti kollab issue-t
+leírni hogy mit hol implementáltam, fejezetszámmal hivatkozva rá vissza
 
-#figure(
-  image("pictures/lathatosag_lathato.png")
-  , caption: [Látható a plüssmaci]
-) <lathatosag_lathato>
+megjelölni, hogy még mit vett át tőlem (amd bug fix, covarianciamátrix transzformációja a kiterjedéshez)
 
 
-#figure(
-  image("pictures/lathatosag_nemlathato.png")
-  , caption: [Nem látható a plüssmaci]
-) <lathatosag_nemlathato>
-
-Hozzá kell tenni, hogy ez a megoldás még nem volt a legcélravezetőbb: minden láthatóságváltoztatáskor a teljes éppen aktuálisan látható splatos adatot feltöltöttük a GPU-ra. Ez a @igazi_dinamikus_lathatosag. fejezetben került javításra.
-
-=== Elsőosztályú polgárok
-
-További editorintegrációhoz egyéb apróságokat is elvégeztem, ilyen a @editor_ikonok. ábrán látható ikonok készítése a splat-os node-okhoz, illetve resource-okhoz, a betöltés és a tárolt adat szétcsatolása, és ezzel az editor automatikusan be is tudja tölteni az eddig számára ismeretlen file-t egy Godot resource-á. Ezzel például exportált buildekhez is automatikusan hozzá tudja tenni ezt a fájlt, és ott már nem kell a betöltést lefuttatnia.
-
-Az @tablazat_teszt. táblázatnál láthatóak a node-hoz, illetve a resource-hoz társított ikonok szöveges leírásai is. Ezzel tudom tesztelni a Typst táblázat captionjeit, illetve referenciáit.
-
-#figure(
-  image("pictures/editor_ikonok.png")
-  , caption: [A Node és a Resource saját ikonokat kaptak]
-) <editor_ikonok>
-
-#figure(
-  table(  columns:2,
-  [GaussianSplatNode], [GaussianResource], 
-  [Piros, átfedő pöttyök], [Sárga, kisebb sugarú pöttyök]
-  )
-  , caption: [Táblázat teszt]
-) <tablazat_teszt>
-
-=== AMD Bug
-
-A tesztelések során figyelmes lettem egy AMD hardveren történő bug-ra, ezt a VulkanRadixSort könyvtárra vezettem vissza, és az eltérő subgroup méret okozhatta. A hibát én is kijavítottam, és láttam azt is, hogy upstream is kijavították már, csak az általam használt eredeti megjelenítő nem frissítette a dependency-t. Ezt jeleztem az ő repositoryjukban is, a megfelelő fixet megjelölve @amd-bug-upsteam-issue. A linkelt issue-ban találhatóak a további linkek a kapcsolódó fixekre.
-
-=== CompositorEffect
-<compositoreffect>
-
-Godot 4.4-től már lehetőség van a rendering pipeline-ba jobban belenyúlni, CompositorEffect-eket írva. Az eddigi, eredeti megjelenítő egy QuadMesh-t jelenített meg egy MeshInstance3D-vel, ami lényegében mindig az igazi kamera előtt lebegett, így tudta a pontfelhőket megjeleníteni. Én még önlab alatt megcsináltam azt hozzá, hogy az átlátszóság alapján összeollózza az eredeti, sima raszteres kamera által adott képpel, ez viszont több helyen látszott, hogy egy elég összetákolt megoldás volt. Manuálisan kellett meghívni a saját renderelésünket, de csak akkor hogyha tényleg szükségünk volt a képre, különben elkezdett szaggatni az editor. A használt textúrák felszabadításának működése nem világos, illetve ablak átméretezésekor is le kell kezeljünk speciális dolgokat, ami nem egyértelmű, hogy teljes körűen sikerül.
-
-=== Addon-ok uniózása
 
 Ezek miatt felkerült a teendők listájára a CompositorEffect-es megoldásnak a vizsgálata is. Közben a félév során egy kínai implementáció is előkerült itt: @kinai-repo. Mérlegelve a szituációt arra jutottam, hogy nem érdemes mindkettőnknek teljesen külön dolgozni a saját programján, így átfutottam az ő kódját, és mivel mindkét projekt (és az a projekt is, amelyet mindketten használtunk: @amd-bug-upsteam-issue) MIT licensz alatt elérhető, unióztam a fontosabb feature-jeinket. A kommunikáció felvételekor leírtam 1-2 dolgot, ennek eredménye lett, hogy ő is kijavította az AMD bugot, illetve valamilyen kovarianciás matekot, amitől a splatok kiterjedései is jól lettek transzformálva, illetve ezután készítettem én is neki egy PR-t az editor ikonokkal, illetve dinamikus láthatósággal és instancinggel. Ezt ő mergeelte is, és megtagelt az acknowledgementsben is.
 
 
 Én pedig az ő implementációja alapján kipróbáltam a CompositorEffect-es megoldást, és tényleg sok problémát egyből megoldott. Így az uniózott projekt már azt használja a továbbiakban.
 
-=== Igazi dinamikus láthatóság
-<igazi_dinamikus_lathatosag>
+=== Ikonok, dinamikus láthatóság és instancing Pull Request
 
-A PR készítése közben a korábbi dinamikus láthatóság problémájából kiindulva biztosan úgy akartam újból megoldani a problémát, hogy láthatóság változtatásakor ne legyen szükség az összes splat adat újbóli feltöltésére. Ez elég könnyen meg is volt oldható úgy, hogy a transzformáció mellé (ami amúgy is minden mozdulatnál újra feltöltődik) pakoltam egy igaz-hamis értéket, ami alapján a shader el tudja dobni a hozzá tartozó splatokat, ezzel megvalósítva a nemláthatóságot.
+=== GLTF import Pull Request
 
-=== Instancing
-
-Hogyha már itt voltam a feltöltésnél, úgy láttam, hogy a feladatkiírásban is szereplő instancinget is akkor a legmegfelelőbb implementálni. Ennél a splat-os modelleket kell különválasztani az objektumoktól.
-
-Eddig minden splat egy extra ID-t kapott, és az ID-edik transzformációs mátrixszal lett eltranszformálva, így megoldva azt, hogy az egyes objektumok máshogyan mozogjanak. Az optimalizációs lehetőség ott jön be, hogyha 1 db kocsi helyett 10 db van a jelenetben, akkor a hozzá tartozó százezer-millió nagyságrendű splat adatait nem szükséges 10-szer tárolni a GPU-n, hiszen ezek ugyanazok.
-
-A megoldás pedig nem nagyon nehéz: az ID buffer legyen kétszer akkora, és minden minden párban az egyik ID mondja meg a transzformációs mátrixot, a másik ID pedig a splatot. Így lehet egy modellnek több transzformációs mátrixa is, csak az ID bufferben kell kétszer benne lennie az összes splat ID-jének. Ez az `nvidia-smi` parancs használatával láthatóan jelentősen javította a memóriahasználatot: a @instancingelott. ábrán 1207MiB-t használt az instancing előtti állapot, míg az @instancingutan. ábrán 818MiB-t, a képeken látható 10-es nagyságrendű autómennyiséggel.
-
-
-#figure(
-  image("pictures/instancing_elott.png")
-  , caption: [Instancing előtti memóriahasználat]
-) <instancingelott>
-
-
-#figure(
-  image("pictures/instancing_utan.png")
-  , caption: [Instancing utáni memóriahasználat]
-) <instancingutan>
-
-
-=== Relightolhatóság
-
-A relightolhatóság egy komplex téma, de egy játékmotor esetén nagyon fontos. Alapból a gaussian splates modellek gyakran rendelkeznek gömbi harmonikusokkal kódolt nézeti irány-függő színekkel, splatonként. Ezzel lehet egyszerű tükröződéseket, csillanásokat szimulálni, és a modell tud színt változtatni annak függvényében, hogy melyik irányból nézzük.
-
-Ezzel szemben egy relightolható / újraszínezhető modell nem nézeti irányfüggő színeket tárol magában splatonként, hanem valamilyen fajta anyagtulajdonságokat, például PBR (roughness, metallic, normal stb.) értékeket. Ennek segítségével nem csak a nézeti iránytól függhet a szín, hanem a teljes, komplex jelenettől, kiemelt hangsúlyt fektetve a fényforrás(ok)ra. Ez egy játékban kifejezetten fontos, például ha egy splat-es modell irányt változtat, akkor a nap másik oldalát süti. Ennek megfelelően a színei is teljesen megváltoznak, amit leginkább ilyen módszerekkel lehet megvalósítani.
-
-A lehetőségek felmérésekor többféle megoldás is célravezetőnek tűnt, mindkettő a saját erősségeivel és gyengeségeivel. Végül arra jutottam, hogy mindkettőt megvalósítom, összehasonlítási céllal.
-
-==== Saját fényszámítással
-
-Az első lehetőség az, hogy mi adjuk át manuálisan a beszámítandó fényforrásokat, és mi számoljuk a színeket a megadott paraméterekből. A prototípust úgy csináltam, hogy egy irányfényforrást tudunk átadni. Ennek a hátránya a manuális fényforrás-összegyűjtés, illetve a shading eltérő lehet a többi, engine által shadelt mesh-étől. Hatalmas előnye viszont, hogy működik a @compositoreffect. fejezetben tagalt CompositorEffect-es megoldással.
-
-A @relightolhato_sajatshaded. ábrán is látható, hogy a megvilágítás működik, de a @relightolhato_godotshaded. ábrához képest azért alulmarad a többi megvilágítással való egyezőségben. Ezen az ambient light állításával némiképp szerintem lehetne segíteni, de ugyanolyan jó sosem lesz.
-
-
-#figure(
-  image("pictures/relightolhato_sajatshaded.png")
-  , caption: [Suzanne, a Blender majom megvilágítva általunk]
-) <relightolhato_sajatshaded>
-
-==== A Godot fényszámításával
-
-A Godot fényszámításának használatakor viszont elő kellett venni az eredeti, Fullscreen quad-os megoldást, mivel a Godot-nak ezen kereszül tudom átadni a PBR értékeket (egy textúrában), ami alapján ő fogja elvégezni a relightolást, a belül tárolt, gyorsítótárazott, stb. fények alapján. Így ez automatikusan tudna működni pontfényforrásokra és spotlightokra is (csak még egy bug miatt nem tud, lásd @tovabbiteendok-dipterv2), amint azt a @relightolhato_spotlight. ábra is mutatja.
-
-Még egy nagyon komoly hátránya ennek a megoldásnak, hogy ez leginkább egyáltalán nem tud félig átlátszó splat-okat kezelni (ami a gaussian splattingnél egy nagyon fontos tulajdonság), mivel a Godot-nak pixelenként csak egy színt, és PBR material tulajdonságokat lehet átadni. Az pedig nem túlzottan megoldható, hogy több félig átlátszó splat anyagtulajdonságait átlagoljuk, ezt adjuk át a Godot-nak, és továbbra is realisztikus / használható eredményt kapjunk ebből.
-
-Megjegyzendő, hogy a Mesh2Splat-tal generált modelleknél viszont nem fontos az, hogy az átlátszóságot jól kezeljük, mivel ezek a modellek jellemzően nem sok átlátszóságot tartalmaznak, szimpla modelleknél legalábbis.
-
-Ezen kívül viszont, alapból a @relightolhato_godotshaded. ábra jóval jobban belepasszol a jelenetbe, mint a @relightolhato_sajatshaded. ábra.
-
-#figure(
-  image("pictures/relightolhato_godotshaded.png")
-  , caption: [Suzanne, a Blender majom megvilágítva Godot által]
-) <relightolhato_godotshaded>
-
-
-#figure(
-  image("pictures/relightolhato_spotlight.png")
-  , caption: [Suzanne, a Blender majom megvilágítva Godot által egy spotlight-tal is (még bugos)]
-) <relightolhato_spotlight>
-
-== Dipterv 2 alatt végzett munka 
-
-=== Relightolható bugfix
-
-=== GLTF import
-
-sh fix, PR a kínai csávónak
-
-linkelni a fájlformátumra ami fentebb van bemutatva, illetve leírni/megindokolni? hogy nem a tömörített, hanem a sima változat parszolását oldottam meg
-
-=== Gömbi harmonikusok transzformációjának megjavítása
-
-Issue fix-szel a kínai csávónak
-
-=== Játékfejlesztés nagyházi mint példafelhasználás (vagy ez legyen az értékelés fejezetben??)
-
-TODO még meg kell csinálni
-
-
-== Instancing mérése felhasznált memóriával
-
-ez az instancing mellé menjen
+=== Issue a gömbi harmonikusok helyes transzformációjáról
 
 == Kitérő: Typst
 
@@ -812,29 +835,49 @@ kód blokkok, számozás, képek számozása (?), bibliography beszúró GUI iz�
 LaTeX:
 20 package a fordításhoz, hosszú build time, csúnya szintaktika, végtelen mennyiségű fájl amik elég nehezen átláthatók, fordításkor is teleszemeteli a dolgot
 
-= Plugin alkalmazásai, eredmények (volt: Önálló munka értékelése, eredmények)
+összességében az élmény milyen
+
+= Plugin alkalmazásai, eredmények
 
 
-== Autó szimulátor önlab1ből
+== Használati utasítás
 
-== When Hamsters Attack TD
+Hogyan lehet betenni egy már meglevő projektbe, mi az h godot addon, stb stb
+
+== Autó szimulátor, mint példafelhasználás
+
+leírni hogy mi ez a projekt, esetleg külön alfejezetben bemutatni
+
+A splat-os és az autós Godot projektek összefésülése egészen könnyen ment, a fájlok összemásolásán túl a `project.godot` fájlt kellett kompatibilissá tenni mindkét projekt részére, többek között a definiált (billentyűzet) bemenetet, és a globális scripteknek megfelelő scripteket (autoload) kellett átemelni. Szerencsére a `project.godot` egy szöveges fájlformátum, sima config fájlként viselkedik, így akár kézzel is könnyű volt az egyes bejegyzéseket átemelni, a maradék beállítást pedig könnyen megtaláltam az editorban.
+
+Továbbá mindkét projektben volt az alapértelmezett jelenet, aminek a node-jaihoz a szükséges scriptek hozzá voltak adva. Kis logikázás után úgy láttam, hogy a splat-os projekt gyökérnode-ja kell, hogy maradjon, többek között azért is, hogy a hozzáadott SplatMesh-eket megtalálja a jelenetben. Nem volt különösebb gond az autós projekttel, ha annak a gyökérnode-ját a splat-os projekt gyökérnode-ja gyerekeként tettem be.
+
+=== Stuttering bug
+
+Ami következményként nehézséget okozott, az a stuttering kiküszöbölése, amit az okozott, hogy az autós projektben a kamerát egy script állította, míg a splatos projektben ugyanezen (aktív) kamera transzformációját egy script továbbította a GPU-nak, és ez a két script valamiért nem meghatározott sorrendben futott. A process priority állításával a probléma megoldódott.
+
+
+== When Hamsters Attack TD, mint példafelhasználás
+
+leírni hogy mi ez a projekt, esetleg külön alfejezetben bemutatni
 
 játék bemutatása, integrációja a pluginnal, mint példa felhasználás
 @when-hamsters-attack-td
 
 erről részletesen beszélni (pl object pooling, animáció alkalmazása, ilyenek)
 
+
 == Asset library plugin
 
-Felkerül végre??
+Felkerül végre?? igen
+
+leírni hogy milyen kontribúcióim vannak benne
 
 == Még mit lehetne értékelésnek, eredménynek?
 
 objektív szempontok szerint összehasonlítani a többféle implementációt (2 féle relightolás, kínai vs saját branch, stb.)
 
 igen pl a relightolást jól össze lehet hasonlítani, mert az 3 teljesen különböző megoldás
-
-értékelés lehet fentebb, összefonva a renderer bemutatással pl, és akár külön (nagy)fejezet a WHATD
 
 = Összefoglaló
 
@@ -882,7 +925,7 @@ TODO minden bibliography item fel lett használva valahol? footnote vs bibliogra
 
 TODO GH readme-be, illetve doksiba is (?) beírni, hogy melyik branch-en mi van. cleanup a githubon is, hogy értelmesen, jól nézzen ki.
 
-Az egészet beadni AI-nak pl nyelvtani javításra
+Az egészet beadni AI-nak pl nyelvtani javításra (egy random helyen eglépelni, hogy észreveszi-e!!!)
 
 időben elküldeni az egészet reviewra (pl november eleje-közepe)
 
