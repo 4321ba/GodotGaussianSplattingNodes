@@ -58,6 +58,12 @@ onlab-github-repo:
   url: https://github.com/4321ba/GodotGaussianSplattingGame/tree/vitavehicle
   date: 2026-05-25
 
+dipterv-github-repo:
+  type: web
+  title: Godot Gaussian Splatting Nodes
+  url: https://github.com/4321ba/GodotGaussianSplattingNodes
+  date: 2026-11-07
+
 when-hamsters-attack-td:
   type: web
   title: When Hamsters Attack TD

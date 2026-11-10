@@ -93,8 +93,14 @@
 
   show figure.caption: it => [#it.counter.display(). #it.supplement: #it.body]
   show figure.where(kind: image): set figure(supplement: [ábra])
-  show figure.where(kind: raw): set figure(supplement: [kódrészlet])
   show figure.where(kind: table): set figure(supplement: [táblázat])
+  show figure.where(kind: raw): set figure(supplement: [kódrészlet])
+  // túl hosszú kódrészletet pagebreak ketté vághat
+  show figure.where(kind: raw): set block(breakable: true)
+  // a kódrészlet balra legyen zárva
+  show figure.where(kind: raw): set align(start)
+  // de a címe középre
+  show figure.caption: set align(center)
   
   set ref(supplement: none)
   //show ref: it => repr(it) // TODO pont a fejezet és figure referenciák után

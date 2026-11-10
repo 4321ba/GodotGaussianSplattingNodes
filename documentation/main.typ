@@ -162,6 +162,7 @@ Ez @klausi-godotgs egy szintén újonnan, 2026-ban feltűnt implementáció. Az 
 Ez a projekt kívülről meglehetősen AI-first projektnek tűnik, és az egyetlen ember által AI segítségével ennyi idő alatt elvégzett minőségi munka mennyisége elgondolkozásra, és kíváncsiságra késztet a szakma jövőjével kapcsolatban.
 
 == Választott módszer
+<valasztott-modszer-fejezet>
 
 Mivel a projekt kezdetekor a @kinai-repo-fejezet. és a @godotgs-fejezet. fejezetben leírt projektek még nem léteztek, ezért a választott módszer a @OriginalGGSVFejezet\-ben leírt projekt kibővítése úgy, hogy a feladatkiírásban szereplő integrációs problémák megoldásra kerüljenek.
 
@@ -348,6 +349,7 @@ A program legyen képes különböző formátumú GS modelleket beolvasni, legal
 A nem funkcionális követelmények közé sorolhatók, mint általában #footnote[https://hu.wikipedia.org/wiki/Nem_funkcion%C3%A1lis_k%C3%B6vetelm%C3%A9ny], a stabilitás, erőforráshasználat, sebesség, a megjelenítés minősége és a szélesebb hardver-támogatás is. Ezek közül az erőforráshasználat szerepel explicit a feladatkiírásban, az instancing vizsgálatával, megvalósításával. A projekt során a többi tulajdonságra is figyelek, amennyiben a scope keretein belül jelentősen fejleszthetők, azt elvégzem. De az elsődleges cél a funkcionalitáson van.
 
 == Architektúra
+<architektura-fejezet>
 
 A @godotbovithetoseg-fejezet. fejezetben bemutatott bővítési lehetőségtől függően többféle változata is lehetséges az architektúrának, és ezek közül mindkettőnek vannak előnyei és hátrányai, így mindkettővel dolgozok. Ez, és más körülmények miatt sajnos a kódbázis, és az addon különböző verziói más-más állapotban vannak. Ez azért szükséges, mivel például különböző változatait az újravilágításnak más-más verzióban, architektúrával lehet implementálni, így párhuzamosan több változat is szerepel. Ezután az egyéb feature-öket más-más kódbázisban implementálom, és a fontosabbakat portolom a másik kódbázisba is. Ez, attól eltekintve, hogy kényelmetlen, hasznos fejlődési lehetőség számomra. Ezeket az elvégzett tevékenységeket a @onallo-munka-bemutatasa. nagyfejezetben részletesen taglalom.
 
@@ -362,235 +364,209 @@ A projekt végrehajtása során körülbelül a feladatlap sorrendjében megyek 
 = Önálló munka bemutatása
 <onallo-munka-bemutatasa>
 
-Az önlab 1-es GitHub repository-m itt @onlab-github-repo érhető el, a kóddal és a dokumentációval együtt.
+Ebben a fejezetben mutatom be a fő programozási feladat megoldásának lépéseit, a feladat megoldásának érdekében elvégzett munkát. A projekt a 2024/25/2 (tavaszi) félévi Önálló laboratórium 1 című tárgy, a 2025/26/2 (tavaszi) félévi Diplomatervezés 1 című tárgy, és a 2026/27/1 (őszi) félévi Diplomatervezés 2 című tárgy témáját adta, így az alább bemutatott munka ezekből tevődik össze.
+
+== A projekt elérhetősége
+
+Az Önálló laboratórium 1 tárgyra készített projekt a @onlab-github-repo GitHub repository-ban érhető el, mind a programkód, a dokumentáció és prezentáció tekintetében. A Diplomaterv tárgyak során történő folytatás a @dipterv-github-repo GitHub repository-ban található, és szintén tartalmazza mind a Godot addon-t (programkódot), mind ezen dokumentumot, mind a prezentációt.
+
+A legtöbb kód és anyag a Godot, és az egyéb felhasznált projektek szellemiségéhez híven MIT licensz alatt elérhetők. A különböző módosítások a @architektura-fejezet. fejezetben részletezett okok miatt esetlegesen különböző ágakon (branch-eken) találhatóak, ezek pontos elhelyezkedését a repository-ban található README dokumentumok leírják.
 
 Adott a megtekintő program, amely be tud tölteni egy `.ply` kiterjesztésű splat-os modellt, és meg tudja azt jeleníteni a játékmotor keretein belül. Illetve adott példaként az autó-szimuláló program. Adottak továbbá splat-os modellek, amiket lehet használni.
 
-Ennek megfelelően a féléves munka a következő részegységekre osztható:
-
-- Megjeleníteni egyszerre több pontfelhőt
-- Ezeket a pontfelhőket függetlenül mozgatni
-- Feltölteni pontfelhőnként transzformációs mátrixokat, hogy tetszőlegesen mozoghassanak a modellek
-- Ezeket a transzformációkat megfelelően feltölteni minden képkockában, lehetőleg automatizált módon megtalálva a hozzájuk tartozó játékobjektumot, ahonnan a transzformáció származik
-- Mélységhelyesen összekombinálni a pontfelhős, és a sima modelleket
-- Összevonni a két projektet (gsplat-os, illetve az autós)
-- Robusztusabbá tenni a `.ply` fájl-beolvasást, hogy a `.splat`-ból [SuperSplat](https://superspl.at/editor)-tal konvertált `.ply` fájlokat is képes legyen beolvasni
-- Javítani felmerülő problémákat
-    - Stuttering: camera és transzformációs mátrix feltöltésének a process priority állítása lett a megoldás
-    - Artifactos mélység: a shader kód párhuzamosan tölt be adatokat, és dolgozza fel őket, ehhez viszont szükséges shared bufferek használata
-
-
 == Egyszerre több pontfelhő megjelenítése
+<egyszerre-tobb-pontfelho-fejezet>
 
+A @valasztott-modszer-fejezet. fejezetben leírtaknak megfelelően a kiindulási projekt már képes egy GS modellt megjeleníteni, így az első egyértelmű feladat több pontfelhő egyidejű megjelenítése.
+
+Erre azért van szükség, mert szeretnénk több különböző fájlból egyszerre pontfelhőket megjeleníteni: például a @vitavehicle-peldafelhasznalas-fejezet. fejezetben bemutatott példafelhasználás esetén az autó teste, és a 4 kereke rögtön 5 külön pontfelhő, más-más transzformációval.
+
+Mivel a pontfelhők mind lényegében pontok halmaza, így ennek a megoldására azt találtam ki, hogy a CPU-n összeuniózom ezeket a pontfelhőket a GPU-ra történő feltöltés előtt, így az eddig is használt pipeline-nal lehetséges lesz több, különböző fájlból származó GS pontfelhő megjelenítése.
 
 #figure(
   image("pictures/multiple_objects.png")
   , caption: [Egyszerre látható több pontfelhős modell]
 ) <multiple_objects>
 
-a @multiple_objects. ábrán egyszerre látszik a mozdony és a környezete, amik egy fájlból származnak, illetve a bonsai fa teteje, ami egy másik fájlból származik. A transzformáció itt még nem működik, így nem lehet mozgatni sem a két modellt egymáshoz képest, az majd a @pontfelhok_transzformacioja_fejezet. fejezet témája lesz.
+Az @multiple_objects. ábrán egyszerre látszik a mozdony és a környezete, amik egy fájlból származnak, illetve a bonsai fa teteje, ami egy másik fájlból származik. A transzformáció itt még nem működik, így nem lehet mozgatni még a két modellt egymáshoz képest, ez a probléma majd az @pontfelhok_transzformacioja_fejezet. fejezetben kerül megoldásra. A pontfelhők fájljai az eredeti, @kerbl-2023-3dgs forrásban megjelölt papír példa adathalmazából származnak.
 
-A megjelenítő egy pontfelhő megjelenítésére volt felkészítve, nekünk viszont egy játékban jórészt több pontfelhőt is célszerű megjeleníteni: például az autó teste és a 4 kereke már eleve 5 külön objektum. Ehhez azt találtam ki, hogy a CPU-n összeuniózom a pontfelhőket, az adataikat, viszont elmentem azt is, hogy mely indexeknél vannak a határok. Ezután a GPU-ra feltöltéskor kihasználok egy float-ot, ami eddig padding célt szolgált, és minden feltöltött splat esetén egy ID-t is továbbítok, ami megmondja, hogy hányadik objektumhoz tartozik.
-
-```py
-class_name PlyFile extends Resource
-
-var size : int
-var vertices : PackedFloat32Array
-var properties : Array[StringName]
-var split : Array[int] # indices where new objects start
-
-...
-
-static func merge(pc1 : PlyFile, pc2 : PlyFile) -> PlyFile:
-	var merged := PlyFile.new()
-	merged.size = pc1.size + pc2.size
-	assert(pc1.properties.hash() == pc2.properties.hash())
-	merged.properties = pc1.properties
-	merged.vertices = PackedFloat32Array(pc1.vertices)
-	merged.vertices.append_array(pc2.vertices)
-	merged.split.append_array(pc1.split)
-	merged.split.append(pc1.vertices.size())
-	for s in pc2.split:
-		merged.split.append(s + pc1.vertices.size())
-	return merged
-
-...
-
-static func load_gaussian_splats(point_cloud : PlyFile, stride : int, 
-    device : RenderingDevice, buffer : RID, should_terminate_reference : Array[bool], 
-    num_points_loaded : Array[int], callback : Callable):
-...
-			### Opacity 
-			points[b+6+4] = 1.0 / (1.0 + exp(-p[v+54]))
-			
-			### ID for differenciating between objects 
-			points[b+11] = 0
-			for k in point_cloud.split:
-				if v >= k:
-					points[b+11] += 1
-...
-```
+Az uniózás során elmentem azt is, hogy mely pacák indexeinél vannak a határok. Ennek segítségével a GPU-ra történő feltöltéskor egy eddig padding célt szolgáló float kihasználásával minden feltöltött splat esetén egy ID-t is továbbítok, ami megmondja, hogy az adott paca hányadik objektumhoz tartozik.
 
 == Pontfelhők transzformációja
 <pontfelhok_transzformacioja_fejezet>
 
+A következő feladat a pontfelhők helyes transzformációja. Ez egy bonyolult feladat több szempontból: egyrészt a transzformáció rögtön 3 tevékenységet foglal magába: eltolást, forgatást és skálázást. Másrészt pedig a transzformációt több, különböző tulajdonságra is alkalmazni kell, nem triviális módon: a pozíciót, a gausszi eloszlású kiterjedés irányait, és a gömbi harmonikusok (nézetirányfüggő megcsillanások) irányait is megfelelően kell transzformálni. Ezeknek a nem megfelelő végrehajtását némely esetben könnyebb, némely esetben nehezebb észrevenni, így a @gombi-harmonikus-trafo-fejezet. fejezetben leírt javítás szükségességét jóval később fedeztem fel, mint ahogy a többi transzformációt implementáltam.
 
 #figure(
   image("pictures/object_transformation.png")
   , caption: [A bonsai fa transzformálva van, míg a vonat helyben marad]
 ) <object_transformation>
 
-a @object_transformation. ábrán ... és ... ...
+A @object_transformation. ábrán ugyanúgy a vonat és környezete pontfelhő, illetve a bonsai fa láthatóak, de ezúttal a bonsai fa pacáira egy időben folyamatosan változó transzform lett applikálva: a helyesség ellenőrzése érdekében pedig ugyanezen transzform szintén alkalmazva lett két kapszula alakra, melynek kirajzolását a megfelelő helyre az engine végzi, így alkalmas a helyesség ellenőrzésére.
 
-Miután a GPU-n már lehet tudni, hogy melyik splat melyik objektumhoz tartozik, így lehetséges objektumonként más transzformációt alkalmazni a splatokra. Ehhez létre kellett hozni, és fel kell tölteni egy új uniform buffert:
-```py
+Egy ilyen logikájú jelenet jelenetfája a @automatic_node_discovery. ábrán látható, ez segíti a hierarchia elképzelését. A `BonsaiPath` nevű görbét tartalmazó objektum által eltárolt útvonalon képes a `PathFollow3D` nevű (és típusú) node mozogni, amely így minden képkockában új pozíciót vesz fel a görbe mentén, automatikusan propagálva a transzformot a gyerekeinek a globális transzformjába. Ezt a globális transzformot kell valamilyen módon eljuttatni a transzformációért felelős GLSL shaderbe, és (csakis) a megfelelő ID-vel rendelkező pacákra alkalmazni.
+
+Első implementációs lépésként fix számú objektum transzformját töltöm fel: ehhez egy fix méretű új uniform buffert hozok létre, és töltöm fel új értékekkel képkockánként.
+
+#figure(```py
 const MAX_OBJECT_COUNT := 16 # number of gsplat object transforms, same as in gsplat_projection.glsl
 var object_transforms : Array[Transform3D]
 ...
-
-	descriptors['transforms'] = context.create_uniform_buffer(16*MAX_OBJECT_COUNT*4)
-
+descriptors['transforms'] =
+        context.create_uniform_buffer(16*MAX_OBJECT_COUNT*4)
 ...
-
-	context.device.buffer_update(descriptors['transforms'].rid, 
-        0, 16*MAX_OBJECT_COUNT*4, get_transforms())
-
+context.device.buffer_update(descriptors['transforms'].rid, 
+                             0, 16*MAX_OBJECT_COUNT*4, get_transforms())
 ...
-
 func update_object_transforms(transforms: Array[Transform3D]) -> void:
-	object_transforms = transforms
+  object_transforms = transforms
 
 func get_transforms() -> PackedByteArray:
-	var fbuf := PackedFloat32Array()
-	assert(len(object_transforms) <= MAX_OBJECT_COUNT)
-	var t := []
-	for i in object_transforms:
-		t.append(Projection(i))
-	for i in (MAX_OBJECT_COUNT - len(object_transforms)):
-		t.append(Projection.IDENTITY)
-	for i in MAX_OBJECT_COUNT:
-		fbuf.append_array([	t[i].x[0], t[i].x[1], -t[i].x[2], -t[i].x[3],
-							t[i].y[0], t[i].y[1], -t[i].y[2], -t[i].y[3],
-							-t[i].z[0], -t[i].z[1], t[i].z[2], t[i].z[3],
-							-t[i].w[0], -t[i].w[1], t[i].w[2], t[i].w[3]])
-	var bytebuf := PackedByteArray()
-	bytebuf.resize(4 * fbuf.size())
-	bytebuf.fill(0)
-	for i in range(len(fbuf)):
-		bytebuf.encode_float(i*4, fbuf[i])
-	return bytebuf
-```
+  var fbuf := PackedFloat32Array()
+  assert(len(object_transforms) <= MAX_OBJECT_COUNT)
+  var t := []
+  for i in object_transforms:
+    t.append(Projection(i))
+  for i in (MAX_OBJECT_COUNT - len(object_transforms)):
+    t.append(Projection.IDENTITY)
+  for i in MAX_OBJECT_COUNT:
+    fbuf.append_array([	t[i].x[0], t[i].x[1], -t[i].x[2], -t[i].x[3],
+                        t[i].y[0], t[i].y[1], -t[i].y[2], -t[i].y[3],
+                        -t[i].z[0], -t[i].z[1], t[i].z[2], t[i].z[3],
+                        -t[i].w[0], -t[i].w[1], t[i].w[2], t[i].w[3]])
+  var bytebuf := PackedByteArray()
+  bytebuf.resize(4 * fbuf.size())
+  bytebuf.fill(0)
+  for i in range(len(fbuf)):
+    bytebuf.encode_float(i*4, fbuf[i])
+  return bytebuf
+```, caption: [Transzformációs mátrixok továbbítása a GPU-ra GDScript-ből]
+) <objecttransform_kod>
 
-Amit pedig a shaderben fel tudunk használni:
+Az @objecttransform_kod. kódrészleten látható a uniform buffer létrehozása, feltöltése, illetve a feltöltéshez használt szerializáció is, ami a GDScript oldali mátrix objektum reprezentációját átkonvertálja olyan formátummá, amit a GLSL oldalon a GPU értelmezni fog tudni. A negatív előjelek bizonyára megmagyarázhatóak, de mindenesetre szükségesek, mivel nélkülük a bonsai fa láthatóan nem ugyanott volt, mint a kapszulákból álló "repülő-alak".
 
-```glsl
+Miután a GPU-n az @egyszerre-tobb-pontfelho-fejezet. fejezetben említett ID továbbítása által már lehet tudni, hogy melyik splat melyik objektumhoz tartozik, így lehetséges objektumonként más transzformációt alkalmazni a splatokra. Így az @objecttransform_kod. kódban továbbított transzformációk alkalmazása érdekében például a következő, a @objecttransform_shaderkod. kódrészleten látható GLSL kód használható:
+
+#figure(```glsl
 // same as in gaussian_splatting_rasterizer.gd
 #define MAX_OBJECT_COUNT 16
-
 ...
-
 struct Splat {
-	vec3 position;
-	float time;
-	float covariance[6]; // Contains top triangle of symmetric matrix
-	float opacity;
-	float id;
-	float sh_coefficients[16*3]; // Spherical harmonic coefficients in increasing order
+  vec3 position;
+  float time;
+  float covariance[6];
+  float opacity;
+  float id;
+  float sh_coefficients[16*3];
 };
-
 ...
-
 layout (std140, set = 0, binding = 7) restrict uniform Transforms {
-	mat4 transforms[MAX_OBJECT_COUNT];
+  mat4 transforms[MAX_OBJECT_COUNT];
 };
-
 ...
-
-	// --- FRUSTUM CULLING ---
-	vec3 splat_pos = splat.position*model_scale;
-	vec4 view_pos = view_matrix * transforms[int(splat.id + 0.5)] * vec4(splat_pos, 1.0);
-	vec4 clip_pos = projection_matrix * view_pos;
-	
-	...
-	
-	mat3 curr_transform = mat3(transforms[int(splat.id + 0.5)]);
-	mat3 cov_mx = curr_transform * DECODE_COVARIANCE(splat.covariance) * transpose(curr_transform);
-	const vec3 covariance = project_covariance(cov_mx, splat_scale, view_pos.xyz, dims);
-	
+// --- FRUSTUM CULLING ---
+vec3 splat_pos = splat.position*model_scale;
+vec4 view_pos = view_matrix * transforms[int(splat.id + 0.5)]
+                * vec4(splat_pos, 1.0);
+vec4 clip_pos = projection_matrix * view_pos;
 ...
-```
+mat3 curr_transform = mat3(transforms[int(splat.id + 0.5)]);
+...
+```, caption: [Transzformációs mátrixok alkalmazása a GPU-n]
+) <objecttransform_shaderkod>
+
+Itt szintén definiálva van az érkező transzformációs mátrixok uniformja, a `Splat` struktúrában minden instance esetén megtalálható az ID, hogy hányadik számú transzformációs mátrixot kell rá alkalmazni (egyszerű egész ábrázolás híján `float`-ként átadva, majd kerekítve), és látható a uniform buffer megindexelése is, a megfelelő mátrix megtalálása és alkalmazása érdekében.
 
 === Kiterjedés irányainak transzformációja
 
-itt vagy lentebb ki lehetne emelni azt a részt amit a kínai csávó is átvett; megreferálni a lentebbi fejezetet? meg előtte leírni hogy miről is van szó
+Külön meg kell említeni, hogy nem elegendő a fentebb bemutatott transzformációt elvégezni a gausszi eloszlású pacák pozíciójára, mivel a paca kiterjedése általában változik a tengelyek irányába, azaz a skálatényezők nem egyenlőek. Ehhez a (GPU-ra feltöltés előtt, a skálatényezőkből és az elforgatásból kiszámolt) kovariancia mátrixot, azaz a pacák kiterjedését és orientációját is transzformálni kell.
+
+A transzformáció elvégezhető balról a transzformációs mátrixszal, jobbról pedig a transzponáltjával való szorzással. #footnote[https://github.com/chiehwangs/3d-gaussian-theory]
+
+#figure(
+  image("pictures/covariance_matrix_transformation_difference.png")
+  , caption: [A kovariancia mátrix transzformációjának hiánya látható különbséget okoz]
+) <covariance_matrix_transformation_difference>
+
+Amennyiben a pacákat nem forgatjuk helyesen, akkor a @covariance_matrix_transformation_difference. ábrán bal oldalon látható eredményhez jutunk, miközben a modellt forgatjuk, vagy forgatást alkalmazunk rá. A jobb oldali teddy lenne a helyes kép, hogyha a kovariancia mátrix helyesen van transzformálva.
 
 === Gömbi harmonikusok transzformációjának megjavítása
+<gombi-harmonikus-trafo-fejezet>
 
-Issue fix-szel a kínai csávónak (megreferálni a fejezetet lentebb?)
-
-ide egy screenshot a különbségről, pl az issue-ból !?
-
-== Automata objektum-megtalálás
+Hasonló filozófiájú, bár nehezebben észrevehető különbséget okoz, ha a gömbi harmonikusokat nem konvertáljuk megfelelően.
 
 
 #figure(
-  image("pictures/automatic_node_discovery.png")
-  , caption: [Egy lehetséges SceneTree, ahol a SplatMesh-eket meg kell találni]
+  image("pictures/sh_transformation_difference.png")
+  , caption: [A gömbi harmonikusok transzformációjának hiánya is észrevehető]
+) <sh_transformation_difference>
+
+A @sh_transformation_difference. ábrán bal oldalon látható a helytelen ábra, míg a jobb oldalon a helyes ábra. Hogy a fontos részletet, a fa törzsének megcsillanását jobban lehessen látni, ezt a részt kinagyítottam a felső sarkakba is. Ez a modell valószínűleg egy lego-fa, vagy legalábbis lego-hoz hasonló elemekből épülnek fel, így a sima felületen a fény bizonyos irányokból nézve meg tud csillanni. Ezt hivatottak kódolni a gömbi harmonikusok, amit viszont nem tudunk visszaadni, ha nem transzformáljuk őket helyesen.
+
+A gömbi harmonikusok bonyolult elforgatása helyett sokkal egyszerűbb a nézeti irányt inverz-transzformálni, és értelem szerint mindkettő ugyanazt az eredményt adja, így az utóbbit implementáltam a @shtransform_shaderkod. kódrészleten látható módon.
+
+
+#figure(```glsl
+vec3 world_view_dir = world_pos.xyz - camera_pos;
+vec3 local_view_dir = normalize(inverse(object_linear) * world_view_dir);
+```, caption: [Nézeti irány helyes transzformációja GLSL-ben]
+) <shtransform_shaderkod>
+
+Ennek a problémának a felfedezését több tényező is hátráltatja: egyrészt nem minden modell rendelkezik gömbi harmonikusokkal, és még kevesebb rendelkezik ténylegesen látható különbséggel. A sokáig használt bonsai fa teszt modellem valamelyik transzformációs lépésnél elvesztette a gömbi harmonikusait, így hiába eredetileg rendelkezett volna a fentebb látható megcsillanással, azon a modellen nem is láthattam a különbséget. Ezen kívül a félig átlátszó splat-ok különböző irányokból nézve önmaguktól, gömbi harmonikusok nélkül is egészen jól tudnak nézetirány-függő színeket produkálni, így azt hiheti az ember, hogy működnek a nézetirány-függő színek, holott csak olyan a pacák elrendezése, hogy más irányból nézve más-más színt adnak vissza.
+
+A @gltf-beolvasas-fejezet. fejezetben leírt GLTF beolvasásnál, amikor a gömbi harmonikusokat is mindenképpen ellenőrizni szerettem volna, jöttem rá, hogy tulajdonképpen ez nem működik normálisan, sőt, a példamodellemnek egyáltalán nincsenek is gömbi harmonikusai. Így újra beszereztem a modellt, ráfókuszáltam a @sh_transformation_difference. ábrán látható fatörzs megcsillanására, amit a @supersplat-fejezet. fejezetben leírt SuperSplat által adott képpel is összehasonlítottam. Ez alapján már helyesen tudtam a problémákat diagnosztizálni, és validálni a működést.
+
+== Automata objektum-megtalálás
+
+A helyes transzformáció alkalmazása után a következő feladat a Godot Scene Tree-jébe (jelenetfa) történő integráció. A Godot-ban alapból az egész jelenetet egy hierarchikus elrendezéssel lehet létrehozni, hasonlóan a Unity-hoz és az Unreal Engine-hez, csak flexibilisebben. Bármely node-nak lehet gyereke bármely node, és például egy `MeshInstance3D` képes a betöltött háromszöghálós modellt a saját transzformjával (pozíció, elforgatás, skála #footnote[https://docs.godotengine.org/en/stable/classes/class_node3d.html#class-node3d-property-transform]) megjeleníteni, ami természetesen magába foglalja a jelenetfában fölötte levő node-ok transzformációját is.
+
+Ezen kívül az összes, SceneTree-be helyezhető node-típus a `Node` objektum leszármazottja, így a nagyon objektumorientált szemlélethez híven az öröklés szerint is van egy hierarchikus struktúra, ezalkalommal az osztályok között, és nem az instance-ek között. Például a `Node` leszármazottja a `Node3D`, ami többek között tartalmazza a `transform` nevű, `Transform3D` típusú field-et, és mivel az összes, 3D-ben értelmezhető objektum a `Node3D` leszármazottja, így mindnek van transzformja is.
+
+Mi legegyszerűbben, és legintuitívabban a `MeshInstance3D` mintájára tudunk létrehozni egy `SplatCloud3D` nevű osztályt, ami közvetlen a Node3D-ből örököl (több adattagra, funkcionalitásra nincs szükségünk), és van egy adattagja, ahová be lehet tenni a betöltendő pontfelhőt. Erre viszonylag jól integrált megoldás is létezik a Godot-ban, amivel a GDScript-ben létrehozott osztály a saját script-tel megjelenik a böngészhető node-ok hierarchikus listájában is az editorban.
+
+#figure(
+  image("pictures/automatic_node_discovery.png", width: 50%)
+  , caption: [Egy lehetséges SceneTree, ami SplatMesh-eket tartalmaz]
 ) <automatic_node_discovery>
 
-TODO ábra legyen kisebb? vagy legalábbis kevésbé elmosott/pixeles.
+A @automatic_node_discovery. ábrán látható egy jelenet hierarchiája, ez a @object_transformation. ábrának közel megfeleltethető: van egy, spline-on mozgó GS objektum, mellette kettő sima háromszöghálós modell ugyanazzal a transzformmal, hogy lehessen ellenőrizni a korrekt pozíciót. Ezen kívül van egy másik GS modell is, közvetlenül a gyökér gyerekeként, ő nincs transzformálva.
 
-@automatic_node_discovery. ábrán látható egy ..., a @object_transformation. ábrának közel megfeleltethető: van egy, spline-on mozgó GS objektum, mellette kettő sima háromszöghálós modell ugyanazzal a transzformmal (hogy lehessen ellenőrizni a korrekt pozíciót), és van egy másik, közvetlenül a gyökér gyerekeként, így ő nincs transzformálva, de legalábbis dinamikusan biztos nem. Ennek a két objektumnak a globális transzformját kell összegyűjteni, hogy a pontfelhőket a megfelelő pozícióra lehessen helyezni.
+A GS node osztály elnevezése több revízión ment át, így néhol `SplatCloud3D`, néhol `SplatMesh`, a @kollab-onallomunka-fejezet. fejezetben említett kódbázisban `GaussianSplatNode` a neve, de mind arra a `Node3D`-leszármazottra utal, ami a SceneTree-be helyezhető, és az adott GS modellt reprezentálja, a transzformját tartalmazza, a jelenetbeli elhelyezéséért felel.
 
-Jelenleg nem támogatott új objektumok létrehozása illetve eltüntetése, láthatóvá illetve láthatatlanná tétele futásidőben. Támogatott viszont az, hogy egy, a Godot Node-ok között is megtalálható objektumot a SceneTree-hez hozzáadva automatán be legyen töltve a splat-os objektum, és a megfelelő Node transzformációja legyen rá hattatva, figyelembe véve a szülő node-ok transzformációját is, így lehetséges valós időben mozgatni, transzformálni őket ugyanúgy, mint a sima modelleket.
+A közvetlen ebből következő feladat tehát a @automatic_node_discovery. ábrán látható két (de potenciálisan több, illetve máshová hozzáadott) objektum globális transzformját eljuttatni a rasterizerig.
 
-A következő script a `class_name` segítségével meg fog jelenni az editorban, mint hozzáadható Node, és lesz egy állítható paramétere, a `ply_file`. Ide be lehet állítani a megfelelő path-t.
+Első körben egy összegyűjtő típusú kommunikációt implementáltam a `SplatMesh` és a gyökér node között, azaz a gyökér node kereste meg az összes GS node-ot, mentette el magának, majd minden új képnél begyűjtötte a globális transzformokat (azaz a node teljes transzformját, amibe a szülők transzformja is bele van számolva), és továbbította a rasterizernek. Az ehhez szükséges osztály nagyon egyszerű, a teljes kód a @pull_gsnode_gdscr. kódblokkban látható.
 
-```py
+#figure(```py
 class_name SplatMesh extends Node3D
 
 @export var ply_file: String
 
 func is_splat_mesh():
-	pass
-```
+  pass
+```, caption: [Pull esetén a GS node implementációja]
+) <pull_gsnode_gdscr>
 
-Ezután a gyökérnode induláskor összeszedi az objektumokat, és eltárolja őket, hogy a transzformációikat el tudja küldeni:
+A root node feladata, a node-ok összegyűjtése picit bonyolultabb volt, és nem találtam könnyű megoldást saját típusú objektumok halmazának könnyű beszerzésére a SceneTree-ből. A legjobb megoldás egy rekurzív bejárás lett, ami az `is_splat_mesh()` függvény létezése alapján gyűjtötte össze a node-okat #footnote[https://forum.godotengine.org/t/how-do-you-get-all-nodes-of-a-certain-class/9143]. A node-okat egy tömbben eltárolta a kezdeti begyűjtés után, illetve a megfelelő fájlokkal inicializálta a rasterizert. Minden képkockában továbbá összegyűjtötte a tömbelemek aktuális transzformját, és továbbította a rasterizer @objecttransform_kod. kódrészleten látható `update_object_transforms(transforms)` függvénynek. Ez a logika viszont később át lett alakítva a @pull-vagy-push-fejezet. fejezetben leírtaknak megfelelően egy push logikájú megoldásra.
 
-```py
+A transzformok rasterizernek való képkockánkénti továbbítása viszont aktuális maradt, és a @pull_rootnode_gdscr. kódrészleten látható módon történik.
+
+#figure(```py
 var splat_meshes : Array[SplatMesh] = []
-
-func _ready() -> void:
-	find_by_method(self, StringName("is_splat_mesh"), splat_meshes)
-	assert(len(splat_meshes) <= GaussianSplattingRasterizer.MAX_OBJECT_COUNT)
-	var splat_filenames := []
-	for m in splat_meshes:
-		splat_filenames.append(m.ply_file)
-	
-	init_rasterizer(splat_filenames)
-    ...
-
-# source: https://forum.godotengine.org/t/how-do-you-get-all-nodes-of-a-certain-class/9143
-func find_by_method(node: Node, method_name : StringName, result : Array) -> void:
-	if node.has_method(method_name) and node.is_visible_in_tree():
-		result.push_back(node)
-	for child in node.get_children():
-		find_by_method(child, method_name, result)
-```
-
-Az összeszedéshez biztosan van jobb módszer, mint a tagfüggvénynév alapján való keresés, de én limitált keresés során nem találtam, és ez működik. Típuslekérdezés csak beépített típusokra ad eltérő eredményt.
-
-```py
+...
 func _process(delta: float) -> void:
-    ...
-	var splat_transforms : Array[Transform3D] = []
-	for m in splat_meshes:
-		splat_transforms.append(m.global_transform)
-	rasterizer.update_object_transforms(splat_transforms)
-```
+  ...
+  var splat_transforms : Array[Transform3D] = []
+  for m in splat_meshes:
+    splat_transforms.append(m.global_transform)
+  ...
+  rasterizer.update_object_transforms(splat_transforms)
+```, caption: [A gyökér vagy autoload továbbítja a transzformokat a rasterizernek]
+) <pull_rootnode_gdscr>
 
-Fontos megemlíteni a szálakat, ugyanis a rasterizer függvényeit alapvetően a render thread-en hívjuk, ez az objektum-transzformációk feltöltése viszont, a kameratranszformációk lekérdezéséhez hasonlóan a "sima" thread-en történik.
+Fontos limitáció, hogy ezzel a megoldással nem támogatott új objektumok futásidejű létrehozása, eltüntetése, és láthatatlanná, illetve láthatóvá tétele sem. Ez majd szintén az @pull-vagy-push-fejezet. fejezetben kerül finomításra.
+
+Meg szükséges említeni még a szálakat, ugyanis a rasterizer függvényeit alapvetően a render thread-en hívjuk, az objektum-transzformációk feltöltése viszont, a kameratranszformációk lekérdezéséhez hasonlóan a fő szálon történik.
 
 == Mélységhelyes összekombinálás
 
@@ -646,11 +622,14 @@ void fragment() {
 }
 ```
 
+Jobban tárgyalni ezt a problémát: Artifactos mélység: a shader kód párhuzamosan tölt be adatokat, és dolgozza fel őket, ehhez viszont szükséges shared bufferek használata
+
 == Addon készítése
 
 leírni hogy milyen fájlokat kellett hova tenni át, autoload, registration script, stb
 
 == Pull vagy Push modell
+<pull-vagy-push-fejezet>
 
 RenderedImage pull vs SplatMesh push
 
@@ -670,6 +649,8 @@ Ez azt is könnyűvé tette, hogy amennyiben a node láthatósága változik, ak
 ) <lathatosag_nemlathato>
 
 Hozzá kell tenni, hogy ez a megoldás még nem volt a legcélravezetőbb: minden láthatóságváltoztatáskor a teljes éppen aktuálisan látható splatos adatot feltöltöttük a GPU-ra. Ez a @igazi_dinamikus_lathatosag. fejezetben került javításra.
+
+megemlíteni hogy egy bazinagy lagspike ellenében így már dinamikusan is hozzá lehet adni dolgokat, meg kitörölni, ami az editor-beli használaton sokat lendített, nem kell az egész jelenetet bezárni meg újra megnyitni egy változatatásért
 
 === Dinamikus láthatóság
 
@@ -768,6 +749,8 @@ A @relightolhato_sajatshaded. ábrán is látható, hogy a megvilágítás műk�
 
 === A Godot fényszámításával
 
+elővétel: ki kellett javítani a spamelős bugot
+
 A Godot fényszámításának használatakor viszont elő kellett venni az eredeti, Fullscreen quad-os megoldást, mivel a Godot-nak ezen kereszül tudom átadni a PBR értékeket (egy textúrában), ami alapján ő fogja elvégezni a relightolást, a belül tárolt, gyorsítótárazott, stb. fények alapján. Így ez automatikusan tudna működni pontfényforrásokra és spotlightokra is (csak még egy bug miatt nem tud, lásd @tovabbiteendok-dipterv2), amint azt a @relightolhato_spotlight. ábra is mutatja.
 
 Még egy nagyon komoly hátránya ennek a megoldásnak, hogy ez leginkább egyáltalán nem tud félig átlátszó splat-okat kezelni (ami a gaussian splattingnél egy nagyon fontos tulajdonság), mivel a Godot-nak pixelenként csak egy színt, és PBR material tulajdonságokat lehet átadni. Az pedig nem túlzottan megoldható, hogy több félig átlátszó splat anyagtulajdonságait átlagoljuk, ezt adjuk át a Godot-nak, és továbbra is realisztikus / használható eredményt kapjunk ebből.
@@ -797,6 +780,7 @@ meg screenshotot csinálni hozzá, magyarázatot, esetleg megemlíteni a limitá
 
 === SPLAT adatfájl adatainak beolvasása
 
+Robusztusabbá tenni a `.ply` fájl-beolvasást, hogy a `.splat`-ból [SuperSplat](https://superspl.at/editor)-tal konvertált `.ply` fájlokat is képes legyen beolvasni
 
 #figure(
   image("pictures/splat_format_buggy.png")
@@ -851,12 +835,15 @@ func parse(path : String) -> void:
 ) <parsefuggveny>
 
 === GLTF adatfájl adatainak beolvasása
+<gltf-beolvasas-fejezet>
 
 sh fix a beolvasásnál, PR a kínai csávónak (link a lentebbi fejezetre)
 
 linkelni a fájlformátumra ami fentebb van bemutatva, illetve leírni/megindokolni? hogy nem a tömörített, hanem a sima változat parszolását oldottam meg
 
 == Kollaboráció a másik implementációval
+<kollab-onallomunka-fejezet>
+
 
 leírni a kezdeti kollab issue-t @kollaboracio-kezdemenyezese
 leírni hogy mit hol implementáltam, fejezetszámmal hivatkozva rá vissza
@@ -870,11 +857,15 @@ Ezek miatt felkerült a teendők listájára a CompositorEffect-es megoldásnak 
 
 Én pedig az ő implementációja alapján kipróbáltam a CompositorEffect-es megoldást, és tényleg sok problémát egyből megoldott. Így az uniózott projekt már azt használja a továbbiakban.
 
+kovarianciás fix visszareferálása, esetleg egy link a kommithoz
+
 === Ikonok, dinamikus láthatóság és instancing Pull Request
 
 === GLTF import Pull Request
 
 === Issue a gömbi harmonikusok helyes transzformációjáról
+
+meg fix, megreferálni a fentebbi fejezetet
 
 == Kitérő: Typst
 
@@ -904,6 +895,7 @@ LaTeX:
 Hogyan lehet betenni egy már meglevő projektbe, mi az h godot addon, stb stb
 
 == Autó szimulátor, mint példafelhasználás
+<vitavehicle-peldafelhasznalas-fejezet>
 
 leírni hogy mi ez a projekt, esetleg külön alfejezetben bemutatni @vitavehicle-gh
 
@@ -951,6 +943,8 @@ játék bemutatása, integrációja a pluginnal, mint példa felhasználás
 erről részletesen beszélni (pl object pooling, animáció alkalmazása, ilyenek)
 
 képek teamsről pl? vagy új screenshotok csinálása? (vszeg ennek a gépnek a screenshots mappájában is megvan)
+
+megemlíteni a licenszt, hogy az eredeti projekt miatt gpl lett (és ténylegesen átírni a repo-ban a licenszt!)
 
 == Asset library plugin
 
@@ -1008,11 +1002,17 @@ TODO jól elkülöníthető amit ténylegesen én csináltam, meg amit átvettem
  
 TODO minden bibliography item fel lett használva valahol? footnote vs bibliography jól van kb elválasztva? (nincs többször ugyanaz a footnote, de a bibliography-k tényleg fontos h bibliography-k legyenek?)
 
-TODO GH readme-be, illetve doksiba is (?) beírni, hogy melyik branch-en mi van. cleanup a githubon is, hogy értelmesen, jól nézzen ki.
+TODO GH readme-be, illetve doksiba is (?) beírni, hogy melyik branch-en mi van. cleanup a githubon is, hogy értelmesen, jól nézzen ki. Fontos, leírtam h a readmeben olvasható h melyik branchen mi van! Plusz prezentációt is feltölteni majd!!!
+
+whenhamstersattacktd gpl vs mit??? valahogy feloldani a readmevel, vszeg gpl-é tenni a portot
 
 Az egészet beadni AI-nak pl nyelvtani javításra (egy random helyen eglépelni, hogy észreveszi-e!!!)
 
+kódrészletek ne legyenek nagyon durván félbevágva (főleg a kis kódrészletek), meg képek miatt ne legyenek óriási szóközök. Ezt miután már nem lesz tartalmi változás
+
 időben elküldeni az egészet reviewra (pl november eleje-közepe)
+
+megkérdezni Mártont h jó-e 2 oldalasra, ha mindenképp úgy szeretném
 
 tervezett ütemterv:
 - végigmenni az egész szövegen ami van, megfelelő sorrendbe tenni a dolgokat, kb legyen meg a szöveg, struktúra
