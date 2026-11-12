@@ -517,6 +517,7 @@ Ennek a problémának a felfedezését több tényező is hátráltatja: egyrés
 A @gltf-beolvasas-fejezet. fejezetben leírt GLTF beolvasásnál, amikor a gömbi harmonikusokat is mindenképpen ellenőrizni szerettem volna, jöttem rá, hogy tulajdonképpen ez nem működik normálisan, sőt, a példamodellemnek egyáltalán nincsenek is gömbi harmonikusai. Így újra beszereztem a modellt, ráfókuszáltam a @sh_transformation_difference. ábrán látható fatörzs megcsillanására, amit a @supersplat-fejezet. fejezetben leírt SuperSplat által adott képpel is összehasonlítottam. Ez alapján már helyesen tudtam a problémákat diagnosztizálni, és validálni a működést.
 
 == Automata objektum-megtalálás
+<automata-objektum-megtalalas-fejezet>
 
 A helyes transzformáció alkalmazása után a következő feladat a Godot Scene Tree-jébe (jelenetfa) történő integráció. A Godot-ban alapból az egész jelenetet egy hierarchikus elrendezéssel lehet létrehozni, hasonlóan a Unity-hoz és az Unreal Engine-hez, csak flexibilisebben. Bármely node-nak lehet gyereke bármely node, és például egy `MeshInstance3D` képes a betöltött háromszöghálós modellt a saját transzformjával (pozíció, elforgatás, skála #footnote[https://docs.godotengine.org/en/stable/classes/class_node3d.html#class-node3d-property-transform]) megjeleníteni, ami természetesen magába foglalja a jelenetfában fölötte levő node-ok transzformációját is.
 
@@ -570,28 +571,30 @@ Meg szükséges említeni még a szálakat, ugyanis a rasterizer függvényeit a
 
 == Mélységhelyes összekombinálás
 
+A motor által generált és megjelenített háromszöghálós modellek, például a @depth_combination. ábrán látható két darab kapszula, és az általunk menedzselt kóddal megjelenített Gauss-i modellek, például a @depth_combination. ábrán látható vonat, sínek, autó és fák teljesen külön csővezeték által vannak generálva. Ez két teljes kép a képernyőre, egyik a háromszöghálós modelleket tartalmazza, a másik a Gauss-i modelleket.
+
+Ahhoz, hogy ezt az elvárt módon meg tudjuk jeleníteni, össze kell a két képet kombinálni, a mélység alapján. A Godot a saját maga által számított háromszöghálós modelleket tartalmazó kép mélységértékeit tudja, nekünk a saját kódban számolt kép mélységértékeit kell előállítanunk. Első körben, hogyha az átlátszóságot nem vesszük figyelembe, mindkét kép minden pixeléhez eltárolunk egy mélységértéket, és azt a színt jelenítjük meg, amelyik kép azon a pixelen a kamerához közelebb van.
+
 #figure(
   image("pictures/depth_combination.png")
-  , caption: [A mélység összekombinálásának tesztelése a vonatos jelenettel és beépített kapszulákkal]
+  , caption: [A mélység kombinálásának tesztelése a vonatos jelenettel és kapszulákkal]
 ) <depth_combination>
 
-a @depth_combination. ábrán látható ...
+A @depth_combination. ábrán láthatóak a korábbról ismert repülő alakú kapszulák. Ezek az útvonalat követve mozogtak is, így lehetővé téve különböző mélységértékek tesztelését. A képernyőkép készítésekor még hiányzott egy transzformációs lépés ( `0..1` és `-1..1` range között), így a határ, ahol a két kép kombinálásának határa van, eltolódott, és a kapszulák irreálisan nagynak tűnnek. Ez később javítva lett.
 
-Ahhoz, hogy a képen össze lehessen fésülni a pontfelhős, és a sima megjelenítést, amelyek teljesen külön pipeline-on futnak, szükséges a pontfelhős megjelenítésnél is, a végső renderelt képen egy pixelenkénti mélységérték szerzése. Ennek segítségével legalább pixelenként el lehet dönteni, hogy a két renderelt kép közül melyik nyerjen. A sima pipeline-nál már eléri a játékmotor a mélységet, nekünk a splat-os megjelenítésnél kell ezt elérhetővé tennünk:
-
-Projection:
+Ennek a feladatnak a programkódban történő megvalósítása már komplexebb volt. Először is a projekciót végző shader kódból továbbítani kellett a kamerától vett távolságot, ehhez a következő lett a helyes kód:
 
 ```glsl
-	data.pos_z = (ndc_pos.z + 1.0)*0.5;
+	data.pos_z = (ndc_pos.z + 1.0) * 0.5;
 ```
 
-Render:
+Ezután a renderelést végző shader kódon kellett átvezetni az értéket, miközben azt is meghatározzuk, hogy milyen módon legyen több paca mélységértéke összekombinálva. Első ösztönre a kamerához legközelebbi megtartása jutna az ember eszébe, de ez GS modellek esetén nem fog jó eredményre vezetni, mivel sokszor tartalmaznak nagyon nagy, nagyon átlátszó pacákat, amik potenciálisan sokkal közelebb vannak a kamerához, mint a ténylegesen fontos, látható splat-ok. Emiatt egy olyan számításra esett a választásom, ami a már meglevő színszámításhoz hasonlóan egy az átlátszósággal súlyozott átlagát számítja ki az adott pixelen látható splat-ok mélységértékeinek. Ehhez két változót akkumulálunk: a súlyozott átlagot, illetve a súlyok összegét. Ez azért szükséges, hogy a végeredményként a kettő hányadosa normalizálja a mélység értékét a megfelelő range-be.
 
-```glsl
+A renderer shaderkód több revízión átment, de logikailag végig a @depthblending_glslkod. kódrészleten látható megoldás maradt a mélység kinyerésének mószere. Később az átlátszóság megjavításával más-más értékekhez lett a mélység hozzácsatolva: a @depthblending_glslkod. kódrészleten a színhez, 4. koordinátaként csatolás látható (az alpha helyett), de más verziókban volt paddelve, vagy az újravilágítást is támogató kódbázisokban a normál értékhez csatolva.
+
+#figure(```glsl
 shared float[WORKGROUP_SIZE] pos_z_tile;
-
 ...
-
     for (uint i = 0; i < num_iterations && shared_t > MIN_FACTOR; ++i) {
     ...
         for (uint j = 0; j < chunk_size && t > MIN_ALPHA; ++j) {
@@ -607,35 +610,61 @@ shared float[WORKGROUP_SIZE] pos_z_tile;
         }
         ...
     }
-    vec3 heatmap_color = mix(vec3(0,0,1), vec3(1,0.2,0.2), num_splats*5e-4) * (1.0 - t) * heatmap_factor;
-    float final_depth = total_weight > 0.0 ? (weighted_depth / total_weight) : 0.0;
-	imageStore(rasterized_image, ivec2(image_pos), vec4(blended_color + heatmap_color, final_depth));
+    float final_depth = total_weight > 0.0 ? 
+                        (weighted_depth / total_weight) : 0.0;
+    imageStore(rasterized_image, ivec2(image_pos), 
+               vec4(blended_color + heatmap_color, final_depth));
 	...
-```
+```, caption: [A render GLSL script továbbítja a mélységértéket]
+) <depthblending_glslkod>
 
-Main spatial shader:
+Ennek a kódnak a megértése során eleinte problémákba ütköztem, mivel a kód workgrouponként párhuzamosan tölti be az adatokat, majd párhuzamosan dolgozza őket fel, viszont az adott szál által betöltött adat nem feltétlenül egyezik meg a később általa feldolgozott adatokkal. Így eleinte változatos, nehezen értelmezhető workgroup-határok mentén éles vonalakkal rendelkező grafikai glitch-eim voltak, mielőtt a logikát és a problémát megértettem. Emiatt van szükség a @depthblending_glslkod. kódrészleten a shared bufferre.
 
-```glsl
+Miután a mélységérték eljut a generált képbe, azt könnyen át tudjuk adni a Godot-nak, például a teljes képernyős quad-on található spatial shader-ben, a @depthforwarding_fragmentgds. kódrészleten látható módon.
+
+#figure(```glsl
 void fragment() {
 	ALBEDO = srgb_to_linear(texture(render_texture, SCREEN_UV).rgb);
 	DEPTH = texture(render_texture, SCREEN_UV).a;
 }
-```
+```, caption: [A spatial shader fragment része továbbítja a mélységértéket]
+) <depthforwarding_fragmentgds>
 
-Jobban tárgyalni ezt a problémát: Artifactos mélység: a shader kód párhuzamosan tölt be adatokat, és dolgozza fel őket, ehhez viszont szükséges shared bufferek használata
+=== Szín normalizálása
 
-== Addon készítése
+Itt említeném meg, hogy a fentebb használt normalizáció a színnél is szükséges matematikailag. Az eredeti, @OriginalGGSVFejezet. fejezetbeli kódbázis sohasem dolgozott a teljes generált képet érintő átlátszósággal, így helyes volt az, hogy a fekete háttérhez akkumulálja a színeket, majd azt jeleníti meg. Mi viszont nem tudjuk, hogy milyen szín van a félig átlátszó modell szélei mögött, így amennyiben nem normalizáljuk a színt, a nagyon átlátszó helyek inkorrektül sötétek lesznek. Az átlátszóság alkalmazásával már bele van számolva az, ami az eredeti megjelenítőben a normalizáció nemalkalmazásával, azaz feketével blendeléssel került megoldásra.
 
-leírni hogy milyen fájlokat kellett hova tenni át, autoload, registration script, stb
+#figure(
+  image("pictures/color_normalization_difference.png")
+  , caption: [A szín is normalizálásra szorulna, de a különbség nem nagy]
+) <color_normalization_difference>
+
+A @color_normalization_difference. ábrán látható az ez által okozott különbség: a bal oldali ábra a normalizálás nélküli, míg a jobb oldali ábra a normalizációt tartalmazó shaderkód eredménye. Sajnos a PDF, illetve a papír formátum sem támogatja a GIF vagy a videó formátumokat széleskörűen, így be kell érnünk a két kép egymás mellett való elhelyezésével. Én a képek között váltogatva egyértelműen látom a különbséget: apró, de észrevehető. A bonsai modell leveleinek legszélét érdemes tüzetesen megvizsgálni: a horizont felett csökkent, világosodott a sötét körvonal az építőelemek széleinél, míg a horizont alatt is, hasonlóan, picit nőtt a világos rész terjedelme. Mindenesetre a különbség a legtöbb modellnél nagyon nehezen észrevehető.
+
+== Plugin készítése
+
+Az eddigi, kiindulási projekt egy sima Godot projekt volt, egy fő jelenettel, ami tartalmazta többek között a megjelenítéshez szükséges node-okat. Ezt a projektet, és ezt a jelenetet kellett megnyitni a GS modellek megjelenítéséhez. Mi viszont egy általánosan használható, könnyen integrálható megoldást szeretnénk csinálni.
+
+A Godot lehetőséget biztosít pluginok készítésére, amiket könnyen, az `addons` mappába helyezéssel be lehet illeszteni bármilyen projektbe, majd az editorban pár kattintással aktiválni-deaktiválni lehet. Ezt nem túl nehéz létrehozni, egy config fájl, meg egy `EditorPlugin` leszármazott script szükséges hozzá #footnote[https://docs.godotengine.org/en/stable/tutorials/plugins/editor/making_plugins.html].
+
+A mi célunkhoz továbbá át kell másolni a szükséges fájlokat az addon mappájába, a nem szükségeseket pedig kiszűrni. Külön meg kell említeni a fő jelenetet, mivel azt nem lehet 1:1-ben betenni úgy, hogy minden egyéb jelenet esetén megjelenjen. A @automatic_node_discovery. ábrán látható a jelenet egy verziója. Itt található például a `RenderedImage` nevű node, ami egy `QuadMesh`-t tartalmazó és megjelenítő `MeshInstance3D` . Ez a node lényegében az egyetlen fontos a megjelenítéshez a jelenetből, minden más létrehozását a plugin felhasználójára, és a tényleges aktuális jelenetre bízhatunk.
+
+A Godot támogat egy autoload nevű funkciót #footnote[https://docs.godotengine.org/en/stable/tutorials/scripting/singletons_autoload.html], ami pont ilyen esetekre jó. A projektbeállításokban (vagy akár a plugin inicializáló scriptjében) be lehet állítani egy vagy több scriptet, vagy akár teljes jelenetet, ami az éppen aktuális jelenet gyökér node-jának testvéreként, a `root` nevű, `Window` típusú igazi gyökér gyerekeként példányosodik. Ez egyébként megmarad jelenetváltások között is. Az így kialakuló hierarchia látható például a @lathatosag_lathato\-@lathatosag_nemlathato. ábrákon. Az editorban látható Remote illetve Local kapcsolóval lehetséges váltani a futó alkalmazás jelentfája, és az editorban levő, mentett jelenetfa között.
+
+Ez a singletonos architektúra alapvetően nem garantál két hasznos dolgot, ami a korábbi, közvetlen jelenetben szereplő `RenderedImage` esetén nem volt kérdés: egyrészt azt, hogy a teljes képernyős quad ( `QuadMesh` ) ténylegesen meg is fog-e jelenni, és helyesen lesz-e a mélység összekombinálva, másrészt pedig azt, hogy az editorban is megjelenjen, hogy a modelleket futtatás nélkül, szerkesztés közben lehessen módosítani. Szerencsére mindkét kétes feature probléma nélkül működött, miután átminősítettem a node-ot autoload singletonná.
+
+Az utóbbi azért lehetséges, mert a Godot saját magát használja megjelenítésre, illetve a `@tool` annotációval ellátott scriptek könnyen képesek futni az editorban. Vélhetően a motor jól átgondolt architektúrájának köszönhetően így még az autoload tool is képes futni az editorban, sőt, még az autoload scripttel ellátott `MeshInstance3D` is látható, az editorban is.
 
 == Pull vagy Push modell
 <pull-vagy-push-fejezet>
 
-RenderedImage pull vs SplatMesh push
+Az @automata-objektum-megtalalas-fejezet. fejezetben bemutatott objektumösszegyűjtés egy jó kiindulópont volt, de több szempontból nem optimális. Egyrészt csúnya a kód, ami összegyűjti a függvénynév alapján a node-okat, másrészt felelősség szerint nem a legjobb konstrukció, ha mindent a gyökér node végez, harmadrészt nehéz a dinamikus láthatóságot implementálni.
 
-Az eredeti megoldás szerint a RenderedImage válogatta össze a jelenetből a kirajzolandó pontfelhő node-okat, és a transzformjaikat. Ezzel az új megoldással a pontfelhő node-ok maguk regisztrálhatnak, és jelentkezhetnek le a kirajzolásról.
+Ezek az indokok miatt a `RenderedImage` által végzett pull helyett áttértem a GS pozíciójáért felelős node push megoldására. Ezzel a módszerrel a `SplatMesh` (később `SplatCloud3D`) maga regisztrálhat a kirajzolásra, és jelentkezhet le róla.
 
-Ez azt is könnyűvé tette, hogy amennyiben a node láthatósága változik, akkor leregisztráljon, és ezzel eltűnjön ténylegesen a jelenetből. Ez része annak a törekvésnek, hogy a pontfelhők az editorba, illetve a játékba is jobban legyenek integrálva, azaz az editorba épített feature-ök (mint pl. a láthatóság) úgy működjenek rajtuk, mint ahogy a felhasználók várják. A nem látható pontfelhő az @lathatosag_lathato. ábrához képest a @lathatosag_nemlathato. ábrán láthatóan nem látható.
+=== Dinamikus láthatóság
+
+Ez a változatás azt is könnyűvé tette, hogy amennyiben a node láthatósága változik, akkor leregisztráljon a megjelenésről, vagy visszaregisztráljon rá, és ezzel eltűnjön ténylegesen a jelenetből, vagy megjelenjen benne. Ez része annak a törekvésnek, hogy a pontfelhős modellek az editorba, illetve a játékba is jobban legyenek integrálva, azaz az editorba épített feature-ök (mint például a láthatóság) úgy működjenek rajtuk, mint ahogy a felhasználók várják, és az a motor többi részétől megszokott. A plüssmaci a @lathatosag_lathato. ábrához képest a @lathatosag_nemlathato. ábrán láthatóan nem látható.
 
 #figure(
   image("pictures/lathatosag_lathato.png")
@@ -648,45 +677,65 @@ Ez azt is könnyűvé tette, hogy amennyiben a node láthatósága változik, ak
   , caption: [Nem látható a plüssmaci]
 ) <lathatosag_nemlathato>
 
-Hozzá kell tenni, hogy ez a megoldás még nem volt a legcélravezetőbb: minden láthatóságváltoztatáskor a teljes éppen aktuálisan látható splatos adatot feltöltöttük a GPU-ra. Ez a @igazi_dinamikus_lathatosag. fejezetben került javításra.
+Ennek a módosításnak a segítségével már nem szükséges minden modellcserénél, vagy új modell hozzáadásakor lefuttatni a pull scriptet, ami a gyakorlatban azt jelenti, hogy nem kell bezárni, és újranyitni az egész jelenetet, hanem az editorban is egy modellcserénél, node törlésnél, vagy hozzáadásnál automatán elvégzi a rendszer a frissítést. Ez nagyon sokat lendített az editor használhatóságán.
 
-megemlíteni hogy egy bazinagy lagspike ellenében így már dinamikusan is hozzá lehet adni dolgokat, meg kitörölni, ami az editor-beli használaton sokat lendített, nem kell az egész jelenetet bezárni meg újra megnyitni egy változatatásért
-
-=== Dinamikus láthatóság
-
-a fentebbi fejezetből kiszedni az ide tartozó részt
+Hozzá kell azért tenni, hogy ez a megoldás még nem volt a legcélravezetőbb: minden láthatóságváltoztatáskor, illetve modell hozzáadáskor, cserekor és törléskor a teljes éppen aktuálisan látható splatos adatot feltöltöttük a GPU-ra. Ez azért volt, mert miután a `RenderedImage` singleton megkapta a változtatási kérelmet, nem tudott mást csinálni, minthogy egy teljesen új rasterizer példányt hoz létre, a megfelelő modellekkel. Ehhez képest egy másik, precízebb módszer a @igazi_dinamikus_lathatosag-fejezet. fejezetben kerül bemutatásra.
 
 === Kifinomultabb dinamikus láthatóság
+<igazi_dinamikus_lathatosag-fejezet>
 
-<igazi_dinamikus_lathatosag>
+A dinamikus láthatóságváltoztatásra egy kifinomultabb megoldást ad például, ha a transzformációs mátrixhoz hasonlóan továbbítunk egy bool értéket a GPU-ra, és az határozza meg, hogy az adott modellhez tartozó pacák kirajzolásra kerülnek-e ténylegesen, vagy sem. Így az adat végig ott marad a GPU-n, akkor is, amikor a modell nem látható, de a kirajzolás korai fázisában explicit eldobja az adatot a grafikus processzor. Így egy potenciális láthatóvá tétel esetén a mozgatáshoz hasonlóan instant ki tudjuk rajzolni a modellt a megfelelő helyre, nincs szükség nagy adat mozgatására.
 
-A PR készítése közben a korábbi dinamikus láthatóság problémájából kiindulva biztosan úgy akartam újból megoldani a problémát, hogy láthatóság változtatásakor ne legyen szükség az összes splat adat újbóli feltöltésére. Ez elég könnyen meg is volt oldható úgy, hogy a transzformáció mellé (ami amúgy is minden mozdulatnál újra feltöltődik) pakoltam egy igaz-hamis értéket, ami alapján a shader el tudja dobni a hozzá tartozó splatokat, ezzel megvalósítva a nemláthatóságot.
+Ezt a módszert az @ikon-dinlat-instancing-pr-fejezet. fejezetben bemutatott pull request, illetve előtte az ott bemutatott másik kódbázis letesztelésének keretében implementáltam. A változtatás nem volt nehéz, de több fájlon át kellett propagálni a láthatóság értékét, ami végül a GPU-ra feltöltés során a transzformációs mátrix egyik nem használt értékének a helyére lett beszuszakolva. Ez alapján az érték alapján a shader el tudja dobni a splat-ot, ha szükséges, és akkor a modell nem fog látszani. Az ezt megvalósító GLSL kód a @realvisibility_glsl. blokkban látható.
+
+#figure(```glsl
+float is_visible = model_matrix[0][3];
+if (is_visible < 0.5) return;
+model_matrix[0][3] = 0.0;
+```, caption: [A projekciós shader eldobja a nem látható splat-okat]
+) <realvisibility_glsl>
 
 == Elsőosztályú polgárok
 
-További editorintegrációhoz egyéb apróságokat is elvégeztem, ilyen a @editor_ikonok. ábrán látható ikonok készítése a splat-os node-okhoz, illetve resource-okhoz, a betöltés és a tárolt adat szétcsatolása, és ezzel az editor automatikusan be is tudja tölteni az eddig számára ismeretlen file-t egy Godot resource-á. Ezzel például exportált buildekhez is automatikusan hozzá tudja tenni ezt a fájlt, és ott már nem kell a betöltést lefuttatnia.
-
-Az @tablazat_teszt. táblázatnál láthatóak a node-hoz, illetve a resource-hoz társított ikonok szöveges leírásai is. Ezzel tudom tesztelni a Typst táblázat captionjeit, illetve referenciáit.
-
-#figure(
-  image("pictures/editor_ikonok.png")
-  , caption: [A Node és a Resource saját ikonokat kaptak]
-) <editor_ikonok>
-
-#figure(
-  table(  columns:2,
-  [GaussianSplatNode], [GaussianResource], 
-  [Piros, átfedő pöttyök], [Sárga, kisebb sugarú pöttyök]
-  )
-  , caption: [Táblázat teszt]
-) <tablazat_teszt>
+Az előbbiekben már javítottuk az editorintegrációt a láthatóság figyelembe vételével, ebben a fejezetben még pár a használatot javító, kellemesebbé tevő fejlesztést mutatok be.
 
 === Editor ikonok
 
-ide áthozni / kijjebb fejteni a fentebbi szöveg tartalmát
+Az editorban szinte minden node-leszármazottnak, illetve beépített erőforrásnak (resource) saját SVG ikonja van, így sokat javíthatunk a beépítettség érzésén, ha hozzáadunk a saját osztályainkhoz is ikonokat, amiket az editor használni tud. A `Node3D`-leszármazottak ikonjai mind `#fc7f7f` (halványpiros) színűek, míg a `Resource`-leszármazottakéi mind `#ffca5f` (citromsárga) színűek. Ez alapján a @tablazat_teszt. táblázatban megjelölt ikonokat párosítottam a saját osztályaimhoz, ami így végeredményként a @editor_ikonok. ábrán látható eredményt adja, ha kijelöljük az egyik `SplatCloud3D` node-ot, és beleteszünk egy `SplatCloudData` resource-t.
+
+#figure(table(columns:2,
+  [SplatCloud3D], [SplatCloudData], 
+  [Piros, átfedő pacák], [Sárga, kisebb sugarú pacák]
+), caption: [Saját osztályok ikonjai]
+) <tablazat_teszt>
+
+#figure(
+  image("pictures/editor_ikonok.png", width: 80%)
+  , caption: [Az új ikonok megjelennek az inspectorban]
+) <editor_ikonok>
+
+Viszont először hiába írtam be a pontos színkódot, arra lettem figyelmes, hogy egy árnyalattal mégis el vannak rontva az ikonjaim. Kis kutatás után találtam rá, hogy az ikon importálásánál van két flag, amit be kell kapcsolni, hogy a skálázás, és a témázás az elvárt módon működjön, és így a szín automatikusan felveszi az editor kinézetének megfelelő színt, pont, mint a többi beépített ikon #footnote[https://docs.godotengine.org/en/stable/engine_details/editor/creating_icons.html].
+
+Az ikonok alkalmazása a kód oldaláról triviális volt, a @splatcloud3d-icon-gds\-@splatclouddata-icon-gds. kódrészleten láthatóan.
+
+#figure(```py
+@tool
+@icon("res://addons/gsplat-nodes/icons/splat_cloud_3d.svg")
+class_name SplatCloud3D extends Node3D
+```, caption: [A `SplatCloud3D` osztály ikont kap]
+) <splatcloud3d-icon-gds>
+
+#figure(```py
+@icon("res://addons/gsplat-nodes/icons/splat_cloud_data.svg")
+class_name SplatCloudData extends Resource
+```, caption: [A `SplatCloudData` osztály is ikont kap]
+) <splatclouddata-icon-gds>
+
+Egy problémás helyet az ikonnak viszont szükséges megemlíteni: a FileSystem dock-ban a Godot verziótól függően nem mindig jelenik meg az ikon, néha a sima `Resource` osztály ikonja látszik. Ez annak köszönhető, hogy performance okokból, és finomítás céljából módosították az implementációt #footnote[https://github.com/godotengine/godot/pull/77932] többször #footnote[https://github.com/godotengine/godot/issues/93874], ami így most jelenleg az én beállításaimmal nem működik. Ennek lehet, hogy a nem beépített kiterjesztés (például `.ply`) az oka #footnote[https://github.com/godotengine/godot/issues/94964].
 
 === Betöltés, és tárolt adat szétcsatolása
 
+ illetve resource-okhoz, a betöltés és a tárolt adat szétcsatolása, és ezzel az editor automatikusan be is tudja tölteni az eddig számára ismeretlen file-t egy Godot resource-á. Ezzel például exportált buildekhez is automatikusan hozzá tudja tenni ezt a fájlt, és ott már nem kell a betöltést lefuttatnia.
 meg ide
 
 == AMD bug kijavítása
@@ -860,6 +909,8 @@ Ezek miatt felkerült a teendők listájára a CompositorEffect-es megoldásnak 
 kovarianciás fix visszareferálása, esetleg egy link a kommithoz
 
 === Ikonok, dinamikus láthatóság és instancing Pull Request
+<ikon-dinlat-instancing-pr-fejezet>
+
 
 === GLTF import Pull Request
 
@@ -1010,7 +1061,7 @@ Az egészet beadni AI-nak pl nyelvtani javításra (egy random helyen eglépelni
 
 kódrészletek ne legyenek nagyon durván félbevágva (főleg a kis kódrészletek), meg képek miatt ne legyenek óriási szóközök. Ezt miután már nem lesz tartalmi változás
 
-időben elküldeni az egészet reviewra (pl november eleje-közepe)
+időben elküldeni az egészet reviewra (pl november eleje-közepe) (tartalmilag minden benne van-e aminek kell, sorrend/struktúra értelmes-e, kilogrammra elég-e, bármi szakmai pontosítanivaló/kirívóan rossz megfogalmazás)
 
 megkérdezni Mártont h jó-e 2 oldalasra, ha mindenképp úgy szeretném
 
