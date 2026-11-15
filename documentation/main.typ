@@ -93,17 +93,17 @@ A továbbiakban bemutatom a témában megtalálható forrásokat, implementáci�
 
 A Gaussian Splatting (GS) technológiát az @kerbl-2023-3dgs cikk vezette be, ami ezután felkapott téma lett. A szerzők többek között különböző Neural radiance field (NeRF) #footnote[https://en.wikipedia.org/wiki/Neural_radiance_field] implementációkhoz hasonlították a saját implementációjukat, túlszárnyalva azokat pontosságban, és valósidejű megjelenítésben. Az általuk készített megoldás nem csak megjelenítést tartalmaz, hanem a képekből történő paraméteroptimalizációt is, ami a GS modelleket, pontfelhők paramétereit állítja elő.
 
-=== Relightolhatóság
+=== Újravilágíthatóság
 
 <relightolhatosag-bemutatas-fejezet>
 
-Az eredeti cikk nézetiránytól függő színeket lehetővé tett a kiterjedt pontoknak, viszont ezek beégetett színek, azaz egy adott modell egy adott irányból mindig ugyanúgy fog kinézni, fényektől függetlenül. Ez egy teljes 3D jelenet rekonstrukciójánál egy teljesen jó eredményt adó megoldás, viszont egy-egy különálló, dinamikus transzformációval rendelkező modell esetén nem mindig ad az elvártnak megfelelő eredményt. Ez különösen fontos lehet egy játékmotor esetén, ahol általában fények is vannak egy jelenetben, és a GS modell nem odaillőnek tűnhet, ha nem reagál a fényekre az elvárt módon.
+Az eredeti @kerbl-2023-3dgs cikk nézetiránytól függő színeket lehetővé tett a kiterjedt pontoknak, viszont ezek beégetett színek, azaz egy adott modell egy adott irányból mindig ugyanúgy fog kinézni, fényektől függetlenül. Ez egy teljes 3D jelenet rekonstrukciójánál egy teljesen jó eredményt adó megoldás, viszont egy-egy különálló, dinamikus transzformációval rendelkező modell esetén nem mindig ad az elvártnak megfelelő eredményt. Ez különösen fontos lehet egy játékmotor esetén, ahol általában fények is vannak egy jelenetben, és a GS modell nem odaillőnek tűnhet, ha nem reagál a fényekre az elvárt módon.
 
 Ennek megoldására többféle lehetőség van, más-más előnyökkel és hátrányokkal. A @scolari2025mesh2splat forrásban megjelölt program segít bizonyos fajta, újravilágítható pontfelhőket generálni háromszöghálós modellekből, ennek a fájlformátumnak a részletezése a @religtholhato-ply-format fejezetben található. Ezen kívül a @kinai-repo implementációban is található újravilágítás opció, ami jelentősen különbözik a fentebbi fájlformátum alkalmazásától.
 
 === Időbeliség
 
-Külön izgalmas feladat, ha időben is változik a felvett jelenet, ilyenkor a pontfelhő időbeli transzformációját is el lehet tárolni, és ugyanazt a mozgó jelenetet akár több szemszögből, vagy mozgó szemszögből visszajátszani. Különböző pontfelhők utólagos szerkesztésére is lehetőség van. Erről szól a @4dgs-wu-time cikk.
+Külön izgalmas feladat, ha időben is változik a felvett jelenet, ilyenkor a pontfelhő időbeli transzformációját is el lehet tárolni, és ugyanazt a mozgó jelenetet akár több szemszögből, vagy mozgó szemszögből visszajátszani. Különböző pontfelhők utólagos szerkesztésére is lehetőség van. Erről szól az @4dgs-wu-time cikk.
 
 === Szabványos GLTF formátum
 
@@ -148,13 +148,11 @@ Mivel a motor, és a Gaussian Splatting téma is népszerű, ezért több, hason
 Egy másik implementáció haztro-tól származik @MasikGodotGaussianSplattingViewer, amelyik viszont a projekt kezdetekor történő kipróbáláskor alulmaradt a @OriginalGGSVFejezet. fejezetben taglalt implementációtól. 2026-ban viszont további fejlesztéseket hajtottak rajta végre, ami a másik megjelenítőről nem mondható el.
 
 === godot-gaussian-splatting ReconWorldLab-tól
-
 <kinai-repo-fejezet>
 
 Ez az implementáció @kinai-repo már a diplomaterv írása közben bukkant fel. Ez már, az előzőekkel szemben, képes több modellt megjeleníteni, és transzformációt alkalmazni rájuk. Ez az plugin a @OriginalGGSVFejezet. fejezetben bemutatott implementáción alapul. Az idő előrehaladtával több, előrehaladott fejlesztést is elvégzett a készítő: többek között többféle renderer támogatása, újravilágítás, és collision generálás.
 
 === godotGS klausi3D-től
-
 <godotgs-fejezet>
 
 Ez @klausi-godotgs egy szintén újonnan, 2026-ban feltűnt implementáció. Az architektúra viszont más, mint a fentebbieknél: ez a megvalósítás a teljes játékmotort forkolta, és kifejezetten nagy mennyiségű munka látható a repository-ban: több 100-as nagyságrendű issue-k, commit-ok és deployment-ek. Mindez annak ellenére, hogy az egyetlen contributor látható, és egyetlen csillaggal rendelkezik a repository. A sok befektetett energia a használatkor is érződik, például az extenzív mennyiségű debug információn, illetve az elérhető opciók, változtatható paraméterek számán is.
@@ -166,7 +164,7 @@ Ez a projekt kívülről meglehetősen AI-first projektnek tűnik, és az egyetl
 
 Mivel a projekt kezdetekor a @kinai-repo-fejezet. és a @godotgs-fejezet. fejezetben leírt projektek még nem léteztek, ezért a választott módszer a @OriginalGGSVFejezet\-ben leírt projekt kibővítése úgy, hogy a feladatkiírásban szereplő integrációs problémák megoldásra kerüljenek.
 
-Eközben, amint felbukkant a @kinai-repo-fejezet. fejezetben leírt projekt, kollaborációt kezdeményeztem @kollaboracio-kezdemenyezese, amelyet a másik fél elfogadott. Ezt megkönnyítette, hogy mindketten a @OriginalGGSVFejezet\-beli kódbázisból indultunk ki, így sok része a kódnak megegyezett. Némely fejlesztéseket én végeztem el, némelyeket ő, melyeket többé-kevésbé átvettünk egymástól. Ezt könnyen lehetővé tette az, hogy mindhárom kódbázis MIT licensszel rendelkezik, így lényegében a licensz és a copyright bemásolásával bármelyik kódot bárki felhasználhatja, még akár zárt forráskódú projektben is #footnote[https://en.wikipedia.org/wiki/MIT_License]. Így például a feladatkiírásban szereplő feladatok megoldásával is, több Pull Request-et készítettem neki. Ezeket az elvégzett munkákat, és kollaborációkat az @onallo-munka-bemutatasa. nagyfejezetben részletezem.
+Eközben, amint felbukkant a @kinai-repo-fejezet. fejezetben leírt projekt, kollaborációt kezdeményeztem @kollaboracio-kezdemenyezese, amelyet a másik fél elfogadott. Ezt megkönnyítette, hogy mindketten a @OriginalGGSVFejezet\-beli kódbázisból indultunk ki, így sok része a kódnak megegyezett. Némely fejlesztéseket én végeztem el, némelyeket ő, melyeket többé-kevésbé átvettünk egymástól. Ezt könnyen lehetővé tette az, hogy mindhárom kódbázis MIT licensszel rendelkezik, így lényegében a licensz és a copyright bemásolásával bármelyik kódot bárki felhasználhatja, még akár zárt forráskódú projektben is #footnote[https://en.wikipedia.org/wiki/MIT_License]. Így például a feladatkiírásban szereplő feladatok megoldásával is, több Pull Request-et készítettem neki. A kollaborációt a @kollab-onallomunka-fejezet. fejezetben részletezem.
 
 = Technológiák bemutatása
 
@@ -221,16 +219,18 @@ Tehát a fő különbség a @nezetiranyfuggo-ply-fejezet. fejezetben taglalt for
 Itt fontos megemlíteni, hogy a @mesh2splat-program-fejezet\-beli program könnyen előállítja a PBR értékeket a bemeneti mesh-ből, ezeknek az értékeknek a visszakövetkeztetése valós, inverz módszerrel felvett adathalmaz esetén viszont elképzelhetően sokkal körülményesebb, és pontatlanabb eredményt ad. Tudomásom szerint erre a problémára nincsen univerzális, könnyen használható, és széles körben pontos eredményt adó módszer. Ez nem a konkrét formátum negatívuma, hanem a teljes, @relightolhatosag-bemutatas-fejezet. fejezetben taglalt újravilágításnak a megoldandó problémája.
 
 === SPLAT
+<splat-formatum-fejezet>
 
 A tesztelések során bizonyos példamodellek a `.splat` formátumban voltak elérhetőek. Nincs formális specifikációja #footnote[https://www.polyvia3d.com/formats/splat], egy egyszerű formátum, ami által eltárolt adatok lényegileg a @nezetiranyfuggo-ply-fejezet\-beli `.ply` formátum adatainak felel meg, a SH értékeket elhagyva. A @supersplat-fejezet. fejezetben bemutatott szerkesztőprogram támogatja a formátum beolvasását, és `.ply` exportálást, az így kapott `.ply` fájl viszont némiképp eltér bizonyos más fájloktól, mivel nem garantált a paraméterek változatlan sorrendje, illetve az SH értékek nincsenek jelen.
 
 === GLTF/GLB
+<gltf-bemutatas-fejezet>
 
 A glTF @gltf-spec egy 3D jelenetek és modellek tárolására és átvitelére használt formátum. A Khronos Group adta ki #footnote[https://en.wikipedia.org/wiki/GlTF], és az egyik legelterjedtebb nyílt formátum erre a célra. 2017-ben, a 2.0 változat megjelenésekor Juan Linietsky, a Godot Engine egyik eredeti fejlesztője a legjobb, és legígéretesebb formátumnak tartotta #footnote[https://godotengine.org/article/we-should-all-use-gltf-20-export-3d-assets-game-engines/]. 2026-ra a @gltf-szabvany forrás a legelterjedtebb 3D asset átviteli formátumnak titulálta.
 
 A `.gltf` kiterjesztés a szöveges változatot, míg a `.glb` a bináris változatot jelenti, de tartalmilag ugyanaz van bennük. Alapesetben a bináris változat sem tartalmaz masszív tömörítést.
 
-Habár eredetileg szintén nem GS modellekre lett a formátum kitalálva, kiterjesztésekkel viszont könnyen bővíthető: ezt használja ki a @gltf-szabvany\-ban bemutatott szabvány is, ami támogatást nyújt a glTF fájlokban történő GS modellek tárolására. Ezt a csúcspontokhoz adott extra adatok segítségével teszi meg, így az extension-t nem támogató megjelenítők is meg tudják jeleníteni a modellt, csak a pontoknak nem lesz kiterjedésük, és az egyéb, extra adatok vesznek el.
+Habár eredetileg szintén nem GS modellekre lett a formátum kitalálva, kiterjesztésekkel viszont könnyen bővíthető: ezt használja ki a @gltf-szabvany\-ban bemutatott szabvány is, ami támogatást nyújt a glTF fájlokban történő GS modellek tárolására. Ezt a csúcspontokhoz adott extra adatok segítségével teszi meg, így az extension-t nem támogató megjelenítők is meg tudják jeleníteni a modellt, csak a pontoknak nem lesz kiterjedésük, és az egyéb, extra adatok vesznek el. A kiterjesztés részletes leírása a @GLTFExtSpec forrás alatt érhető el.
 
 Ez alapesetben szintén nagyon nagy fájlméreteket eredményez, mivel nem tömörített formátumról beszélünk. Ezt megoldandó, a @gltf-szabvany kiterjesztés bemutatásakor már folyamatban volt a formátum bővítése, hogy tömörítést is végre lehessen hajtani. Az egyik említett módszer a @spz-fejezet. fejezetben bemutatott SPZ formátum beágyazása, amelyhez tartozó Pull Request a diplomaterv írásakor is egyeztetés, fejlesztés alatt áll #footnote[https://github.com/KhronosGroup/glTF/pull/2531].
 
@@ -278,10 +278,11 @@ A programot cross-platform keretrendszerben írták meg, C++-t, OpenGL-t és ImG
 A problémáról nyitottam egy issue-t #footnote[https://github.com/electronicarts/mesh2splat/issues/2], majd a maintainer kérésére egy pull request-et is #footnote[https://github.com/electronicarts/mesh2splat/pull/7]. Sajnos a változtatás végül nem lett merge-elve, feltételezhetően idő- vagy motivációhiány miatt, habár több embertől érkezett rá pozitív visszajelzés. Később egy másik contributor szintén elvégezte #footnote[https://github.com/electronicarts/mesh2splat/pull/22] a Linux támogatáshoz szükséges változtatásokat, amik már némiképp mások voltak, mivel a kódbázis is változott, és ez szerencsére merge-elve lett, így a projekt jelenleg már támogatja a Linuxon történő fordítást és futtatást is.
 
 === SplatTransform
+<splattransform-fejezet>
 
 A @gltf-szabvany által írt glTF GS extension nagyon szépen specifikálva volt, a specifikáció mellett viszont sehogyan sem sikerült találnom példafájlokat, amivel az implementációt tesztelni tudtam volna. Sajnos a @supersplat-fejezet. fejezetben bemutatott SuperSplat weblap nem támogatja, legalábbis egyelőre, a glTF exportot, így szükségem volt egy másik konverziós programra, amivel elő tudtam állítani a szükséges tesztfájlokat.
 
-Így esett a választásom a @splattransform-gh -nél fellelhető `splat-transform` nevű parancssori programra, ami pont arra jó, hogy GS modelleket lehet vele parancssorból konvertálni.
+Így esett a választásom a @splattransform-gh -nél fellelhető `splat-transform` nevű parancssori programra, ami pont arra jó, hogy GS modelleket lehet vele parancssorból konvertálni. A dokumentációja alapján támogatja a glTF formátumot is @GLTFExtSuperSplatDoc.
 
 Az installálás `npm`-en keresztül tűnt a legegyszerűbbnek, a használat pedig szerencsére nem igényelt komplex szintaktikát:
 
@@ -323,6 +324,7 @@ Godot 4.3 előtt az volt a legkézenfekvőbb megoldás a problémára, hogy a te
 Ezt a megoldást implementálta a @OriginalGGSVFejezet. fejezetben bemutatott projekt, ami az én munkám kiindulópontját is adta.
 
 === Megjelenítés compositor effect-tel
+<compositoreffect-fejezet>
 
 Godot 4.3-ban megjelent egy módszer, amivel a kompozitort lehet bővíteni, CompositorEffect néven #footnote[https://docs.godotengine.org/en/stable/classes/class_compositoreffect.html]. Ezzel gyönyörűen félbe lehet szakítani a renderelés menetét, és beilleszteni a saját adatainkat a megjelenítéshez. Viszont ennek is vannak limitációi, például újravilágítás esetén nem lehet a Godot deferred shading-jét használni a splat-os modellekhez, így itt az árnyalásra más módszert szükséges alkalmazni. A @fsquad-fejezet. fejezetbeli megoldással lehetséges a Godot beépített deferred shading-jét használni.
 
@@ -478,6 +480,7 @@ mat3 curr_transform = mat3(transforms[int(splat.id + 0.5)]);
 Itt szintén definiálva van az érkező transzformációs mátrixok uniformja, a `Splat` struktúrában minden instance esetén megtalálható az ID, hogy hányadik számú transzformációs mátrixot kell rá alkalmazni (egyszerű egész ábrázolás híján `float`-ként átadva, majd kerekítve), és látható a uniform buffer megindexelése is, a megfelelő mátrix megtalálása és alkalmazása érdekében.
 
 === Kiterjedés irányainak transzformációja
+<kiterjedes-iranyai-trafo-fejezet>
 
 Külön meg kell említeni, hogy nem elegendő a fentebb bemutatott transzformációt elvégezni a gausszi eloszlású pacák pozíciójára, mivel a paca kiterjedése általában változik a tengelyek irányába, azaz a skálatényezők nem egyenlőek. Ehhez a (GPU-ra feltöltés előtt, a skálatényezőkből és az elforgatásból kiszámolt) kovariancia mátrixot, azaz a pacák kiterjedését és orientációját is transzformálni kell.
 
@@ -570,6 +573,7 @@ Fontos limitáció, hogy ezzel a megoldással nem támogatott új objektumok fut
 Meg szükséges említeni még a szálakat, ugyanis a rasterizer függvényeit alapvetően a render thread-en hívjuk, az objektum-transzformációk feltöltése viszont, a kameratranszformációk lekérdezéséhez hasonlóan a fő szálon történik.
 
 == Mélységhelyes összekombinálás
+<melyseghelyes-osszekombinalas-fejezet>
 
 A motor által generált és megjelenített háromszöghálós modellek, például a @depth_combination. ábrán látható két darab kapszula, és az általunk menedzselt kóddal megjelenített Gauss-i modellek, például a @depth_combination. ábrán látható vonat, sínek, autó és fák teljesen külön csővezeték által vannak generálva. Ez két teljes kép a képernyőre, egyik a háromszöghálós modelleket tartalmazza, a másik a Gauss-i modelleket.
 
@@ -595,26 +599,26 @@ A renderer shaderkód több revízión átment, de logikailag végig a @depthble
 #figure(```glsl
 shared float[WORKGROUP_SIZE] pos_z_tile;
 ...
-    for (uint i = 0; i < num_iterations && shared_t > MIN_FACTOR; ++i) {
-    ...
-        for (uint j = 0; j < chunk_size && t > MIN_ALPHA; ++j) {
-            ...
-            float pos_z = pos_z_tile[j];
-            ...
-            if (alpha > 0.2) {
-                weighted_depth += (1.0 - pos_z) * alpha * t;
-                total_weight += alpha * t;
-            }
-            ...
-            t *= (1.0 - alpha);
-        }
-        ...
+  for (uint i = 0; i < num_iterations && shared_t > MIN_FACTOR; ++i) {
+  ...
+    for (uint j = 0; j < chunk_size && t > MIN_ALPHA; ++j) {
+      ...
+      float pos_z = pos_z_tile[j];
+      ...
+      if (alpha > 0.2) {
+        weighted_depth += (1.0 - pos_z) * alpha * t;
+        total_weight += alpha * t;
+      }
+      ...
+      t *= (1.0 - alpha);
     }
-    float final_depth = total_weight > 0.0 ? 
-                        (weighted_depth / total_weight) : 0.0;
-    imageStore(rasterized_image, ivec2(image_pos), 
-               vec4(blended_color + heatmap_color, final_depth));
-	...
+    ...
+  }
+  float final_depth = total_weight > 0.0 ? 
+                      (weighted_depth / total_weight) : 0.0;
+  imageStore(rasterized_image, ivec2(image_pos), 
+             vec4(blended_color + heatmap_color, final_depth));
+  ...
 ```, caption: [A render GLSL script továbbítja a mélységértéket]
 ) <depthblending_glslkod>
 
@@ -642,6 +646,7 @@ Itt említeném meg, hogy a fentebb használt normalizáció a színnél is szü
 A @color_normalization_difference. ábrán látható az ez által okozott különbség: a bal oldali ábra a normalizálás nélküli, míg a jobb oldali ábra a normalizációt tartalmazó shaderkód eredménye. Sajnos a PDF, illetve a papír formátum sem támogatja a GIF vagy a videó formátumokat széleskörűen, így be kell érnünk a két kép egymás mellett való elhelyezésével. Én a képek között váltogatva egyértelműen látom a különbséget: apró, de észrevehető. A bonsai modell leveleinek legszélét érdemes tüzetesen megvizsgálni: a horizont felett csökkent, világosodott a sötét körvonal az építőelemek széleinél, míg a horizont alatt is, hasonlóan, picit nőtt a világos rész terjedelme. Mindenesetre a különbség a legtöbb modellnél nagyon nehezen észrevehető.
 
 == Plugin készítése
+<plugin-keszitese-fejezet>
 
 Az eddigi, kiindulási projekt egy sima Godot projekt volt, egy fő jelenettel, ami tartalmazta többek között a megjelenítéshez szükséges node-okat. Ezt a projektet, és ezt a jelenetet kellett megnyitni a GS modellek megjelenítéséhez. Mi viszont egy általánosan használható, könnyen integrálható megoldást szeretnénk csinálni.
 
@@ -700,6 +705,7 @@ model_matrix[0][3] = 0.0;
 Az előbbiekben már javítottuk az editorintegrációt a láthatóság figyelembe vételével, ebben a fejezetben még pár a használatot javító, kellemesebbé tevő fejlesztést mutatok be.
 
 === Editor ikonok
+<editor-ikonok-fejezet>
 
 Az editorban szinte minden node-leszármazottnak, illetve beépített erőforrásnak (resource) saját SVG ikonja van, így sokat javíthatunk a beépítettség érzésén, ha hozzáadunk a saját osztályainkhoz is ikonokat, amiket az editor használni tud. A `Node3D`-leszármazottak ikonjai mind `#fc7f7f` (halványpiros) színűek, míg a `Resource`-leszármazottakéi mind `#ffca5f` (citromsárga) színűek. Ez alapján a @tablazat_teszt. táblázatban megjelölt ikonokat párosítottam a saját osztályaimhoz, ami így végeredményként a @editor_ikonok. ábrán látható eredményt adja, ha kijelöljük az egyik `SplatCloud3D` node-ot, és beleteszünk egy `SplatCloudData` resource-t.
 
@@ -731,258 +737,333 @@ class_name SplatCloudData extends Resource
 ```, caption: [A `SplatCloudData` osztály is ikont kap]
 ) <splatclouddata-icon-gds>
 
-Egy problémás helyet az ikonnak viszont szükséges megemlíteni: a FileSystem dock-ban a Godot verziótól függően nem mindig jelenik meg az ikon, néha a sima `Resource` osztály ikonja látszik. Ez annak köszönhető, hogy performance okokból, és finomítás céljából módosították az implementációt #footnote[https://github.com/godotengine/godot/pull/77932] többször #footnote[https://github.com/godotengine/godot/issues/93874], ami így most jelenleg az én beállításaimmal nem működik. Ennek lehet, hogy a nem beépített kiterjesztés (például `.ply`) az oka #footnote[https://github.com/godotengine/godot/issues/94964].
+Egy problémás helyet az ikonnak viszont szükséges megemlíteni: a FileSystem dock-ban a Godot verziótól függően nem mindig jelenik meg az ikon, néha a sima `Resource` osztály ikonja látszik. Ez annak köszönhető, hogy performance okokból, és finomítás céljából módosították az implementációt #footnote[https://github.com/godotengine/godot/pull/77932] többször #footnote[https://github.com/godotengine/godot/issues/93874], ami így most jelenleg az én beállításaimmal nem működik. Ennek lehet, hogy a nem beépített kiterjesztés (például `.ply`) az oka #footnote[https://github.com/godotengine/godot/issues/94964]. Az ikon hiánya látható a @import_ply. ábrán is.
 
 === Betöltés, és tárolt adat szétcsatolása
 
- illetve resource-okhoz, a betöltés és a tárolt adat szétcsatolása, és ezzel az editor automatikusan be is tudja tölteni az eddig számára ismeretlen file-t egy Godot resource-á. Ezzel például exportált buildekhez is automatikusan hozzá tudja tenni ezt a fájlt, és ott már nem kell a betöltést lefuttatnia.
-meg ide
+Az eddigi kódban a `PlyFile` nevű osztály volt felelős mind a fájlformátum betöltéséért, mind a betöltött adat tárolásáért. Ezt több praktikus szempontból célszerű megváltoztatni.
+
+Egyrészt, hogyha később többféle fájlformátumot szeretnénk implementálni, akkor a formátumbetöltésre külön logika kell, viszont lehetőség szerint a tárolt adatot, belső reprezentációt már jó, ha ugyanaz az osztály kezeli minden formátum esetén. Ezt a Godot többi része is így kezeli, és a fájl importálás technikáját elérhetővé is teszi a felhasználók számára, így a pluginnal könnyen tudunk új importereket regisztrálni.
+
+Másrészt pedig, hogyha eddig exportált build-ben szerettünk volna pontfelhős modelleket megjeleníteni, akkor explicit minden projektben meg kellett volna mondani az editornak, hogy a `.ply` fájlokat tegye bele az exportált build-be, és így is minden alkalommal be kell parszolni a fájlt a megnyitáskor. Hogyha egy `Resource` leszármazottba az engine importálóját használva betöltjük a pontfelhős modellt még az editor használata közben, akkor a már betöltött formátum automatikusan mentésre kerül például exportáláskor. És egyéb, kényelmi feature-öket is lehetővé tesz, mint a beépített import fül használata, illetve drag-n-drop a fájlrendszer fülről az inspectorba.
+
+A felelőség szétszedése nem volt túl bonyolult, az explicit fájl parszolásért felelős rész átkerült az új PLY importerbe, míg a többi rész: az adattagok, a @egyszerre-tobb-pontfelho-fejezet. fejezetben említett merge-elés, illetve a GPU-kompatibilis reprezentáció készítése maradtak az eredeti fájlban, ami így az @tablazat_teszt. táblázatban is említett `SplatCloudData` névre lett átkeresztelve.
+
+A @import_ply. ábrán látható is az importer felülete, amihez az adatokat az importer script-ben getterek írásával lehet megadni, mint például amik a @importer_gettek_gds. kódblokkban láthatóak. Ezután a @import_ply. ábrán a FileSystem fülről a fájlnevet lehetséges drag-n-droppolni a @editor_ikonok. ábrán szereplő Splat Data attribútum értékéhez, így nagyban megkönnyítve a node és a resource közötti kapcsolat létrehozását.
+
+#figure(
+  image("pictures/import_ply.png", width: 50%)
+  , caption: [A `ply` fájl importálása a motor felületét használja]
+) <import_ply>
+
+
+#figure(```py
+func _get_importer_name() -> String:
+	return "gsplat.ply.importer"
+
+func _get_visible_name() -> String:
+	return "Gaussian Splat (.ply)"
+
+func _get_recognized_extensions() -> PackedStringArray:
+	return ["ply"]
+```, caption: [A `ply` importer gettereinek egy része]
+) <importer_gettek_gds>
+
+
 
 == AMD bug kijavítása
+<amd-bug-fejezet>
 
-A tesztelések során figyelmes lettem egy AMD hardveren történő bug-ra, ezt a VulkanRadixSort könyvtárra vezettem vissza, és az eltérő subgroup méret okozhatta. A hibát én is kijavítottam, és láttam azt is, hogy upstream is kijavították már, csak az általam használt eredeti megjelenítő nem frissítette a dependency-t. Ezt jeleztem az ő repositoryjukban is, a megfelelő fixet megjelölve @amd-bug-upsteam-issue. A linkelt issue-ban találhatóak a további linkek a kapcsolódó fixekre.
+A különböző számítógépeken való tesztelések során figyelmes lettem egy AMD hardveren történő hibára. Ezt az eredeti megjelenítő által használt VulkanRadixSort @vulkan-radix-sort-gh könyvtárra vezettem vissza, és az eltérő subgroup méret, illetve a kevésbé engedékeny szabványkövetés okozhatta. A hibát én is kijavítottam, és közben láttam azt is, hogy upstream a VulkanRadixSort-nál is kijavították már #footnote[https://github.com/jaesung-cs/vulkan_radix_sort/issues/7]. Viszont a @OriginalGGSVFejezet. fejezetben írt megjelenítőt, amelyikre a kódot alapoztam, már 2 éve nem frissítették egyáltalán, így ez a fix se került bele. Van viszont egy nyitott issue náluk is, ami pont ezt a problémát írja le AMD hardveren @amd-bug-upsteam-issue, így megjelöltem nekik a VulkanRadixSort javítást, illetve a sajátomat is, hogy annál az issue-nál is meg legyen jelölve, hogy mi okozza a problémát.
 
 == CompositorEffect-es megoldás vizsgálata
+<compositoreffect-onallomunka-fejezet>
 
-<compositoreffect> Biztos ez jó referencia? nem a fentebbi, bevezető fejezetet kéne?
+A @compositoreffect-fejezet. fejezetben bemutatott másik fajta módszer a végleges kép megjelenítésére szintén egy járható út, és a @kollab-onallomunka-fejezet. fejezetbeli kollaboráció során nekem is volt szerencsém ezzel a megoldással dolgozni. Az architektúra annyiban különbözik, hogy nincs szükség az autoload singleton-ra, hanem helyette a jelenetbe bele kell tenni egy `WorldEnvironment` node-ot, amiben létre kell hozni egy `Compositor`-t, és annak kell hozzáadni `CompositorEffect`-ként a saját scriptünket.
 
-Godot 4.4-től már lehetőség van a rendering pipeline-ba jobban belenyúlni, CompositorEffect-eket írva. Az eddigi, eredeti megjelenítő egy QuadMesh-t jelenített meg egy MeshInstance3D-vel, ami lényegében mindig az igazi kamera előtt lebegett, így tudta a pontfelhőket megjeleníteni. Én még önlab alatt megcsináltam azt hozzá, hogy az átlátszóság alapján összeollózza az eredeti, sima raszteres kamera által adott képpel, ez viszont több helyen látszott, hogy egy elég összetákolt megoldás volt. Manuálisan kellett meghívni a saját renderelésünket, de csak akkor hogyha tényleg szükségünk volt a képre, különben elkezdett szaggatni az editor. A használt textúrák felszabadításának működése nem világos, illetve ablak átméretezésekor is le kell kezeljünk speciális dolgokat, ami nem egyértelmű, hogy teljes körűen sikerül.
+Ez a plugin felhasználójának szemszögéből minimálisan több setup-ot igényel, cserébe viszont az architektúra jobb: nem GDScript-ből kell manuálisan hívni az újrarenderelést minden alkalommal, nem kell nekünk kezelnünk a textúrát, és esetleges ablakátméretezés esetén megoldani, hogy a megfelelő méretű legyen, illetve jóval natívabban tudjuk a képek összekombinálását is végezni.
 
 == Instancing
+<instancing-fejezet>
 
-Hogyha már itt voltam a feltöltésnél, úgy láttam, hogy a feladatkiírásban is szereplő instancinget is akkor a legmegfelelőbb implementálni. Ennél a splat-os modelleket kell különválasztani az objektumoktól.
+Az instancing fogalma azt jelenti, hogy ugyanazt a modellt többször rajzoljuk ki, ami így hatékonyabb, mintha egyesével, külön-külön rajzolnánk ki ugyanazt a modellt #footnote[https://en.wikipedia.org/wiki/Geometry_instancing]. A mi esetünkben ezt úgy lehet értelmezni, hogy ha több példánya van a jelenetben ugyanannak a modellnek, akkor nem szeretnénk a teljes modellt többször feltölteni a GPU-ra.
 
-Eddig minden splat egy extra ID-t kapott, és az ID-edik transzformációs mátrixszal lett eltranszformálva, így megoldva azt, hogy az egyes objektumok máshogyan mozogjanak. Az optimalizációs lehetőség ott jön be, hogyha 1 db kocsi helyett 10 db van a jelenetben, akkor a hozzá tartozó százezer-millió nagyságrendű splat adatait nem szükséges 10-szer tárolni a GPU-n, hiszen ezek ugyanazok.
+Ennek a feladatnak az implementációja a @igazi_dinamikus_lathatosag-fejezet. fejezetben bemutatott, dinamikus láthatóság mellett került implementálásra, a @kollab-onallomunka-fejezet. fejezetben bemutatott kódbázisban.
 
-A megoldás pedig nem nagyon nehéz: az ID buffer legyen kétszer akkora, és minden minden párban az egyik ID mondja meg a transzformációs mátrixot, a másik ID pedig a splatot. Így lehet egy modellnek több transzformációs mátrixa is, csak az ID bufferben kell kétszer benne lennie az összes splat ID-jének. Ez az `nvidia-smi` parancs használatával láthatóan jelentősen javította a memóriahasználatot: a @instancingelott. ábrán 1207MiB-t használt az instancing előtti állapot, míg az @instancingutan. ábrán 818MiB-t, a képeken látható 10-es nagyságrendű autómennyiséggel.
+Mind az a kódbázis, mind a korábbiakban bemutatott, úgy oldja meg eddig a kirajzolást, hogy minden egyes paca kap egy extra ID-t, ami azt mondja meg, hogy a pacát a transzformációs mátrixok tömbjében az ID-edik mátrixával kell eltranszformálni a modelltranszformációkor. Ez oldja meg azt, hogy a modellek képesek legyenek máshogy mozogni.
 
+#figure(
+  image("pictures/instancing_figure.pdf")
+  , caption: [Magyarázó ábra az instancingről]
+) <instancing_figure>
+
+Ehelyett, amint azt a @instancing_figure. ábra is szemlélteti, hogyha feltöltünk még egy tömböt, amiben pacák és transzformok sorszámait tároljuk, akkor sok helyet meg tudunk spórolni. Ugyanis eddig, ha egy modell többször szerepelt a jelenetben, akkor a teljes adatát duplikáltan kellett feltölteni a GPU-ra, mivel egy paca adatát csak egyszer tudtuk kirajzolni. Ezt az indirekciót beletéve viszont képesek vagyunk azt megoldani, hogy egy pacát több, különböző transzformmal is ki tudjunk rajzolni.
+
+A @instancing_figure. ábrán szereplő példán részletesebben bemutatva: van egy modellünk, ami 4 pacát tartalmaz. A valóságban természetesen százezres nagyságrendű is lehet ez a szám, így egy modell által foglalt hely gyakran eléri például az 50MB-ot is. Ezt szeretnénk kirajzolni kétszer, két objektumként. Ezeknek van két külön transzformja, ami a pozíciójukat, elforgatásukat és skálázásukat meghatározza. Instancing nélkül a teljes modell adatát (mind a 4 pacát) duplikálnunk kell, mert így tudunk csak egy-egy pacát többször kirajzolni. Instancing esetén viszont a köztes táblázatnak lesz csak 8 sora, ami sokkal kevesebb helyet foglal (2 int, 60 float helyett), és többször tudunk referálni a pacák tömbjének elemeire. Az instance-es táblázat jobb oldalától pedig a rendszer ugyanúgy viselkedik, mint az előző esetben, kikeresve a helyes transzformot.
+
+=== Instancing hatásának mérése
+
+A munka sikerességét leginkább a memóriahasználattal lehet ellenőrizni. Ennek végrehajtásához a tesztjelenethez hozzáadtam 10 db autót a @instancingelott\-@instancingutan. ábrán láthatóan, és megmértem a memóriahasználatot az instancing előtti verzióval, és az instancinget használó verzióval. A méréshez az `nvidia-smi` parancsot használtam, mivel a desktopomban NVIDIA grafikus kártya van.
+
+A mérés azt mutatta meg, hogy az instancing láthatóan jelentősen javította a memóriahasználatot: friss indítás után a @instancingelott. ábrán 1207MiB-t használt az instancing előtti állapot, míg a @instancingutan. ábrán 818MiB-t az instancinget használó állapot.
 
 #figure(
   image("pictures/instancing_elott.png")
-  , caption: [Instancing előtti memóriahasználat]
+  , caption: [Instancing nélküli memóriahasználat]
 ) <instancingelott>
-
 
 #figure(
   image("pictures/instancing_utan.png")
   , caption: [Instancing utáni memóriahasználat]
 ) <instancingutan>
 
-=== Instancing hatásának mérése
+Többszöri tesztelést végrehajtva ugyanezzel a példajelenettel, editor nélküli, illetve editorból történő indítással azt az eredményt kaptam, hogy a memóriahasználat ilyen kis méretű memóriánál nehezebben határozható meg pontosan: néha lényegében ugyanannyi volt mindkét implementációnak a memórialábnyoma. Ezt párosítva azzal, hogy az autó modell mindössze 8MB, így a 10 autó által nyerhető memória elméletileg is kevesebb, mint 72MB, illetve a memória-allokációról szóló előzetes tudásom alapján az a gyanúm van, hogy a memóriahasználat adagonként bővül, és ez okozza a mérés pontatlanságát. De a fentebbi eredmények editor nélküli indítás során mindenesetre konzisztensen reprodukálhatóak, így az implementáció működése, és a kisebb memóriahasználat igazolva van.
 
-instancing mérése felhasznált memóriával
+== Újravilágíthatóság implementálása
+<relightolas-sajatmunka-fejezet>
 
-ez az instancing mellé menjen
+A @relightolhatosag-bemutatas-fejezet. fejezetben bemutatott újravilágítás, újraszínezés technológiája egy komplex téma. Mi ennek a problémának azt a részhalmazát fogjuk megoldani, ami a @mesh2splat-program-fejezet. fejezetben bemutatott program kimenetét tudja jól megjeleníteni, újrafényezni. A bemeneti fájlformátum tehát a @religtholhato-ply-format. fejezetben tárgyalt PLY formátum lesz.
 
-=== Pull Request
+Az implementáció lehetőségeinek felmérésekor többféle megoldás is célravezetőnek tűnt, mindkettő a saját erősségeivel és gyengeségeivel. Végül arra jutottam, hogy mindkettőt megvalósítom, összehasonlítási céllal.
 
-== Újravilágíthatóság
-
-A relightolhatóság egy komplex téma, de egy játékmotor esetén nagyon fontos. Alapból a gaussian splates modellek gyakran rendelkeznek gömbi harmonikusokkal kódolt nézeti irány-függő színekkel, splatonként. Ezzel lehet egyszerű tükröződéseket, csillanásokat szimulálni, és a modell tud színt változtatni annak függvényében, hogy melyik irányból nézzük.
-
-Ezzel szemben egy relightolható / újraszínezhető modell nem nézeti irányfüggő színeket tárol magában splatonként, hanem valamilyen fajta anyagtulajdonságokat, például PBR (roughness, metallic, normal stb.) értékeket. Ennek segítségével nem csak a nézeti iránytól függhet a szín, hanem a teljes, komplex jelenettől, kiemelt hangsúlyt fektetve a fényforrás(ok)ra. Ez egy játékban kifejezetten fontos, például ha egy splat-es modell irányt változtat, akkor a nap másik oldalát süti. Ennek megfelelően a színei is teljesen megváltoznak, amit leginkább ilyen módszerekkel lehet megvalósítani.
-
-A lehetőségek felmérésekor többféle megoldás is célravezetőnek tűnt, mindkettő a saját erősségeivel és gyengeségeivel. Végül arra jutottam, hogy mindkettőt megvalósítom, összehasonlítási céllal.
+#figure(
+  image("pictures/relightolhato_mindketshaded.png")
+  , caption: [Suzanne, a Blender majom megvilágítva általunk, illetve Godot által]
+) <relightolhato_mindketshaded>
 
 === Saját fényszámítással
 
-Az első lehetőség az, hogy mi adjuk át manuálisan a beszámítandó fényforrásokat, és mi számoljuk a színeket a megadott paraméterekből. A prototípust úgy csináltam, hogy egy irányfényforrást tudunk átadni. Ennek a hátránya a manuális fényforrás-összegyűjtés, illetve a shading eltérő lehet a többi, engine által shadelt mesh-étől. Hatalmas előnye viszont, hogy működik a @compositoreffect. fejezetben tagalt CompositorEffect-es megoldással.
+Az első lehetőség az, hogy mi adjuk át manuálisan a beszámítandó fényforrásokat a shader-nek, és a mi shaderünk számolja a színeket a megadott PBR-, illetve fényparaméterekből. A prototípust úgy csináltam, hogy egy irányfényforrást tudunk átadni. Ennek a módszernek a hátránya a manuális fényforrás-összegyűjtés, illetve az árnyalás eltérő lehet a többi, motor által árnyalt modell árnyalásától. Előnye viszont, hogy működik a @compositoreffect-fejezet. fejezetben tagalt CompositorEffect-es megoldással, és az átlátszóság teljesen normálisan értelmezhető: mivel a pacák árnyalását mi számoljuk ki, ezért semmi nem akadályoz meg minket abban, hogy egy pixelen több paca végső színét is kiszámoljuk, majd az eddigi blendelést használva az árnyalás után kombináljuk össze őket. Ezt a módszert a kompozitoreffektes kódbázishoz implementáltam.
 
-A @relightolhato_sajatshaded. ábrán is látható, hogy a megvilágítás működik, de a @relightolhato_godotshaded. ábrához képest azért alulmarad a többi megvilágítással való egyezőségben. Ezen az ambient light állításával némiképp szerintem lehetne segíteni, de ugyanolyan jó sosem lesz.
-
-
-#figure(
-  image("pictures/relightolhato_sajatshaded.png")
-  , caption: [Suzanne, a Blender majom megvilágítva általunk]
-) <relightolhato_sajatshaded>
+A kép eredménye a @relightolhato_mindketshaded. ábrán a bal oldalon látható. Az irányfényforrás általi megvilágítás működik, viszont a jobb oldali ábrához képest azért láthatóan eltér egy picit a sötét részeken a sötétség mértéke a natív árnyalástól, ami a leginkább a henger sötét oldalán látszik. Ezen a saját árnyalás finomhangolásával lehetne segíteni, de végletként nem volna szerencsés a Godot teljes árnyalását újraimplementálni.
 
 === A Godot fényszámításával
+<godot-relighting-fejezet>
 
-elővétel: ki kellett javítani a spamelős bugot
+A másik megoldási lehetőség a Godot deferred shading-jének a használata, azaz átadni a Godot-nak a PBR tulajdonságokat textúrákban, hogy ő árnyalja a modellünket, pontosan úgy, ahogyan a jelenet többi részét árnyalná. Ehhez ő rendelkezik a jelenet pontos fényeivel, ami a motor belső reprezentációja, gyorsítótárazása miatt az előző módszer esetén számunkra nem volt elérhető a shader-ből.
 
-A Godot fényszámításának használatakor viszont elő kellett venni az eredeti, Fullscreen quad-os megoldást, mivel a Godot-nak ezen kereszül tudom átadni a PBR értékeket (egy textúrában), ami alapján ő fogja elvégezni a relightolást, a belül tárolt, gyorsítótárazott, stb. fények alapján. Így ez automatikusan tudna működni pontfényforrásokra és spotlightokra is (csak még egy bug miatt nem tud, lásd @tovabbiteendok-dipterv2), amint azt a @relightolhato_spotlight. ábra is mutatja.
+Ennek a módszernek viszont hátránya az, hogy pixelenként csak egyetlen árnyalást tudunk végrehajtani, ugyanis egy adag PBR tulajdonságot tudunk csak átadni a motornak. Emiatt egyáltalán nem is tudunk félig átlátszó pacákat kezelni, mivel akkor látszódna mögötte ugyanazon a pixelen egy másik paca, amit szintén árnyalni kéne. Ez elég fájó a Gaussian Splatting esetén, mivel a pacák átlátszósága az egyik fő attrakciója a módszernek. Az pedig nem igazán fog használható eredményt adni, ha az anyagtulajdonságokat blendeljük az átlátszóság szerint, majd azt adjuk át árnyalni.
 
-Még egy nagyon komoly hátránya ennek a megoldásnak, hogy ez leginkább egyáltalán nem tud félig átlátszó splat-okat kezelni (ami a gaussian splattingnél egy nagyon fontos tulajdonság), mivel a Godot-nak pixelenként csak egy színt, és PBR material tulajdonságokat lehet átadni. Az pedig nem túlzottan megoldható, hogy több félig átlátszó splat anyagtulajdonságait átlagoljuk, ezt adjuk át a Godot-nak, és továbbra is realisztikus / használható eredményt kapjunk ebből.
+Egy másik hátrány pedig, hogy a Godot-nak az árnyaláshoz csak a fullscreen quad-os megoldással lehet átadni az anyagtulajdonságokat (ORM: occlusion, roughness, metallic), és a normálvektorokat, így azt a kódbázist kell előszedni a módszer teszteléséhez, amelyik azt a megjelenítést használja.
 
-Megjegyzendő, hogy a Mesh2Splat-tal generált modelleknél viszont nem fontos az, hogy az átlátszóságot jól kezeljük, mivel ezek a modellek jellemzően nem sok átlátszóságot tartalmaznak, szimpla modelleknél legalábbis.
+A kódbázis elővétele után sürgősen szükséges volt kijavítani egy bugot, ami idő közben nagyon problémássá vált: mi hívjuk explicit a render thread-en a kirajzolást, és ez egyből megtörténik a `_process` callback hívása során, a @renderthread_rasterize_gds. kódrészleten látható módon. Ez viszont akkor is meghívódott, amikor az ablak nem volt fókuszban, vagy éppen egyébként a jelenet többi része nem rajzolódott újra, így "felgyűltek" a frissítések. Ez pedig azt okozta, hogy következő alkalommal, amikor újra mozgatni szerette volna a képet az ember, akkor egy nagy szaggatásnak lehetett a tanúja, mielőtt a rendszer életre kelt. Rosszabb esetekben az egész motort is magával vitte a program. A megoldás az lett, hogy a kódrészleten is láthatóan feltételhez kötöttük a raszterizáció hívását, és csak akkor hívjuk meg a frissítést, ha tényleg történt valami változás.
 
-Ezen kívül viszont, alapból a @relightolhato_godotshaded. ábra jóval jobban belepasszol a jelenetbe, mint a @relightolhato_sajatshaded. ábra.
+#figure(```py
+if has_camera_updated or transforms_changed or is_loading:
+  RenderingServer.call_on_render_thread(rasterizer.rasterize)
+```, caption: [A raszterizáció hívása a `_process`-ből]
+) <renderthread_rasterize_gds>
 
-#figure(
-  image("pictures/relightolhato_godotshaded.png")
-  , caption: [Suzanne, a Blender majom megvilágítva Godot által]
-) <relightolhato_godotshaded>
+Miután ezt megjavítottuk, rá lehet térni az újravilágítás implementálására. Az előzőhöz hasonlóan úgy kell módosítani a PLY importert, hogy az eredeti, 60-64 érték helyett a 20 új értéket keresse, és tegye be a belső reprezentációba. Ennek megfelelően kell a belső reprezentációkat is módosítani, mind a CPU-n ( `SplatCloudData` ), mind a GPU-n (projection és render shader-ök). Létre kell hozni, és helyesen bekötni a szükséges buffereket, illetve a gömbi harmonikusos színkalkulációt lecserélni a paraméterek átadására a 3 különböző textúrába. Végül a teljes képernyős quad-ra helyezett spatial shader kapja meg az anyagtulajdonságokat, és adja tovább a játékmotornak, aki innentől kezeli az árnyalást.
 
+Az eredmény a @relightolhato_mindketshaded. ábra jobb oldalán látható, és tényleg sokkal jobban beleillik a jelenetbe, mint az általunk árnyalt Suzanne. Megjegyzendő, hogy a Mesh2Splat-tal konvertált modellekben amúgy sem jut sok szerephez a pacák átlátszósága, egyszerű modelleknél legalábbis, így a módszer ezzel kapcsolatos hiányossága az ábrán nem okoz látható problémát.
 
-#figure(
-  image("pictures/relightolhato_spotlight.png")
-  , caption: [Suzanne, a Blender majom megvilágítva Godot által egy spotlight-tal is (még bugos)]
-) <relightolhato_spotlight>
 
 ==== Javítás nem irányfény esetére
 
-lepedő, asszem
+Mivel az engine számolja az árnyalást, így elméletileg ingyen támogatást kapunk az egyéb, beépített fényforrások fényének árnyalására is. Ehhez viszont az irányfényforráshoz képest még egy dolgot át kell adjunk a motornak, méghozzá a világbeli pozícióját a modellnek. Erre érthetően szüksége van, mivel például a spotlight fényereje függ a modell spotlighthoz képesti irányától, és távolságától is, ezeket pedig a pozíció alapján tudja a motor meghatározni. Az irányfény esetén nem volt nagyon fontos a világbeli pozíció, mivel az irányfény (árnyéktól, egyéb effektektől eltekintve, ezek nem képezik részét a projektnek) minden pontban ugyanannyira világít meg objektumokat, csak a felület normálvektora számít.
 
-meg screenshotot csinálni hozzá, magyarázatot, esetleg megemlíteni a limitációkat, bugos széleket, az is növeli az oldalszámot
+#figure(
+  image("pictures/relightolhato_spotlight.png")
+  , caption: [Suzanne, a Blender majom megvilágítva Godot által egy spotlight-tal]
+) <relightolhato_spotlight>
+
+A @relightolhato_spotlight. ábrán látható a megvilágítás eredménye, bal oldalon a helytelen világbeli pozíció átadásával, míg a jobb oldalon a helyes pozícióval. A javítás pedig inkább egy workaround, mint egy tökéletes megoldás: sajnos a Godot nem fogadja el a koordinátákat a fragment shader-ben, így muszáj a vertex shadert használni ehhez. Viszont a mi modellünk nem háromszögháló alapú, hanem lényegében ebből a szempontból egy téglalap, így az az ötlet, hogy osszuk fel a téglalapot például 128x128 kis téglalapra, majd a csúcspontokat "terítsük rá" a GS jelenetre, mint egy lepedőt. Így az adott pixeleken a világbeli koordináta elég közel lesz az adott GS modell tényleges világbeli koordinátájához, és az árnyalás helyesen tud működni. Néhol, a modell határánál lehet látni némi pontatlanságot, de összességében a módszer minőségéhez képest a végeredmény teljesen rendben van.
+
+==== Együttes megjelenítés gömbi harmonikusos modellekkel
+
+Az előző fejezetben a gömbi harmonikusok betöltését, számítását tulajdonképpen lecseréltük a PBR folyamatra. Viszont egy plugin akkor sokkal könnyebben használható, hogyha ugyanazzal a kódbázissal képes újravilágítható modelleket, és gömbi harmonikusos modelleket is megjeleníteni. Sőt, esetleg még egyszerre is képes mindkét modellfajtát megjeleníteni.
+
+Ezt úgy volt célom megvalósítani, hogy merge-elem az új módosítások branch-ét, és a módosítások előtti változatét, ami tartalmazza a közben implementált, @gltf-beolvasas-fejezet. fejezetben bemutatott GLTF formátum betöltését.
+
+Ez nem egy egyszerű merge-elési folyamat volt, mivel a gömbi harmonikusok működéséhez meg kellett tartani azt a kódrészletet, amihez az egyik branch nem nyúlt, a másik pedig kitörölte. Összességében viszont mégis viszonylag könnyen ment. Az adat formátumának kérdésére a megoldás pedig az lett, hogy mindkét halmaz attribútumot elmentjük. Ez összesen 64 float, a fájlban nem található értékeket pedig alapértelmezett értékekkel töltjük fel. A shader ezek alapján el tudja végezni mindkét árnyalást, aminek az eredménye a @relightable_and_sh_together. ábrán látható is.
+
+#figure(
+  image("pictures/relightable_and_sh_together.png")
+  , caption: [Az újravilágítható Suzanne és a gömbi harmonikusos GLB bonsai egy kódbázisból van kirajzolva]
+) <relightable_and_sh_together>
 
 == Fájlformátumok implementálása
 
 === SPLAT adatfájl adatainak beolvasása
 
-Robusztusabbá tenni a `.ply` fájl-beolvasást, hogy a `.splat`-ból [SuperSplat](https://superspl.at/editor)-tal konvertált `.ply` fájlokat is képes legyen beolvasni
+A `.ply` formátumban tárolt GS modellek paraméterei nem mindig ugyanazok, és ennek kezelése fentebb is fontos szerepet játszott, például a @relightolas-sajatmunka-fejezet. fejezetben. Alább azt mutatom be, hogy a @splat-formatum-fejezet. fejezet-beli `.splat` fájlok adatait hogyan tudjuk beolvasni.
 
-#figure(
-  image("pictures/splat_format_buggy.png")
-  , caption: [Egy `.splat` formátumú buggy modell a SuperSplat editorban]
-) <splat_format_buggy>
+Ennek a motivációja az, hogy a projekt elején többféle modellt szerettem volna megjeleníteni, például a @lathatosag_lathato. ábrán látható plüssmacit, ezek közül pár viszont ebben a formátumban volt elérhető.
 
-A @splat_format_buggy. ábrán látható a példamodell, amit be szerettem volna tölteni. A konverziót `.ply` formává a @supersplat-fejezet. fejezetben bemutatott SuperSplat editor elvégzi, viszont a pontos property-k, illetve a sorrendjük nem egyezik meg a korábban megszokottal.
+A formátumot magát nem szükséges nekünk parszolni, mivel a @supersplat-fejezet. fejezetben bemutatott SuperSplat editorja képes konvertálni `.splat` formátumból `.ply` fájllá. Szükséges viszont a `.ply` beolvasást robosztusabbá tenni, mivel a konvertált fájl, és az eddigi, beolvasott `.ply` fájlok formátuma nem teljesen egyezik meg.
 
-esetleg a teljes konkrét header-öket leírni ide? hogy hogy néz ki módosítás nélkül. Ez szerepel az eredeti, uncut screenshoton pl az önlab1 doksiban
+Az eltérés két formában ölt testet: egyrészt a tulajdonságok közül sok hiányzik, másrészt pedig a sorrendjük nem egyezik meg a korábban megszokottal. Az örökölt beolvasófüggvény eddig egyikre sincs felkészítve.
 
-A bemeneti adatformátum a `.ply`, illetve ennek egy speciális esete. Eredetileg a megjelenítő projekt csak olyan modelleket tudott megjeleníteni, amiknek a 62 property-je mind szerepel, és egy konkrét sorrendben van:
+#figure(```
+ply
+format binary_little_endian 1.0
+element vertex 116722
+property float x
+property float y
+property float z
+property float opacity
+property float rot_0
+property float rot_1
+property float rot_2
+property float rot_3
+property float f_dc_0
+property float f_dc_1
+property float f_dc_2
+property float scale_0
+property float scale_1
+property float scale_2
+end_header
+```, caption: [A konverzió eredményeként kapott `.ply` formátumú plüssmaci fejléce]
+) <ply_formatum_splatbol_txt>
 
-```
+#figure(```
 x, y, z, nx, ny, nz, f_dc_0, f_dc_1, f_dc_2, f_rest_0, f_rest_1, f_rest_2, f_rest_3, f_rest_4, f_rest_5, f_rest_6, f_rest_7, f_rest_8, f_rest_9, f_rest_10, f_rest_11, f_rest_12, f_rest_13, f_rest_14, f_rest_15, f_rest_16, f_rest_17, f_rest_18, f_rest_19, f_rest_20, f_rest_21, f_rest_22, f_rest_23, f_rest_24, f_rest_25, f_rest_26, f_rest_27, f_rest_28, f_rest_29, f_rest_30, f_rest_31, f_rest_32, f_rest_33, f_rest_34, f_rest_35, f_rest_36, f_rest_37, f_rest_38, f_rest_39, f_rest_40, f_rest_41, f_rest_42, f_rest_43, f_rest_44, opacity, scale_0, scale_1, scale_2, rot_0, rot_1, rot_2, rot_3
-```
+```, caption: [Az eredeti beolvasó függvény által támogatott `.ply` tulajdonságok listája]
+) <ply_formatum_eredeti_txt>
 
-Ez akkor ütközött problémába, amikor egy másik forrásból származó modellt szerettem volna megjeleníteni, ami `.splat` formátumban volt. Addig nem probléma, hogy az online [Supersplat](https://superspl.at/editor) segítségével át lehet konvertálni ezt `.ply` fájllá, viszont ebből a modellből hiányoztak bizonyos property-k, 14 volt összesen, és a meglevők sem megfelelő sorrendben voltak:
+A @ply_formatum_splatbol_txt. blokkban látható az a fejléc, amit parszolni szeretnénk, és a @ply_formatum_eredeti_txt. blokkban pedig azok a property-k listája, amit az eredeti beolvasó be tudott olvasni. A tulajdonságokon kívül a header többi része megegyezik.
 
-```
-x, y, z, opacity, rot_0, rot_1, rot_2, rot_3, f_dc_0, f_dc_1, f_dc_2, scale_0, scale_1, scale_2
-```
-
-Így módosítottam a beolvasó részt, hogy 0-ként olvassa a hiányzó adatokat, illetve a megfelelő pozícióba tegye a property-ket. Ez azért működik, mert ami hiányzik, az a 45 db spherical harmonikusokhoz szükséges érték, amiket lehet 0-ra inicializálni, illetve a normálvektor, amit pedig nem használ fel a beolvasó.
-
-Példareferencia egy kódrészletre: a parse függvény az @parsefuggveny. kódrészleten látható.
+A hiányzó értékek a gömbi harmonikusok, illetve a normálvektor (amit a beolvasó ezesetben nem használ fel), így semmi probléma nem adódik abból, hogyha 0-ra inicializáljuk az ismeretlen tulajdonságokat. A többi adatot pedig át kell rendezni, hogy a megfelelő sorrendben történjen a beolvasásuk. Ezeket a @parsefuggveny-gds. kódrészleten látható parse függvény el tudja végezni. A kód több revízión átment, és most már a ply importer része, de a logikája változatlan maradt.
 
 #figure(```py
 func parse(path : String) -> void:
-	var file := FileAccess.open(path, FileAccess.READ)
-	var line := file.get_line().split(' ')
-	while not line[0] == 'end_header':
-		line = file.get_line().split(' ')
-		match line[0]:
-			'format':   file.big_endian = line[1] == 'binary_big_endian'
-			'element':  size = int(line[2])
-			'property': properties.push_back(line[2])
-	vertices = file.get_buffer(size*len(properties) * 4).to_float32_array()
-	if properties.hash() != DEFAULT_PROPERTIES.hash():
-		var prop_inverse := {}
-		for i in properties.size():
-			prop_inverse[properties[i]] = i
-		var new_vertices := PackedFloat32Array()
-		new_vertices.resize(size*DEFAULT_PROP_CNT)
-		for i in size:
-			for pi in DEFAULT_PROP_CNT:
-				new_vertices[i * DEFAULT_PROP_CNT + pi] = 
-                    vertices[i * len(properties) + prop_inverse[DEFAULT_PROPERTIES[pi]]] 
-                    if DEFAULT_PROPERTIES[pi] in prop_inverse else 0
-		properties = DEFAULT_PROPERTIES.duplicate()
-		vertices = new_vertices
-```, caption: [Példa egy kódrészlet számozására]
-) <parsefuggveny>
+  var file := FileAccess.open(path, FileAccess.READ)
+  
+  var line := file.get_line().split(' ')
+  while not line[0] == 'end_header':
+    line = file.get_line().split(' ')
+    match line[0]:
+      'format':   file.big_endian = line[1] == 'binary_big_endian'
+      'element':  size = int(line[2])
+      'property': properties.push_back(line[2])
+  
+  vertices = file.get_buffer(size*len(properties) * 4).to_float32_array()
+  
+  if properties.hash() != DEFAULT_PROPERTIES.hash():
+    var prop_inverse := {}
+    for i in properties.size():
+      prop_inverse[properties[i]] = i
+    
+    var new_vertices := PackedFloat32Array()
+    new_vertices.resize(size*DEFAULT_PROP_CNT)
+
+    for i in size:
+      for pi in DEFAULT_PROP_CNT:
+        new_vertices[i * DEFAULT_PROP_CNT + pi] = 
+vertices[i * len(properties) + prop_inverse[DEFAULT_PROPERTIES[pi]]] 
+if DEFAULT_PROPERTIES[pi] in prop_inverse else 0
+    
+    properties = DEFAULT_PROPERTIES.duplicate()
+    vertices = new_vertices
+```, caption: [A parse függvény robusztusabb lett]
+) <parsefuggveny-gds>
 
 === GLTF adatfájl adatainak beolvasása
 <gltf-beolvasas-fejezet>
 
-sh fix a beolvasásnál, PR a kínai csávónak (link a lentebbi fejezetre)
+Egy másik fájlformátum, aminek a beolvasása szükséges, a GLTF, ami a @gltf-bemutatas-fejezet. fejezetben került bemutatásra. Az implementálandó formátum részletes dokumentációja @GLTFExtSpec alatt érhető el. 
 
-linkelni a fájlformátumra ami fentebb van bemutatva, illetve leírni/megindokolni? hogy nem a tömörített, hanem a sima változat parszolását oldottam meg
+A részletes dokumentációnak köszönhetően az implementáció viszonylag zökkenőmentesen ment. Két dolgot szükséges megjegyezni, az egyik bizonyos paraméterek konverziójának szükségessége: a skálázás és az átlátszóság más skálán vannak tárolva a `.ply` formátumhoz képest, emiatt valamelyik formátum betöltésénél szükséges a konverziót elvégezni, hogy a tárolt reprezentáció már egységes legyen (skálázás: exponenciális, átlátszóság: szigmoid). A másik, hasonló probléma a gömbi harmonikusok sorrendje: a `.ply` formátumban csatornánként vannak kódolva: 15 piros, 15 zöld majd 15 kék szín, míg a `.gltf`-ben harmonikusonként, a 3 csatorna együtt: `RGBRGBRGB...` . Ezt is a beolvasás során szükséges az egyik importerben megoldani, illetve a belső reprezentációnál egyértelműen meghatározni, hogy mit milyen sorrendben, és skálán vár el. Ez az @gltf-pr-fejezet. fejezetben szintén érdekes lesz, mert az ottani kódbázisban más a belső reprezentáció, mint nálam.
+
+A formátum implementálása mellett a másik nehézséget a tesztfájlok beszerzése okozta: mindenképpen szerettem volna hivatalos fájlokat szerezni, de a Khronos oldalán, és repository-jaiban sehol sem találtam GS modelleket, amik garantáltan megfelelő GLTF formátumúak. Így muszáj voltam a @splattransform-fejezet. fejezetben bemutatott programot használni. A konvertált fájlokat jól be tudta tölteni az importer. Fontos megjegyezni, hogy a Godot-nak már eleve van GLTF importere, ami a sima modellek betöltésére képes, és a pontfelhős modelleket pontokként tudja megjeleníteni, a formátum backwards compatibility-je miatt. Ahhoz, hogy a mi importerünkkel tudjuk a modellt betölteni, egyszerűen át lehet váltani a modell betöltéséhez használt importert a motor felületén.
+
+A betöltés és megjelenítés eredménye látható a @relightable_and_sh_together. ábrán, ahol a bonsai fa GLB formátumú fájlból származik. Az ábrán már a gömbi harmonikusok is helyesen működnek, miután a megjelenítőnél az @gombi-harmonikus-trafo-fejezet. fejezetbeli javítást elvégeztem, és látható a modellen a @sh_transformation_difference. ábrán kiemelt megcsillanás is.
+
+Megjegyzendő, hogy a @gltf-bemutatas-fejezet. fejezetben említett tömörített változat implementálása is felmerült bennem, viszont mivel a kitömörítés natív kód és könyvtárak nélkül, tisztán GDScript-ben problémásnak tűnik, illetve a szabvány még nem is végleges, az ötletet elvetettem.
 
 == Kollaboráció a másik implementációval
 <kollab-onallomunka-fejezet>
 
+A @kinai-repo-fejezet. fejezetben leírt implementáció a projekt végrehajtása során bukkant fel, és mivel ugyanazon a kódbázison alapult mindkét plugin, a @valasztott-modszer-fejezet. fejezetben leírtaknak megfelelően úgy döntöttem, hogy kollaborációt kezdeményezek @kollaboracio-kezdemenyezese.
 
-leírni a kezdeti kollab issue-t @kollaboracio-kezdemenyezese
-leírni hogy mit hol implementáltam, fejezetszámmal hivatkozva rá vissza
+Ebben bemutattam a projektem röviden, leírtam, hogy milyen javításokat tudna tőlem átvenni, illetve leírtam további terveimet. Nem írtam le, de fejben megjegyeztem, hogy miben jobb az ő implementációja. Először távolságtartó választ adott, de a későbbiekben teljesen együttműködően viselkedett, több PR-t is merge-elt, amiket lentebb taglalok.
 
-megjelölni, hogy még mit vett át tőlem (amd bug fix, covarianciamátrix transzformációja a kiterjedéshez)
+Még mielőtt explicit pull request-et nyitottam volna neki, egy pár, a kollaborációs issue-ban említett, illetve nem említett fejlesztést gyorsan be is épített: növelte a támogatott fájlformátumok számát #footnote[https://github.com/ReconWorldLab/godot-gaussian-splatting/commit/25040d49c41adc7fca54f6eed8321a0e28811b8c], kijavította ő is a @amd-bug-fejezet. fejezetben említett AMD bugot #footnote[https://github.com/ReconWorldLab/godot-gaussian-splatting/commit/d0c5d380eccf4756defdee0b7bc24554eaf4a530], illetve, habár nem említettem meg, mert nekem nem tűnt fel, de megjavította az @kiterjedes-iranyai-trafo-fejezet. fejezetben leírthoz hasonló problémáját a kovariancia mátrix transzformációjának #footnote[https://github.com/ReconWorldLab/godot-gaussian-splatting/commit/a811baab6b0ff3d33d6ee24e5e14d30e9912f41b]. Ez utóbbi lehet, hogy teljesen független javítás, de feltételezhetően a képek, vagy kódok összehasonlítása mutatta őt a probléma forrása felé.
 
-
-
-Ezek miatt felkerült a teendők listájára a CompositorEffect-es megoldásnak a vizsgálata is. Közben a félév során egy kínai implementáció is előkerült itt: @kinai-repo. Mérlegelve a szituációt arra jutottam, hogy nem érdemes mindkettőnknek teljesen külön dolgozni a saját programján, így átfutottam az ő kódját, és mivel mindkét projekt (és az a projekt is, amelyet mindketten használtunk: @amd-bug-upsteam-issue) MIT licensz alatt elérhető, unióztam a fontosabb feature-jeinket. A kommunikáció felvételekor leírtam 1-2 dolgot, ennek eredménye lett, hogy ő is kijavította az AMD bugot, illetve valamilyen kovarianciás matekot, amitől a splatok kiterjedései is jól lettek transzformálva, illetve ezután készítettem én is neki egy PR-t az editor ikonokkal, illetve dinamikus láthatósággal és instancinggel. Ezt ő mergeelte is, és megtagelt az acknowledgementsben is.
-
-
-Én pedig az ő implementációja alapján kipróbáltam a CompositorEffect-es megoldást, és tényleg sok problémát egyből megoldott. Így az uniózott projekt már azt használja a továbbiakban.
-
-kovarianciás fix visszareferálása, esetleg egy link a kommithoz
+Az ő kódbázisa pedig jóval robusztusabb volt: nálam csak előre meghatározott, fix mennyiségű modellt lehet betölteni, még szerepelt a @godot-relighting-fejezet. fejezetben kijavított probléma, amitől az editor eléggé akadozott, és néha kifagyott, illetve összességében a kompozitoreffektes megoldás megbízhatóbbnak tűnt. Emellett a blending, átlátszóság jobban működött nála. Ezek miatt mindenképpen szerettem volna én is kísérletezni az ő kódjával, ezt meg is tettem az @compositoreffect-onallomunka-fejezet. fejezetben.
 
 === Ikonok, dinamikus láthatóság és instancing Pull Request
 <ikon-dinlat-instancing-pr-fejezet>
 
+A kísérletezés folytatásaként ide is portoltam a @editor-ikonok-fejezet. fejezetben leírt editor ikonokat, illetve az @igazi_dinamikus_lathatosag-fejezet\-beli hatékony dinamikus láthatóságot, és az @instancing-fejezet\-beli instancing-et pedig itt implementáltam. Ezekről nyitottam neki issue-kat, ahol egy-egy részletet (például a `.svg.import` fájlok fehérlistázását #footnote[https://github.com/ReconWorldLab/godot-gaussian-splatting/issues/4]) megbeszéltük, majd a három módosítással egy pull request-et is #footnote[https://github.com/ReconWorldLab/godot-gaussian-splatting/pull/6]. Ezt ő tesztelte, merge-elte és megköszönte, majd hozzá is adott az acknowledgements-hez #footnote[https://github.com/ReconWorldLab/godot-gaussian-splatting#0x0a-acknowledgements].
 
 === GLTF import Pull Request
+<gltf-pr-fejezet>
+
+Miután az @gltf-beolvasas-fejezet. fejezetben a GLTF importálást először a saját kódbázisomban implementáltam, úgy gondoltam, hogy ez is egy olyan, jól elhatárolható feature, amiről érdemes lehet pull request-et nyitni. Így áttettem az importert az ő kódbázisára és az ő belső reprezentációjára, nyitottam egy PR-t, amit ő nem sokkal később merge-elt is szintén #footnote[https://github.com/ReconWorldLab/godot-gaussian-splatting/pull/28]. 
 
 === Issue a gömbi harmonikusok helyes transzformációjáról
 
-meg fix, megreferálni a fentebbi fejezetet
+A tesztelés során tűnt fel, hogy a gömbi harmonikusok nála sincsenek helyesen transzformálva, így nyitottam egy issue-t róla #footnote[https://github.com/ReconWorldLab/godot-gaussian-splatting/issues/29], leírva az @gombi-harmonikus-trafo-fejezet. fejezetben bemutatott javítást is röviden. Erről nem nyitottam pull request-et, mert a javítás nagyon apró: 1-3 sor módosításából állt összesen. A problémát nem sokkal később ki is javította #footnote[https://github.com/ReconWorldLab/godot-gaussian-splatting/commit/9ef048835533fd5c3d14b32e77de34bada9f8f68] a javasolt logikával, azzal a többlettel, hogy mindkét backendjénél ki kellett javítani, amire én nem gondoltam volna.
 
 == Kitérő: Typst
 
-A diplomaterv dokumentumának elkészítéséhez a Typst nevű nyelvet használom, ami egy modern LaTeX megfelelő. Dani nevű szobatársam segítségével konvertáltuk a sablonokat (főleg ő), ez elérhető itt: @typst-bme-dipterv-sablon.
+Még egy, a diplomaterv írása során extenzíven használt eszközt mindenképpen szeretnék megemlíteni, habár nem tartozik a Gaussian Splatting témaköréhez: ez pedig a Typst nevű typesetting nyelv és compiler #footnote[https://typst.app/]. Ezen dokumentum elkészítéséhez a Typst-et használom.
 
-=== Rövid bemutatás
+A Typst egy modern LaText alternatíva, ami mind a markdown-nal, mind a WYSIWYG #footnote[https://en.wikipedia.org/wiki/WYSIWYG] szerkesztőkkel (LibreOffice Writer, Microsoft Word), mind a LaTeX-szel szemben rendelkezik előnyökkel. Egy berlini cég készíti, és szabad, nyílt forráskódú a fordítója. Az első verzióját nem régen, 2023-ban adták ki, mégis gyors elterjedésnek indult.
 
-open source, cég háttere, szintaktika, elterjedés
+Nekem a kollégiumi szobatársam mutatta be, aki elkészítette a nyelvhez a diplomaterv sablont is: ez a @typst-bme-dipterv-sablon alatt érhető el. Időközben én is finomhangoltam a sablont, de meglepően fájdalommentes volt bármi, amit el akartam érni benne, annak ellenére, hogy a nyelvet korábban nem ismertem.
 
-=== Miért jobb
+Az alapképzésen a szakdolgozatomat LibreOffice Writer-ben írtam, mivel LaTeX-et nem szerettem volna használni, és bármilyen egyéb online WYSIWYG szerkesztő nem volt elég okos az irodalomjegyzék normális kezeléséhez. Hozzá kell tennem, hogy a Writer-ben is kifejezetten szörnyű volt mind az irodalomjegyzék-, mind az ábra- és a fejezetreferenciák kezelése, így az elvárás léce nem volt magason.
 
-word/libreoffice-nál, latexnél
+Hasonlóan sokat javított a kódblokkok beszúrásán is a Typst, ugyanis kifejezetten könnyen lehet őket számozni, referálni rájuk, és a szintaktika alapú színezést is teljesen jól támogatja, a markdown-hoz hasonlóan. Az egyéb formázás pedig általánosságban véve sokkal könnyebben kezelhető úgy, hogy nincsenek láthatatlan formázási szabályok, vagy véletlenül máshonnan bemásolt formázás.
 
-Word:
-kód blokkok, számozás, képek számozása (?), bibliography beszúró GUI izébizénél sokkal egyszerűbb, stb
+A LaTeX-szel nincs nagyon sok tapasztalatom, de az alatt az idő alatt, amíg foglalkoztam vele, az a benyomásom volt róla, hogy elég körülményes a használata. Unicode támogatása elég esetleges (például a ▀ dobozrajzoló karakter hibát okozott, ezt annak idején kifejezetten sokáig próbáltam debugolni), a dokumentumhoz általában legalább 3, furcsa szintaktikájú fájlra van szükség, és a fordítás során az egész mappa tele lesz ideiglenes fájlokkal szemetelve. A szintaktikája véleményem szerint csúnya, és nehézkes. Ezen kívül sokféle implementáció és könyvtár van, ami egy elég fragmentált ökoszisztémához vezethet. Lehetne Overleaf-et #footnote[https://www.overleaf.com/] használni, de a hosszú fordítási idő és a szintaktika ott is hátrány.
 
-LaTeX:
-20 package a fordításhoz, hosszú build time, csúnya szintaktika, végtelen mennyiségű fájl amik elég nehezen átláthatók, fordításkor is teleszemeteli a dolgot
+Ezzel szemben a Typst instant fordul, ugyanúgy rendelkezik egy egyszerű online szerkesztővel, de a parancssori fordító használata is egyértelmű, egyszerű, és egyféle nyilvánvaló implementáció és módszer van rá. A szobatársam sablonja lényegében egy darab sablon fájlból áll, és a fordítás során sem lesz teleszemetelve a mappa. A szintaktika egyszerű és könnyen használható, és összességében mindig találtam egyszerű megoldást a problémákra, amiket meg akartam vele oldani.
 
-összességében az élmény milyen
+Úgyhogy összességében, habár az elvárásaim nem voltak magason, kifejezetten használhatónak találtam a Typst-et, és amennyiben következő alkalommal egy hasonló dokumentumot kell írjak, nagy valószínűséggel újra ezt választom. Mindenkinek, akinek alapvetően tetszik a LaTeX filozófiája, de egy fájdalommentesebb megoldásra vágyik, jó szívvel tudom ajánlani.
+
 
 = Plugin alkalmazásai, eredmények
 
-
 == Használati utasítás
 
-Hogyan lehet betenni egy már meglevő projektbe, mi az h godot addon, stb stb
+A plugin integrálása egy már meglevő Godot projektbe az @plugin-keszitese-fejezet. fejezetben leírtaknak megfelelően elég egyszerű: a mappát be kell másolni az `addons` mappába, a projektbeállításoknál be kell kapcsolni a plugint, majd egy esetleges újraindítás után már be is lehet tenni a `SplatCloud3D` node-ot a jelenetbe.
 
-== Autó szimulátor, mint példafelhasználás
+A pontfelhős modelleket a projektbe helyezés után a motor automatikusan importálja, de esetleg ki kell választani a helyes importert az Import fülön. Sikeres importálás esetén a modellt lehet drag-n-droppolni az inspectorba, ha a `SplatCloud3D` node van a jelenetfában kijelölve, sikertelen importálás esetén pedig a konzolban látható a hibaüzenet.
+
+== Autószimulátor, mint példafelhasználás
 <vitavehicle-peldafelhasznalas-fejezet>
-
-leírni hogy mi ez a projekt, esetleg külön alfejezetben bemutatni @vitavehicle-gh
-
-@vitavehicle_car. ábrán az eredeti program látható
 
 #figure(
   image("pictures/vitavehicle_car.png")
   , caption: [Példa képernyőkép a VitaVehicle autószimulátorról]
 ) <vitavehicle_car>
 
+Az első teszt-alkalmazás egy másik projekt felhasználásával a @vitavehicle-gh alatt elérhető, VitaVehicle nevű, viszonylag realisztikus autószimulátor projekten alapul. Az eredeti projektet jreo03 készítette, és elég fapados modelleket és kód-esztétikát használó, de teljesen működőképes projektről van szó. Maga az autó fizikája tényleg kifejezetten kifinomultnak érződik. A projekt szintén a MIT licensz alatt érhető el. Egy példakép a @vitavehicle_car. ábrán látható.
 
-A splat-os és az autós Godot projektek összefésülése egészen könnyen ment, a fájlok összemásolásán túl a `project.godot` fájlt kellett kompatibilissá tenni mindkét projekt részére, többek között a definiált (billentyűzet) bemenetet, és a globális scripteknek megfelelő scripteket (autoload) kellett átemelni. Szerencsére a `project.godot` egy szöveges fájlformátum, sima config fájlként viselkedik, így akár kézzel is könnyű volt az egyes bejegyzéseket átemelni, a maradék beállítást pedig könnyen megtaláltam az editorban.
+Az @plugin-keszitese-fejezet. fejezetbeli munka ekkoriban még nem készült el, így a két Godot projektet össze kellett fésülni. Az összefésülés első lépéseként a fájlokat össze kellett másolni. A fő konfliktust a projektfájl, a `project.godot` okozta, ez a projektbeállításokat tartalmazza. Szerencsére egy szöveges fájlformátum, így össze lehet a két fájlt hasonlítani, és akár szövegszerkesztővel összemásolni a tartalmat, akár a látott különbségek alapján a Godot-n belül újra alkalmazni a szükséges beállításokat. A lényegi módosítások a billentyűzet bemenet és az autoload-ok listája volt, egy-két egyéb beállítás mellett.
 
-Továbbá mindkét projektben volt az alapértelmezett jelenet, aminek a node-jaihoz a szükséges scriptek hozzá voltak adva. Kis logikázás után úgy láttam, hogy a splat-os projekt gyökérnode-ja kell, hogy maradjon, többek között azért is, hogy a hozzáadott SplatMesh-eket megtalálja a jelenetben. Nem volt különösebb gond az autós projekttel, ha annak a gyökérnode-ját a splat-os projekt gyökérnode-ja gyerekeként tettem be.
-
+A másik megoldandó probléma az alapértelmezett jelenet volt, mivel mindkét projekt arra számított, hogy a saját jelenetével fut a játék. A legegyszerűbb megoldás, ha az egyik jelenet gyökerének a gyerekeként szúrjuk be a teljes másik jelenetet, és az igazi gyökér például az @automata-objektum-megtalalas-fejezet. fejezet logikája miatt szükségszerűen a pontfelhős projektből kellett származzon. Szerencsére a másik projekt főjelenetével nem volt különösebb gond abból, hogy nem ő lett az igazi gyökér.
 
 #figure(
   image("pictures/vitavehicle_project_combination.png")
   , caption: [A VitaVehicle projekt összekombinálása a GS megjelenítővel]
 ) <vitavehicle_project_combination>
 
-A @vitavehicle_project_combination. ábrán együtt látható a pontfelhős és a háromszöghálós autó, tesztelve a korrekt pozíciót és reakciót a környezetre
+A @vitavehicle_project_combination. ábrán már a két projekt összekombinálásának eredménye látható: hozzáadtam az alapvetően fehér, textúra nélküli, háromszöghálós autóhoz egy GS modellt, egy kis platós teherautót. Egyelőre mindkét modellt láthatóan tartom, hogy lehessen látni a különbségeket, esetleges eltéréseket. A platós teherautó szépen követte is a fehér autót (láthatóan megegyezett a transzformjuk), egyfajta csúnya stutteringtől eltekintve. Ennek a megjavítását a @vitavehicle-stuttering-fejezet. fejezetben részletezem.
 
 #figure(
   image("pictures/vitavehicle_end_result.png")
   , caption: [A kombinálás végső eredménye]
 ) <vitavehicle_end_result>
 
-@vitavehicle_end_result. ábrán látható a kombinálás végső eredménye: két, külön irányítható GS modell alapú autó (külön forgó, kormányozható kerekekkel), illetve egy plüssmaci, ami fizikailag reagál az autókra: eltolható, ha nekimegyünk.
+A @vitavehicle_end_result. ábrán látható a tesztprojekt végleges eredménye. A platós teherautó modelljét lecseréltem egy Toyota modellre, amit már a korábbi, például a @lathatosag_lathato\-@lathatosag_nemlathato. ábrákról is ismerünk, ez is egy GS modell. Ebből kettő is van a jelenetben, egymástól függetlenül irányíthatóak, és a fizikai interakciók közöttük, mind a pálya, illetve a háttérben látható plüssmaci (szintén GS modell) között a várhatónak megfelelően történik. Az autók és a maci fent maradnak a pályán, és ha egymásnak mennek, enyhén eltolják egymást.
 
+Mivel a motorban eleve a fizika a megjelenítéstől viszonylag függetlenül történik, így a kerék nélküli Toyota GS modellt, illetve a Toyota kerekének GS modellét a megfelelő méretre skálázva, és a node-ját a megfelelő szülő gyerekeként betéve egyszerűen le lehetett cserélni az eddigi `MeshInstance3D` node-ok által megjelenített háromszöghálós autótestet és kerekeket. A kerekek ezek után ugyanúgy képesek voltak forogni, mint eddig, illetve az első kerekek még a kormányzásra is ugyanúgy tudtak reagálni (elfordulni), mint eddig.
+
+Meg érdemes jegyezni, hogy a pálya, és a háttér maradt az eredeti, háromszöghálós modell, így az @melyseghelyes-osszekombinalas-fejezet\-beli mélységhelyes összekombinálás is fontos szerepet játszott a példafelhasználásban.
 
 === Stuttering bug
+<vitavehicle-stuttering-fejezet>
 
-Ami következményként nehézséget okozott, az a stuttering kiküszöbölése, amit az okozott, hogy az autós projektben a kamerát egy script állította, míg a splatos projektben ugyanezen (aktív) kamera transzformációját egy script továbbította a GPU-nak, és ez a két script valamiért nem meghatározott sorrendben futott. A process priority állításával a probléma megoldódott.
+Az összekombinálást, és sikeres megjelenítést követően arra lettem figyelmes, hogy mozgó autó esetén a két autó-modell egy-egy képkockányit ugrál egymáshoz képest előre-hátra. Pontosabban a GS modell némelyik képkockában jó helyen van, némelyikben pedig egy képkockával hátrébb, mint kellene.
 
-képek inkább ez után a fejezet után? lehet h jobban fel lehetne osztani ezt a részt
+Ezt az okozta, hogy az autós projektben a kamerát egy script állította, míg a pacás projektben ugyanezen (aktív) kamera transzformját egy másik script továbbította a GPU-nak. Ez a két script pedig nem meghatározott sorrendben futott, így néha az egyik futott előbb, néha a másik.
+
+A megoldást az jelentette, hogy a kamera feltöltő script-nek a process priority-jét #footnote[https://docs.godotengine.org/en/stable/classes/class_node.html#class-node-property-process-priority] magasabbra kellett állítani, és ezáltal a sorrend már determinisztikus lett, mindig a transzformáció feltöltése futott később.
 
 == When Hamsters Attack TD, mint példafelhasználás
 
@@ -1000,6 +1081,8 @@ megemlíteni a licenszt, hogy az eredeti projekt miatt gpl lett (és ténylegese
 == Asset library plugin
 
 Felkerül végre?? igen
+
+eredményként említeni, hogy a kódom tudják használni mások is
 
 leírni hogy milyen kontribúcióim vannak benne
 
@@ -1059,7 +1142,7 @@ whenhamstersattacktd gpl vs mit??? valahogy feloldani a readmevel, vszeg gpl-é 
 
 Az egészet beadni AI-nak pl nyelvtani javításra (egy random helyen eglépelni, hogy észreveszi-e!!!)
 
-kódrészletek ne legyenek nagyon durván félbevágva (főleg a kis kódrészletek), meg képek miatt ne legyenek óriási szóközök. Ezt miután már nem lesz tartalmi változás
+kódrészletek ne legyenek nagyon durván félbevágva (főleg a kis kódrészletek), meg képek miatt ne legyenek óriási szóközök. Ezt miután már nem lesz tartalmi változás. Kell-e egyáltalán a kódrészletek szétszedhetősége???
 
 időben elküldeni az egészet reviewra (pl november eleje-közepe) (tartalmilag minden benne van-e aminek kell, sorrend/struktúra értelmes-e, kilogrammra elég-e, bármi szakmai pontosítanivaló/kirívóan rossz megfogalmazás)
 
@@ -1077,6 +1160,7 @@ tervezett ütemterv:
 - újabb nyelvtani ellenőrzés
 - a/az az ábráknál / fejezetcímeknél kifejezetten! ezt már miután semmi átrendezés / új beszúrás nincs
 - valamit tartalmilag totál elírni, hogy azt megtalálja-e egy AI, hha valahol totál marhaság lenne
+- a teljes online mappát átmásolni a git-es mappába, és megnézni h kimaradt-e vmi (pl kép) a verziókontrollból
 
 beadás után nyomtatás, + a diasor elkészítése míg amíg jól emlékszem a dokumentumra!
 
