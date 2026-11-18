@@ -102,6 +102,7 @@ Az eredeti @kerbl-2023-3dgs cikk nézetiránytól függő színeket lehetővé t
 Ennek megoldására többféle lehetőség van, más-más előnyökkel és hátrányokkal. A @scolari2025mesh2splat forrásban megjelölt program segít bizonyos fajta, újravilágítható pontfelhőket generálni háromszöghálós modellekből, ennek a fájlformátumnak a részletezése a @religtholhato-ply-format fejezetben található. Ezen kívül a @kinai-repo implementációban is található újravilágítás opció, ami jelentősen különbözik a fentebbi fájlformátum alkalmazásától.
 
 === Időbeliség
+<idobeliseg-fejezet>
 
 Külön izgalmas feladat, ha időben is változik a felvett jelenet, ilyenkor a pontfelhő időbeli transzformációját is el lehet tárolni, és ugyanazt a mozgó jelenetet akár több szemszögből, vagy mozgó szemszögből visszajátszani. Különböző pontfelhők utólagos szerkesztésére is lehetőség van. Erről szól az @4dgs-wu-time cikk.
 
@@ -1172,10 +1173,11 @@ Egy apró megjegyzés, amit ReconWorldLab is megjegyzett @gdgs-relighting-doc, h
 
 = Összefoglaló
 
-Sokat tanultunk a dipterv alatt, megismerkedtünk ezzel, azzal, godot rendering pipeline, gaussian splatting, fájlformátumok, typst, stb
+A diplomaterv írása során sokat tanultam mind a technológiáról, mind egyéb, hasznos készségek terén. Kezdetnek megismerkedtünk a 3D Gaussian Splatting technológiával, majd a Godot játékmotorba való integráció során különböző programozási, architekturális problémákat oldottunk meg. Az implementáció közben figyelemmel kísértük a konkurens megoldásokat, és kollaborációt hajtottunk végre, ahol értelme volt. Végül alkalmazási példákon keresztül mutattuk be a készített plugin használatát, használhatóságát, és részletesen összehasonlítottuk az újravilágítást végző implementációkat. Ezen dokumentum írása során pedig megismerkedtünk egy feltörekvő markup filozófiájú nyelvvel, a Typst-tel.
 
-a plugin használható, viszonylag jó integrációval, fenn van (??) az asset store-ban, hozzátettem bizonyos fejlesztéseket, mások meg itt és itt érhetők el, ... (külön asset store item a relightolható mesh-esnek??, ha nem merge-eli majd?)
+Jövőbeli fejlesztésként további életminőséget javító fejlesztéseket lehetne a pluginon végrehajtani, például a megjeleníthető GS modellek számának dinamikusan változatathatóvá tételét, a különböző ágakon levő tesztek, implementációk közötti váltást lehetővé tevő kapcsolók implementációját, vagy az editor viewportban GS modelleknek kattintással való kijelölhetőségét. Nagyobb szabású fejlesztési lehetőségek között szerepel a voxel field alapú, vagy hasonló logikájú feldolgozása a pontfelhőnek, collisionhöz és árnyékhoz, a @idobeliseg-fejezet. fejezetben szereplő időben változó pontfelhők vizsgálata, támogatása, illetve többféle, többek között tömörített fájlformátumok támogatása.
 
+A mindenki számára szabadon letölthető plugin-változataim, illetve a másik implementációhoz történt kontribúcióim alapján viszont az elért eredménnyel elégedett vagyok, a projektet sikeresnek titulálom. Remélhetőleg hozzá tudtam tenni a Godot-ba integrált Gaussian Splatting könyvtárak minőségének általános fejlődéséhez.
 
 #bibliography("bibliography.yml")
 
