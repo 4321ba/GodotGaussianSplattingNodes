@@ -202,7 +202,7 @@ Ez a formátum így minden egyes pontonként (blob-onként) 62 lebegőpontos sz�
 
 Mivel a formátum könnyen bővíthető, módosítható, így egyszerűen lehetséges blob-onként más adatok eltárolása. Ezt használja ki a @mesh2splat-program-fejezet. fejezetben bemutatott program is, ami ugyanabban a formátumban, de más pontonkénti adatot tárol el, más céllal.
 
-Ezekkel az adatokkal a színeket nem az adott blob-ra történő ránézés iránya határozza meg egyedül, hanem a jelenetben szereplő fények, és egyéb faktorok is. Ennek kiterjedt irodalma van a standard grafika pipeline esetén fizikai alapú renderelés (physically based rendering, PBR) #footnote[https://en.wikipedia.org/wiki/Physically_based_rendering] néven, mivel a háromszögeket is lehet hasonló anyagtulajdonságok figyelembe vételével megvilágítani. Ennek a technikának a segítségével tudjuk a pontfelhőket is újravilágítani.
+Ezekkel az adatokkal a színeket nem az adott blob-ra történő ránézés iránya határozza meg egyedül, hanem a jelenetben szereplő fények, és egyéb faktorok is. Ennek kiterjedt irodalma van a standard grafika pipeline esetén fizikai alapú renderelés (physically based rendering, PBR @pbr-wiki) néven, mivel a háromszögeket is lehet hasonló anyagtulajdonságok figyelembe vételével megvilágítani. Ennek a technikának a segítségével tudjuk a pontfelhőket is újravilágítani.
 
 A csúcsonként eltárolt értékek a következők ezesetben:
 - 3 float: pozíció
@@ -832,6 +832,7 @@ Az implementáció lehetőségeinek felmérésekor többféle megoldás is célr
 ) <relightolhato_mindketshaded>
 
 === Saját fényszámítással
+<relightolas-sajatszamitas-fejezet>
 
 Az első lehetőség az, hogy mi adjuk át manuálisan a beszámítandó fényforrásokat a shader-nek, és a mi shaderünk számolja a színeket a megadott PBR-, illetve fényparaméterekből. A prototípust úgy csináltam, hogy egy irányfényforrást tudunk átadni. Ennek a módszernek a hátránya a manuális fényforrás-összegyűjtés, illetve az árnyalás eltérő lehet a többi, motor által árnyalt modell árnyalásától. Előnye viszont, hogy működik a @compositoreffect-fejezet. fejezetben tagalt CompositorEffect-es megoldással, és az átlátszóság teljesen normálisan értelmezhető: mivel a pacák árnyalását mi számoljuk ki, ezért semmi nem akadályoz meg minket abban, hogy egy pixelen több paca végső színét is kiszámoljuk, majd az eddigi blendelést használva az árnyalás után kombináljuk össze őket. Ezt a módszert a kompozitoreffektes kódbázishoz implementáltam.
 
@@ -871,6 +872,7 @@ Mivel az engine számolja az árnyalást, így elméletileg ingyen támogatást 
 A @relightolhato_spotlight. ábrán látható a megvilágítás eredménye, bal oldalon a helytelen világbeli pozíció átadásával, míg a jobb oldalon a helyes pozícióval. A javítás pedig inkább egy workaround, mint egy tökéletes megoldás: sajnos a Godot nem fogadja el a koordinátákat a fragment shader-ben, így muszáj a vertex shadert használni ehhez. Viszont a mi modellünk nem háromszögháló alapú, hanem lényegében ebből a szempontból egy téglalap, így az az ötlet, hogy osszuk fel a téglalapot például 128x128 kis téglalapra, majd a csúcspontokat "terítsük rá" a GS jelenetre, mint egy lepedőt. Így az adott pixeleken a világbeli koordináta elég közel lesz az adott GS modell tényleges világbeli koordinátájához, és az árnyalás helyesen tud működni. Néhol, a modell határánál lehet látni némi pontatlanságot, de összességében a módszer minőségéhez képest a végeredmény teljesen rendben van.
 
 ==== Együttes megjelenítés gömbi harmonikusos modellekkel
+<egyuttes-megjelenites-fejezet>
 
 Az előző fejezetben a gömbi harmonikusok betöltését, számítását tulajdonképpen lecseréltük a PBR folyamatra. Viszont egy plugin akkor sokkal könnyebben használható, hogyha ugyanazzal a kódbázissal képes újravilágítható modelleket, és gömbi harmonikusos modelleket is megjeleníteni. Sőt, esetleg még egyszerre is képes mindkét modellfajtát megjeleníteni.
 
@@ -1067,30 +1069,106 @@ A megoldást az jelentette, hogy a kamera feltöltő script-nek a process priori
 
 == When Hamsters Attack TD, mint példafelhasználás
 
-leírni hogy mi ez a projekt, esetleg külön alfejezetben bemutatni
+A When Hamsters Attack TD egy When Penguins Attack TD #footnote[https://armorgames.com/play/4600/when-penguins-attack-td] által ihletett, 3D grafikával rendelkező toronyvédő játék, amit a Játékfejlesztés labor című tárgy nagy házi feladataként készítettem Godot-ban @when-hamsters-attack-td. Egy példa képernyőkép az eredeti játékról a @what_original_screenshot. ábrán látható. Második példafelhasználásként ennek a játéknak az ellenfeleit cserélem le pontfelhős modellekre.
 
-játék bemutatása, integrációja a pluginnal, mint példa felhasználás
-@when-hamsters-attack-td
+Mivel ez a példafelhasználás a projekt végén történt, így a fentebb leírt feature-ök jó része rendelkezésre állt. A változatok közül az @egyuttes-megjelenites-fejezet\-beli munka eredményeként előállt branch-et használtam.
 
-erről részletesen beszélni (pl object pooling, animáció alkalmazása, ilyenek)
+Az integráció szempontjából legfontosabb, hogy a plugin különválasztása megtörtént, így jóval egyszerűbben el lehet addig jutni, hogy a pályán a játszható játék mellett egy GS modellt is meg lehet jeleníteni. Ehhez lényegében a mappa projektbe másolása, a plugin bekapcsolása és egy újraindításon kívül mást nem is kell csinálni. A `SplatCloud3D` node-ot be lehet tenni bármelyik jelenetbe, és az editorban, illetve futtatáskor is látszik a modell, ha helyesen lett importálva.
 
-képek teamsről pl? vagy új screenshotok csinálása? (vszeg ennek a gépnek a screenshots mappájában is megvan)
+#figure(
+  image("pictures/what_original_screenshot.png")
+  , caption: [Példa képernyőkép a When Hamsters Attack TD játékról]
+) <what_original_screenshot>
 
-megemlíteni a licenszt, hogy az eredeti projekt miatt gpl lett (és ténylegesen átírni a repo-ban a licenszt!)
+A további integrációs feladatok egy része a modellek lecserélése: a 3-féle ellenfél modelljét a plüssmacira, a Toyotára és a bonsai fára cserélem le. A bonsai fa alatt otthagyom az eredeti modell lánctalpát, így a két modell együtt adja az ellenfelet. Külön figyelmet igényelt az irány, mivel az új modellek nem feltétlen ugyanabba az irányba néztek, mint az eredetiek, illetve a scriptekben is figyelni kellett, hogy a megfelelő referenciákat lecseréljem az új modellekre. Semmi nem használta a `MeshInstance3D`-séget, de használva volt például a transzform, animációhoz.
 
-== Asset library plugin
+#figure(
+  image("pictures/teddy_anim_vid.png")
+  , caption: [Az infantery animációja működik a teddy modellen]
+) <teddy_anim_vid>
 
-Felkerül végre?? igen
+A @teddy_anim_vid. ábrán látható az egyik egység halálának animációja, ami előrebukásból, kis csúszásból, majd föld alá süllyedésből áll. Az irányok és az animálandó node beállítása után minden probléma nélkül működött a GS modellen is, mint ahogyan a háromszöghálós modellen korábban, a bobbing séta animációval együtt. A képek balról jobbra, majd fentről le nézendők.
 
-eredményként említeni, hogy a kódom tudják használni mások is
+Mivel a GS modellek dinamikus hozzáadása és törlése nem támogatott, így object pooling-ot implementáltam. Előre leidéztem a szükséges mennyiségű modellt, majd az új ellenfél idézésekor `RemoteTransform3D`-t #footnote[https://docs.godotengine.org/en/stable/classes/class_remotetransform3d.html] használva a megfelelő node-hoz kötöttem a látható modellt. Halálkor pedig visszaadtam a modellt a pool-nak. Ez picit nehézkesebbé, és nem drop-in replacement-té tette ezt a megoldást, mivel az eddigi jelenetöröklési hierarchia, és gyerekként felülírt modell helyett muszáj volt a szülőnek is tudni a lehetséges ellenféltípusokról, hogy a megfelelő modellt tudja a pool-tól kérni. Cserébe viszont megoldotta a módszer a dinamikus ellenfél-idézést, és megsemmisítést.
 
-leírni hogy milyen kontribúcióim vannak benne
+A konverzió végső eredménye a @what_end_result. ábrán látható, és ezután az elvárásoknak megfelelően a játék ugyanúgy játszható, mint eddig.
 
-== Még mit lehetne értékelésnek, eredménynek?
+#figure(
+  image("pictures/what_end_result.png")
+  , caption: [A lecserélt modellekkel ugyanúgy játszható a játék]
+) <what_end_result>
 
-objektív szempontok szerint összehasonlítani a többféle implementációt (2 féle relightolás, kínai vs saját branch, stb.)
+A licensz még említésre méltó, ugyanis a játék projekt GPL-3.0 licenszű, így a módosított projekt is szükségszerűen ugyanezen licensz alatt lesz elérhető. Ez nem ütközik a plugin MIT licenszébe, azt probléma nélkül közzé lehet tenni más licensz alatt.
 
-igen pl a relightolást jól össze lehet hasonlítani, mert az 3 teljesen különböző megoldás
+== Asset Library plugin kontribúciók
+
+A plugin könnyen letölthető, és betehető Godot projektekbe a @dipterv-github-repo GitHub repository különböző ágaiból letöltve. Egy másik lehetőség a terjesztésre a Godot Asset Library #footnote[https://godotengine.org/asset-library/asset], ahova fel lehet pluginokat is tölteni, és ezek az editoron belülről is betehetők a motorba. Én fontolgattam a feltöltést, viszont végül a projekt fragmentáltsága, szerteágazósága miatt (különböző ágakon különböző architektúrájú megoldásokat teszteltem), illetve a közben megjelent @kinai-repo-fejezet. fejezetben bemutatott projekt miatt úgy gondoltam, hogy nem adna annyit az ökoszisztémához egy másik asset library bejegyzés.
+
+A munkám egy része viszont a @kollab-onallomunka-fejezet. fejezetnek köszönhetően így is fent van az asset library-ben: a diplomaterv írásakor a GLTF importer kivételével a többi kontribúció már benne van a letölthető verziójában a GDGS #footnote[https://godotengine.org/asset-library/asset/5076] pluginnak.
+
+== Újravilágítási módszerek összehasonlítása
+
+Egy jó összehasonlítási szempontot ad az újravilágítás, mind az én implementációim között, mind más implementációval. A @kinai-repo-fejezet. fejezetben bemutatott projekt is implementált újravilágíthatóságot, de teljesen más technikával.
+
+=== Összehasonlított módszerek
+
+Az általam implementált újravilágíthatóság-technikák a @relightolas-sajatmunka-fejezet. fejezetben kerülnek bemutatásra, de összefoglalva arról van szó, hogy pacánként eltárolunk extra anyaginformációkat, és egyszerű fizikai alapú renderelést alkalmazunk a pacákra az anyagtulajdonságok és a jelenetbeli fények figyelembe vételével.
+
+Ezzel szemben a @kinai-repo-fejezet\-beli implementáció (ReconWorldLab implementációja, GDGS) azt a technológiát használja bármilyen GS modell újravilágítására, amit collision generálására is használ. Az ő implementációjának van egy olyan köztes feature-je, hogy tud a pacákból egy voxel field-et generálni. Ez a mező sok mindenhez hasznos: GS modell tud árnyékot vetni (látható a @suzanne_gdgs_relit. ábrán, GS modellre viszont nem vetül árnyék), és lehet fizikai kiterjedést (collision) generálni automatán. Ez segítség a felhasználónak, ugyanis nélküle magától kell kiválasztania a megfelelő alakzatot, ami legjobban illik a modellre. Megjegyzendő, hogy ez azért háromszögháló alapú reprezentációknál is gyakori: sokszor a 3D karakter collision-je egy egyszerű kapszula, a komplex vizuális modell ellenére. Ezen kívül ennek a voxel field-nek a segítségével egy lighting proxy-t is lehet számolni, ami alapján a rendszer újra tud világítani bármilyen GS modellt @gdgs-relighting-doc.
+
+=== Újravilágítás paraméterei
+
+Vegyük észre, hogy most már 3 különböző fajta világítási, fénnyel kapcsolatos módszerről van szó, és egyik sem zárja ki a másikat. Alapesetben minden pacának van színe. Ezen felül némelyeknek vannak gömbi harmonikusai (SH), ami nézetirány-függő fényeket tesz lehetővé. Ez erős megcsillanás esetén nem feltétlenül jó, ha újra szeretnénk a modellt világítani, de ezesetben könnyen el is lehet ezt az információt dobni, és csak a DC komponenst használni, mint szín.
+
+Másrészt minden pacának lehetnek anyagtulajdonságai (például roughness, metallic), illetve normálvektora, aminek segítségével el tudjuk végezni az újravilágítást pacánként. Ez a gyakorlatban nekünk a Mesh2Splat (@mesh2splat-program-fejezet. fejezet) kimenetét jelenti.
+
+Harmadrészt pedig, amennyiben egy gömbi harmonikusos, vagy anélküli modellünk van, és mégis figyelembe szeretnénk venni a jelenetbeli fényeket, akkor valamilyen módon ki kell találni az előbb említett paraméterekre értelmes értékeket. Ez az anyagtulajdonságok esetén nem nehéz, a probléma a normálvektorral van. A @kinai-repo-fejezet\-beli implementációban értelmezésem szerint erre szükséges a voxel mező, az ambient occlusion és konfidenciája mellett. Az én @relightolas-sajatszamitas-fejezet\-beli implementációm is implementált egy sokkal egyszerűbb, normálvektor-kitaláló módszert: minden egyes gausszi eloszlású blob legkisebb kiterjedésének irányát vette a normálvektornak. Ez elméletileg logikus, mivel egy felület esetén a paca a felületre merőleges irányba kellene, hogy a legkisebb kiterjedéssel rendelkezzen. Viszont a gyakorlatban nem adott használható eredményt, amint a @teddy_bonsai_rossznormal_relit. ábra is mutatja.
+
+=== Összehasonlítás
+
+Ezt a sokféle változó paramétert, és többféle implementációs lehetőséget próbáltam egyszerűen, de a lehető legjobban lefedni a @tablazat_ujravilagitas. táblázatban: itt 3 modellt teszteltem le 3-féle implementációval. A tesztelt modellek már fentebbről ismerősek lehetnek: Teddy pacáinak csak a legszükségesebb tulajdonságai vannak meg, Bonsai ezen kívül rendelkezik még gömbi harmonikusokkal, míg Suzanne pedig a Mesh2Splat újravilágítási paramétereivel rendelkezik a legszükségesebb tulajdonságok mellett.
+
+A tesztelt implementációk közül is 3 van. Első az @relightolas-sajatszamitas-fejezet. fejezetbeli kompozitoreffektes megoldás, ami a pacák kiterjedéséből megpróbálja a normálvektort minden áron kitalálni, és újravilágítani a modellt. Ez eldobja a gömbi harmonikusok információit, ha vannak. Második a @godot-relighting-fejezet. fejezetbeli fullscreen quad-os megoldás, ami megtartja, és használja a gömbi harmonikusokat, ha vannak, illetve felhasználja az újravilágítás paramétereit is, ha vannak. Harmadik pedig ReconWorldLab implementációja, ami a @kinai-repo-fejezet. fejezetben került bemutatásra (rövid nevén GDGS: GoDot Gaussian Splatting), ez alapértelmezetten felhasználja a gömbi harmonikusokat, ha vannak, és bake-elhető light proxy segítségével minden modellből ki tud normálvektorokat találni.
+
+#figure(table(columns:4,
+  [*Modell neve*], [*Teddy*], [*Bonsai*], [*Suzanne*], 
+  [*Gömbi harmonikusok*], [Nincsenek], [Vannak], [Nincsenek], 
+  [*Anyagtulajdonságok és normál*], [Nincsenek], [Nincsenek], [Vannak], 
+  [*Saját fényszámítással (@relightolas-sajatszamitas-fejezet)*], [@teddy_bonsai_rossznormal_relit. ábra], [@teddy_bonsai_rossznormal_relit. ábra], [@relightolhato_mindketshaded. ábra],
+  [*Godot fényszámításával (@godot-relighting-fejezet)*], [Érintetlen], [@relightable_and_sh_together. ábra], [@relightolhato_mindketshaded\-@relightable_and_sh_together. ábra],
+  [*GDGS (@kinai-repo-fejezet)*], [@teddy_gdgs_relit. ábra], [@bonsai_gdgs_relit. ábra], [@suzanne_gdgs_relit. ábra]
+), caption: [Ábrák számai a modellek és implementációk függvényében]
+) <tablazat_ujravilagitas>
+
+#figure(
+  image("pictures/teddy_bonsai_rossznormal_relit.png")
+  , caption: [Teddy és Bonsai újravilágítási kísérlet megtippelt normálokkal]
+) <teddy_bonsai_rossznormal_relit>
+
+A @teddy_bonsai_rossznormal_relit. ábrán láthatóan a normálvektort nem lehet megtippelni a paca legkisebb kiterjedésének irányából, megfigyelendő, hogy még a simának tekinthető talapzata Teddy-nek is kifejezetten rosszul lett megvilágítva. A helyes, kivilágítatlan modell például a @teddy_gdgs_relit. ábrán látható. A saját implementációk által megjelenített Suzanne értékelése és összehasonlítása a @relightolas-sajatmunka-fejezet. fejezetben szerepel. A @teddy_bonsai_rossznormal_relit. ábrából tanulva az @godot-relighting-fejezet\-beli implementációban inkább úgy általánosítottam az újravilágítási paramétereket, hogy nem meglétük esetén nem történik fényszámítás, így Teddy és Bonsai ezen implementáció alatt érintetlenek, ugyanúgy jelennek meg, mint újravilágítás nélkül.
+
+#figure(
+  image("pictures/teddy_gdgs_relit.png")
+  , caption: [Teddy: bal oldalt az eredeti modell, jobb oldalt GDGS által újravilágítva]
+) <teddy_gdgs_relit>
+
+#figure(
+  image("pictures/bonsai_gdgs_relit.png")
+  , caption: [Bonsai: bal oldalt az eredeti modell, jobb oldalt GDGS által újravilágítva]
+) <bonsai_gdgs_relit>
+
+A GDGS mivel teljesen más módszert használ, így az eredményei is teljesen mások lesznek, ettől érdekes az összehasonlítás. A @teddy_gdgs_relit\-@bonsai_gdgs_relit. ábrán láthatóak a Teddy és Bonsai modellek újravilágítás nélkül, illetve újravilágítással. Habár azért például a Teddy-nél lehet látni a használt voxeleket, az eredmény mégis impresszív. Ahhoz képest, hogy a modelleknek nem volt semmi újravilágítási információja, a program képes volt teljesen értelmes megvilágítást alkalmazni. A látható voxelhatárok ellen pedig lehetséges a felbontás minőségét állítani. A bonsai esetén az újravilágításon felül még a gömbi harmonikusok is alkalmazva vannak, látható a fatörzs megcsillanása, viszont ez kérésre kikapcsolható. Ami kevésbé impresszív viszont, az a Suzanne újravilágítása: a @suzanne_gdgs_relit. ábrán láthatóan a Mesh2Splat kimenete nem kompatibilis a GDGS újravilágításával. Ezt az újravilágítási paraméterek állítása, például voxelméret sem oldotta meg. Kikapcsolt újravilágítás esetén pedig a modell teljesen egyszínű, így csak a körvonala látszik, a részletek, alak nem.
+
+#figure(
+  image("pictures/suzanne_gdgs_relit.png")
+  , caption: [Suzanne, GDGS általi újravilágítás próbálkozással]
+) <suzanne_gdgs_relit>
+
+Egy apró megjegyzés, amit ReconWorldLab is megjegyzett @gdgs-relighting-doc, hogy amennyiben egy valós, felvett, paraméteroptimalizált jelenetet világítunk újra, akkor az tulajdonképpen kétszer lesz megvilágítva. Ugyanis az eredeti felvételkor is voltak már a valódi jelenetben fényforrások, amik esetleg megcsillanásokat, árnyékokat, sötétebb, világosabb részeket eredményeztek, és ezt mi nem tudjuk kiszedni a jelenetből. A gömbi harmonikusok kikapcsolása megcsillanások esetén segíthet, de legfeljebb egy nagyon apró részét oldja meg a kérdésnek. Esetleg létezhet olyan program, ami az újravilágítási paramétereket megpróbálja kitalálni például a gömbi harmonikusokból, esetleg különböző megvilágítással körbefotózott modellből, de ez egy nagyon nehéz feladatnak tűnik.
+
+Összességében azt szükséges mondani, hogy nincs egyféle jó megoldás az újravilágításra, a megfelelő megoldás mind a használt modelltől, mind a felhasználás körülményeitől függ. Így egy ideális pluginnak szükséges az összes lehetséges módszert a felhasználó számára elérhetővé tenni, hogy a beállítások segítségével a saját alkalmazási környezetére tudja szabni a megjelenítést. Ezt a GDGS elég jól csinálja, csak a modellel érkező újravilágítási paramétereket nem tudja felhasználni.
+
+
 
 = Összefoglaló
 
@@ -1137,8 +1215,7 @@ TODO jól elkülöníthető amit ténylegesen én csináltam, meg amit átvettem
 TODO minden bibliography item fel lett használva valahol? footnote vs bibliography jól van kb elválasztva? (nincs többször ugyanaz a footnote, de a bibliography-k tényleg fontos h bibliography-k legyenek?)
 
 TODO GH readme-be, illetve doksiba is (?) beírni, hogy melyik branch-en mi van. cleanup a githubon is, hogy értelmesen, jól nézzen ki. Fontos, leírtam h a readmeben olvasható h melyik branchen mi van! Plusz prezentációt is feltölteni majd!!!
-
-whenhamstersattacktd gpl vs mit??? valahogy feloldani a readmevel, vszeg gpl-é tenni a portot
+whenhamstersattacktd gpl vs mit??? valahogy feloldani a readmevel, gpl-é tenni a portot
 
 Az egészet beadni AI-nak pl nyelvtani javításra (egy random helyen eglépelni, hogy észreveszi-e!!!)
 

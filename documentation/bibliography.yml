@@ -190,4 +190,14 @@ vitavehicle-gh:
   url: https://github.com/jreo03/g-rcp2/tree/godot-4.0.3-conversion
   date: 2026-11-07
 
+pbr-wiki:
+  type: web
+  title: Physically based rendering
+  url: https://en.wikipedia.org/wiki/Physically_based_rendering
+  date: 2026-11-17
 
+gdgs-relighting-doc:
+  type: web
+  title: GDGS Relighting documentation
+  url: https://github.com/ReconWorldLab/godot-gaussian-splatting/blob/main/docs/relighting.md
+  date: 2026-11-18
