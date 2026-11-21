@@ -214,7 +214,7 @@
   total-share: [],
   total-justification: [],
 ) = {
-  [= Nyilatkozat generatív mesterséges intelligencia alkalmazásáról]
+  [= Nyilatkozat generatív mesterséges intelligencia alkalmazásáról <ai-nyilatkozat-fejezet>]
 
   [
     #set list(marker: checkbox(if not used-ai [✘] else []))
@@ -246,23 +246,27 @@
         [#share],
         ..prompt-list.map(p => (
           table.cell(align: left)[*Prompt lényegi része*],
-          table.cell(colspan: 3, align: left)[#p],
+          table.cell(colspan: 3, align: left)[
+            #set par(first-line-indent: (amount: 0em))
+            #set text(size: 6pt)
+            #p
+          ],
         )).flatten(),
         ..(double-line),
       )
     }
 
     table(
-      columns: (4fr, 3fr, 3fr, 3fr),
+      columns: (1.5fr, 3fr, 3fr, 3fr),
       align: center + horizon,
       stroke: 0.5pt,
       inset: (x: 6pt, y: 5pt),
 
       table.header(
-        [*Felhasználási módok*],
+        [*Felhasz-nálási módok*],
         [*Generatív MI \ eszköz(ök) neve*],
         [*Érintett részek* \ (fejezet, oldalszám, hivatkozás)],
-        [*Használat becsült aránya* \ (felhasználási módonként)],
+        [*Használat becsült aránya* (felhasználási módonként)],
       ),
       ..double-line,
 
@@ -275,7 +279,7 @@
       )).flatten(),
 
       table.cell(colspan: 3, align: left)[
-        *Összesített százalékos érték (a feladat érdemi részére nézve):*
+        *Összesített százalékos érték (a feladat érdemi részére nézve)*
       ],
       [#total-share],
 

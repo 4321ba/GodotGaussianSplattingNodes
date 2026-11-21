@@ -25,7 +25,6 @@
   
   = Abstract
 
-
   In recent years, inverse graphics methods, which reverse the image-generation process to perform 3D reconstruction from visual data, have undergone significant development. Among these, 3D Gaussian Splatting (3DGS) has gained special attention. It reconstructs a scene as a radiance field represented by a specialized point cloud enhanced with Gaussian distributions. This representation can be rendered very efficiently, in a way similar to the rasterization of traditional 3D models. 3DGS is becoming widely adopted, as industry standards are already beginning to emerge.
 
   A particularly interesting application of this modern technology is creating graphical assets for video games, such as in the popular Godot engine. Godot is a lightweight, free and open-source game engine for developing games and simulations.
@@ -1016,6 +1015,7 @@ Ezzel szemben a Typst instant fordul, ugyanúgy rendelkezik egy egyszerű online
 
 
 = Plugin alkalmazásai, eredmények
+<plugin-alkalmazasai-fejezet>
 
 == Használati utasítás
 
@@ -1177,50 +1177,141 @@ A mindenki számára szabadon letölthető plugin-változataim, illetve a másik
 
 #bibliography("bibliography.yml")
 
+#import "prompts.typ": prompts
+
 #show: appendix.with(
   used-ai: true,
   ai-usage: (
-    (category: [Irodalomkutatás]),
     (
-      category: [Programkód generálása],
-      tool: [Gemini],
-      parts: [4.2. fejezet, 34–38. o.],
-      share: [15%],
-      prompts: (
-        [GDShader és compute shader memóriaelrendezés optimalizálása...],
-        [Object pooling és RemoteTransform3D architektúra Godot 4-ben...],
+      category: [Új ötletek, megoldási javaslatok és programkód generálása],
+      tool: [ChatGPT, Gemini],
+      parts: [@onallo-munka-bemutatasa\-@plugin-alkalmazasai-fejezet. fejezet],
+      share: [25%],
+      prompts: ([_Az ezen táblázatról szóló szabály meghozása előtt a projekthez használt promptok nem kerültek mentésre. Ezek viszonylag kis, specifikus kérések voltak, kis hatással._
+    
+    
+        ], ..prompts,
       ),
     ),
     (
-      category: [Új ötletek, megoldási javaslatok generálása],
+      category: [Egyéb: Absztrakt angol nyelvűre fordítása],
       tool: [Gemini],
-      parts: [3.1. fejezet, 21. o.],
-      share: [5%],
-      prompts: [Megoldási javaslatok 3DGS és PBR pipeline egyesítésére...],
-    ),
-    (category: [Vázlat létrehozása (szövegstruktúra, vázlatpontok)]),
-    (category: [Szövegblokkok létrehozása]),
-    (category: [Képek generálása illusztrációs célból]),
-    (category: [Adatvizualizáció, grafikonok generálása adatpontok alapján]),
-    (category: [Prezentáció készítése]),
-    (
-      category: [Egyéb: angol nyelvű absztrakt fordítása],
-      tool: [Gemini],
-      parts: [Absztrakt, 2. o.],
-      share: [2%],
-      prompts: [Magyar nyelvű diplomaterv-absztrakt fordítása angolra...],
+      parts: [Abstract],
+      share: [95%],
+      prompts: [Nice. It's been a while. Now I wrote the thesis text. Below I paste the abstract in Hungarian, please translate it into English. Use simple english, but still it should be fine for a master thesis' abstract.
+
+      _Absztrakt akkori változata_],
     ),
     (
-      category: [Egyéb: LaTeX sablon átírása Typst formátumba],
+      category: [Egyéb: AI nyilatkozat írása a Typst sablonhoz],
       tool: [Gemini],
-      parts: [A. függelék],
-      share: [1%],
-      prompts: [LaTeX nyilatkozat táblázat átalakítása Typst sablonná...],
+      parts: [@ai-nyilatkozat-fejezet függelék],
+      share: [50%],
+      prompts: (
+        [in typst I have this for list entries. I want the X to be in the middle of the square, but probably because of some spacing it is off. I want the exact size for the square, I don't want to make it bigger. How do I reduce the spacing or make it negative, so that the X goes up and right relative to the square, and they also take less space (only the space that the empty square would)?
+```
+#set list(marker: square(height: 0.75em)[✘])
+```
+The checkbox character doesn't work well, its using a different font and its ugly],
+        [_AI_nyilatkozat_tablazat_HU.tex_
+        
+        Nice. To be fair the whole task is to translate the attached latex template to typst. So far I've got until here:
+        
+_AI nyilatkozat kódjának akkori változata_
+
+Please try to finish the rest. Take special care to nice spacing and the lines between rows, if you can.],
+[Yeah I like the non-rowgutter version. 
+The box looks worse than it did, but I do like the non-code-duplicatedness. Please however make it like this:
+
+```
+#let checkbox(texttt) = square(height: 0.75em, inset: 0pt)[
+  #place(center + horizon, text(top-edge: "bounds", bottom-edge: "bounds")[texttt])
+]``` (though this doesnt work cuz it writes texttt instead of the variable xddd)
+
+Also, sometimes we need to put multiple prompts, so please make usage-row accept multiple values for the prompt, and add multiple lines after the usage with "prompt lényegi része" on the left 1, and the prompt on the right 3 cells
+
+And please put the whole thing into the appendix function, so far it looks like this:
+
+
+```
+#let appendix(body) = {
+  heading(level: 1, numbering: none)[Függelék]
+  set heading(offset: 1, numbering: (..numbers) => {
+    let nums = numbers.pos()
+    let _ = nums.remove(0)
+    numbering("A.1.", ..nums)
+  })
+  counter(heading).update(0)
+  body
+}
+```
+
+and it is used like this:
+
+```
+#show: appendix
+
+= Nyilatkozat generatív mesterséges intelligencia alkalmazásáról
+...
+```
+
+But I'd want to be able to wrap this text and table into the appendix, while still being able to add other appendix entries after the table. And also be able to populate the ai table from the usage, while the table itself stays in the template.],
+[nice, this is pretty good! I want to ask for a few small adjustments:
+10pt for text size is good (?)
+no need for the 0.5em vspace just before the table
+I want to be able to reorganize the usage-categories, but it is fine if the templates text is in the user-file, since then they can customize the text if they want more easily. Also, we should be able to have multiple "egyéb" options. Or all of them can be done with the same logic, and then it becomes simpler as well.
+I want to draw no table at all if they say they didn't use any AI. (then any info that is passed for the table can be dropped, but it should still compile if possible)],
+[nice, thats good. Now, please write me a python script that converts the attached prompts into the required format. Please pay special attention to line breaks, code blocks, characters that need escaping, etc. It would be good to convert the prompts to a separate file, and have an easy way to "include" that file in the main.typ, since this will be a huge amount of text.
+
+They all go to one category, titled "Új ötletek, megoldási javaslatok és programkód generálása", I will take care of that.
+
+So please write a script that scrapes all of my prompts in the attached file, and word-by-word copies them to this new file. If there is an attachment file to the prompt as well, put the name of the file in front of the prompt like this:
+`_file.ext akkori változata_` (\_ so that it is in italics)
+No need to scrape the responses you gave.
+If there is code pasted into the prompt too, you don't need to auto-recognize that and put the whole thing into a codeblock, but please make sure to escape the characters in a way that I don't get comp.error when I try to see the result. ],
+
+[
+  _extract_prompts.py akkori változata_
+  
+  okay, that is starting to take shape. Now I have the typst file like this:
+```
+[
+
+_rendered\_image\.gd akkori változata_ \
+Hi\. I am making a godot addon that integrates gaussian splatting into the editor\/games, as nodes that can be moved\. I have an autoload singleton with a fullscreen quad where the drawing happens\. This works fine when running the game\. However, I am not sure how it would work in the editor, which would be pretty cool\. This way people could see their splat objects also in the editor\. Now I am getting a bunch of errors from the autoload singleton, which would suggest that it is actually loaded in the editor (it is a \@tool script, however I was not sure if that also is enough for autoload singletons to start during edited scenes, it looks like it is)\.
+
+The errors point to the following problem: \
+splat\_filenames is empty on line 34, meaning the initialization of the rest of the scene probably happens after that is  called\. It is probably indeed true, since if I close the main demo scene, the errrors keep repeating, suggesting that the autoload tools are loaded before everything, and keep running, even if there is no 3d scene open\.
+
+So my guess for a fix is to make dynamically loading\/unloading splat files possible, and that would possibly solve this as well\. My question is what do you think of all of this, and also do you know if the autoload tool is only the script running, or the attached MeshInstance3D will also be available in the editor in case a 3d scene is opened, rendering the splat objects hopefully in the right place, as they do during running the scene?
+
+], [...
+```
+But I'd want to include it so that I can pass the texts as arrays to the typst array we had above to use the function to put it into the table. How to do that? Here is the current python script, and how the main.typ looks like now:
+```
+#show: appendix.with(
+  used-ai: true,
+  ai-usage: (
+    (
+      category: [Új ötletek, megoldási javaslatok és programkód generálása],
+      tool: [ChatGPT, Gemini],
+      parts: [@onallo-munka-bemutatasa\-@plugin-alkalmazasai-fejezet. fejezet],
+      share: [25%],
+      prompts: [_Az ezen táblázatról szóló szabály meghozása előtt a projekthez használt promptok nem kerültek mentésre. Ezek viszonylag kis, specifikus kérések voltak, kis hatással._
+    
+    
+    ],
+    #include "prompts.typ"
+    ),
+....
+```
+but ofc this doesn't work :/],
+      ),
     ),
   ),
-  total-share: [10%],
+  total-share: [15%],
   total-justification: [
-    A generatív MI eszközöket kizárólag segédletekhez, hibakereséshez és nyelvi fordításhoz használtam; a szakmai tartalmat minden esetben ellenőriztem.
+    A generatív MI eszközök sokat segítettek a logika programkódra történő fordításakor, egyes esetekben megoldási ötletek javaslásakor. A megoldási ötleteket minden esetben értelmeztem, és egyes esetekben felülbíráltam. A generált programkódokat átnéztem, kijavítottam, a rendszer logikáját minden esetben értem. A diplomaterv szövegét generatív MI nélkül írtam, az általam befektetett energiát előtérbe helyezve.
   ],
 )
 
@@ -1232,6 +1323,7 @@ A mindenki számára szabadon letölthető plugin-változataim, illetve a másik
 - Megvan a szükséges mennyiség?
 - Összességében egyéb javaslat?
 - Két oldalasra szeretném mindenképpen, mennyire baj?
+- AI táblázat mérete maradhat-e? Betűméret mennyire baj? Egyébként nagyon sok helyet foglalna.
 
 = További teendők a Dipterv 2-ig (végleges doksi leadásig)
 
