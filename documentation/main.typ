@@ -1179,36 +1179,49 @@ A mindenki számára szabadon letölthető plugin-változataim, illetve a másik
 
 #show: appendix
 
+= Nyilatkozat generatív mesterséges intelligencia alkalmazásáról
 
+// https://www.reddit.com/r/typst/comments/1d7empo/how_to_make_a_check_list_with_a_checkbox_at_the/
+#[
+  #set list(marker: square(height: 0.75em, inset: 0pt)[
+    #place(center + horizon, text(top-edge: "bounds", bottom-edge: "bounds")[ ])
+  ])
+  - *Nem használtam* semmilyen generatív MI segédeszközt.
+  #set list(marker: square(height: 0.75em, inset: 0pt)[
+    #place(center + horizon, text(top-edge: "bounds", bottom-edge: "bounds")[✘])
+  ])
+  - *Használtam* generatív MI segédeszközt. Az MI-vel generált tartalmakat ellenőriztem, a generált kimenetek valóságtartalmáról meggyőződtem, az alábbi táblázatban megfelelően jelöltem minden használatot.
+]
+#[
+  #set text(size: 10pt)
+  #table(columns: 4, align: center, row-gutter: 2pt, 
+  table.header(
+    [*Felhasználási módok*],
+    [*Generatív MI \ eszköz(ök) neve*],
+    [*Érintett részek* \ (fejezet, oldalszám, hivatkozás)],
+    [*Használat becsült aránya* (felhasználási módonként)]),
+    [asd], [qwe], [qwe], [sad]
+  )
+
+]
+
+= Kérdések az első verzióhoz
+
+- Fejezetek sorrendje, aránya jó-e?
+- Van-e valami, amit fejtsek ki bővebben?
+- Megvan a szükséges mennyiség?
+- Összességében egyéb javaslat?
+- Két oldalasra szeretném mindenképpen, mennyire baj?
 
 = További teendők a Dipterv 2-ig (végleges doksi leadásig)
-<tovabbiteendok-dipterv2>
 
-- a WhenHamstersAttackTD @when-hamsters-attack-td játék átírása félig (vagy teljesen) GSplatos modellek használatára
-- ezen dokumentum finomítása, véglegesítése
-  - irodalomjegyzék vs lábjegyzet? Melyiket mennyire? Mind mehet irodalomjegyzékbe, nem baj ha nagyon sok?
-- TODO-k kijavítása, eltüntetése itt is és a kódban is
-- minden kép, táblázat és kódrészlet be van számozva? és rendesen referálva?
-- commit history-t, ai chat history-t, teams chatet visszaolvasni, hogy ne hagyjak ki semmit, amiről lehet írni
+TODO-k kijavítása, eltüntetése itt is és a kódban is
 
-*!!!kérdések:*
-- kódolás rész kész, más nem kell
-- fejezetek sorrendje!
-- irodalomjegyzék vs lábjegyzet
-- kedvezményes tanrend nem kell
-- terv szerint heti kb 5 oldal finomítása, mostmár inkább 10 xd (október eleje)
+minden kép, táblázat és kódrészlet be van számozva? és rendesen referálva? A képaláírásokat mindenhol megcsináltam helyesen?
 
-== Egyéb TODO-k
-
-
- TODO margó tükrözés rendesen, ha 2 oldalasat szeretnék, és a feladatkiíráshoz is a megfelelő margó! Illetve a legvégén: jól legyenek párosítva az oldalak, ha tényleg 2 oldalasat csinálok (tartalomjegyzék-tartalomjegyzék, absztrakt-abstract, stb.)
-
-
-TODO Valahova a féléves beosztásokat: mi volt önlab1, mi dipterv1, mi dipterv2
+TODO margó tükrözés rendesen, ha 2 oldalasat szeretnék, és a feladatkiíráshoz is a megfelelő margó! Illetve a legvégén: jól legyenek párosítva az oldalak, ha tényleg 2 oldalasat csinálok (tartalomjegyzék-tartalomjegyzék, absztrakt-abstract, stb.)
 
 TODO Daninak a sablonban levő módosításokat elküldeni, ha már kb fix
-
-TODO jól elkülöníthető amit ténylegesen én csináltam, meg amit átvettem/amiről csak írok? ne időrendi sorrendben menjek a cuccokon végig, hanem logikai sorrendben.
  
 TODO minden bibliography item fel lett használva valahol? footnote vs bibliography jól van kb elválasztva? (nincs többször ugyanaz a footnote, de a bibliography-k tényleg fontos h bibliography-k legyenek?)
 
@@ -1224,17 +1237,15 @@ időben elküldeni az egészet reviewra (pl november eleje-közepe) (tartalmilag
 megkérdezni Mártont h jó-e 2 oldalasra, ha mindenképp úgy szeretném
 
 tervezett ütemterv:
-- végigmenni az egész szövegen ami van, megfelelő sorrendbe tenni a dolgokat, kb legyen meg a szöveg, struktúra
 - AI táblázat betétele
 - újra végigfutni mindenen, absztraktok, dolgozat szerkezete, egyéb TODO-k letisztázása
 - képaláírások, kódaláírások rendben vannak? sehol sincs copy-paste ami nem oda tartozik?
 - AI nyelvtani korrekció tesztje (viabilis megoldás-e, minél több hiba, magyartalan szöveg javítása)
 - fentebbi todo-k átfutása, hogy van-e valami releváns
 - elküldeni a konzulensnek, még mivel érdemes kiegészíteni, átrendezés, ilyesmi stb.
-- legyen meg a szövegmennyiség kg-ra
 - újabb nyelvtani ellenőrzés
 - a/az az ábráknál / fejezetcímeknél kifejezetten! ezt már miután semmi átrendezés / új beszúrás nincs
-- valamit tartalmilag totál elírni, hogy azt megtalálja-e egy AI, hha valahol totál marhaság lenne
+- valamit tartalmilag / nyelvtanilag totál elírni, hogy azt megtalálja-e egy AI, hha valahol totál marhaság lenne
 - a teljes online mappát átmásolni a git-es mappába, és megnézni h kimaradt-e vmi (pl kép) a verziókontrollból
 
 beadás után nyomtatás, + a diasor elkészítése míg amíg jól emlékszem a dokumentumra!
@@ -1243,8 +1254,7 @@ beadás után nyomtatás, + a diasor elkészítése míg amíg jól emlékszem a
 ötletek a méret növelésére:
 - nerf megemlítése / kijjebb fejtése
 - irodalomkutatáshoz screenshotok, kipróbálni a dolgokat amiket referálok, illetve még írni róluk
-
-*TODO AI táblázat majd ide!*
+- commit history-t, ai chat history-t, teams chatet visszaolvasni, hogy ne hagyjak ki semmit, amiről lehet írni
 
 
 // vim:spelllang=hu:spell
