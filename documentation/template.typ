@@ -204,7 +204,97 @@
   body
 }
 
-#let appendix(body) = {
+#let checkbox(char) = square(height: 0.75em, inset: 0pt)[
+  #place(center + horizon, text(top-edge: "bounds", bottom-edge: "bounds")[#char])
+]
+
+#let ai-declaration(
+  used-ai: false,
+  usage: (),
+  total-share: [],
+  total-justification: [],
+) = {
+  [= Nyilatkozat generatív mesterséges intelligencia alkalmazásáról]
+
+  [
+    #set list(marker: checkbox(if not used-ai [✘] else []))
+    - *Nem használtam* semmilyen generatív MI segédeszközt.
+
+    #set list(marker: checkbox(if used-ai [✘] else []))
+    - *Használtam* generatív MI segédeszközt. Az MI-vel generált tartalmakat ellenőriztem, a generált kimenetek valóságtartalmáról meggyőződtem, az alábbi táblázatban megfelelően jelöltem minden használatot.
+  ]
+
+  if used-ai {
+    set text(size: 10pt)
+    set par(justify: false)
+
+    let double-line = (
+      table.cell(colspan: 4, inset: 0pt)[#v(1.5pt)],
+    )
+
+    let usage-row(category, tool: [], parts: [], share: [], prompts: ()) = {
+      let prompt-list = if type(prompts) == array {
+        if prompts.len() > 0 { prompts } else { ([],) }
+      } else {
+        (prompts,)
+      }
+
+      (
+        table.cell(align: left)[#category],
+        [#tool],
+        [#parts],
+        [#share],
+        ..prompt-list.map(p => (
+          table.cell(align: left)[*Prompt lényegi része*],
+          table.cell(colspan: 3, align: left)[#p],
+        )).flatten(),
+        ..(double-line),
+      )
+    }
+
+    table(
+      columns: (4fr, 3fr, 3fr, 3fr),
+      align: center + horizon,
+      stroke: 0.5pt,
+      inset: (x: 6pt, y: 5pt),
+
+      table.header(
+        [*Felhasználási módok*],
+        [*Generatív MI \ eszköz(ök) neve*],
+        [*Érintett részek* \ (fejezet, oldalszám, hivatkozás)],
+        [*Használat becsült aránya* \ (felhasználási módonként)],
+      ),
+      ..double-line,
+
+      ..usage.enumerate().map(((idx, entry)) => usage-row(
+        entry.at("category", default: []),
+        tool: entry.at("tool", default: []),
+        parts: entry.at("parts", default: []),
+        share: entry.at("share", default: []),
+        prompts: entry.at("prompts", default: ()),
+      )).flatten(),
+
+      table.cell(colspan: 3, align: left)[
+        *Összesített százalékos érték (a feladat érdemi részére nézve):*
+      ],
+      [#total-share],
+
+      table.cell(colspan: 4, align: left + top)[
+        *Összesített érték rövid, szöveges indoklása:* \
+        #total-justification
+        #if total-justification == [] { v(3.5em) }
+      ],
+    )
+  }
+}
+
+#let appendix(
+  used-ai: false,
+  ai-usage: (),
+  total-share: [],
+  total-justification: [],
+  body,
+) = {
   heading(level: 1, numbering: none)[Függelék]
   set heading(offset: 1, numbering: (..numbers) => {
     let nums = numbers.pos()
@@ -212,6 +302,13 @@
     numbering("A.1.", ..nums)
   })
   counter(heading).update(0)
+
+  ai-declaration(
+    used-ai: used-ai,
+    usage: ai-usage,
+    total-share: total-share,
+    total-justification: total-justification,
+  )
+
   body
 }
-

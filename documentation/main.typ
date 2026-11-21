@@ -1177,82 +1177,53 @@ A mindenki számára szabadon letölthető plugin-változataim, illetve a másik
 
 #bibliography("bibliography.yml")
 
-#show: appendix
-
-= Nyilatkozat generatív mesterséges intelligencia alkalmazásáról
-
-#let checkbox(texttt) = square(height: 0.75em, inset: 0pt)[
-  #place(center + horizon, text(top-edge: "bounds", bottom-edge: "bounds")[#texttt])
-]
-
-#[
-  #set list(marker: checkbox([ ]))
-  - *Nem használtam* semmilyen generatív MI segédeszközt.
-
-  #set list(marker: checkbox([x]))
-  - *Használtam* generatív MI segédeszközt. Az MI-vel generált tartalmakat ellenőriztem, a generált kimenetek valóságtartalmáról meggyőződtem, az alábbi táblázatban megfelelően jelöltem minden használatot.
-]
-
-#v(0.5em)
-
-#[
-  #set text(size: 9.5pt)
-  #set par(justify: false) // Prevents stretched word spacing inside narrow cells
-
-  // Replicates LaTeX's \hline\hline double border between category blocks
-  #let double-line = (
-    table.cell(colspan: 4, inset: 0pt)[#v(1.5pt)],
-  )
-
-  // Helper for each category + prompt block
-  #let usage-row(category, tool: [], parts: [], share: [], prompt: [], sep: true) = (
-    table.cell(align: left)[#category],
-    [#tool],
-    [#parts],
-    [#share],
-    table.cell(align: left)[*Prompt lényegi része*],
-    table.cell(colspan: 3, align: left)[#prompt],
-    ..(if sep { double-line } else { () }),
-  )
-
-  #table(
-    // Mirrors the 40mm : 30mm : 30mm : 30mm column ratio from the LaTeX template
-    columns: (4fr, 3fr, 3fr, 3fr),
-    align: center + horizon,
-    stroke: 0.5pt,
-    inset: (x: 6pt, y: 5pt),
-
-    table.header(
-      [*Felhasználási módok*],
-      [*Generatív MI \ eszköz(ök) neve*],
-      [*Érintett részek* \ (fejezet, oldalszám, hivatkozás)],
-      [*Használat becsült aránya* \ (felhasználási módonként)],
+#show: appendix.with(
+  used-ai: true,
+  ai-usage: (
+    (category: [Irodalomkutatás]),
+    (
+      category: [Programkód generálása],
+      tool: [Gemini],
+      parts: [4.2. fejezet, 34–38. o.],
+      share: [15%],
+      prompts: (
+        [GDShader és compute shader memóriaelrendezés optimalizálása...],
+        [Object pooling és RemoteTransform3D architektúra Godot 4-ben...],
+      ),
     ),
-    ..double-line,
+    (
+      category: [Új ötletek, megoldási javaslatok generálása],
+      tool: [Gemini],
+      parts: [3.1. fejezet, 21. o.],
+      share: [5%],
+      prompts: [Megoldási javaslatok 3DGS és PBR pipeline egyesítésére...],
+    ),
+    (category: [Vázlat létrehozása (szövegstruktúra, vázlatpontok)]),
+    (category: [Szövegblokkok létrehozása]),
+    (category: [Képek generálása illusztrációs célból]),
+    (category: [Adatvizualizáció, grafikonok generálása adatpontok alapján]),
+    (category: [Prezentáció készítése]),
+    (
+      category: [Egyéb: angol nyelvű absztrakt fordítása],
+      tool: [Gemini],
+      parts: [Absztrakt, 2. o.],
+      share: [2%],
+      prompts: [Magyar nyelvű diplomaterv-absztrakt fordítása angolra...],
+    ),
+    (
+      category: [Egyéb: LaTeX sablon átírása Typst formátumba],
+      tool: [Gemini],
+      parts: [A. függelék],
+      share: [1%],
+      prompts: [LaTeX nyilatkozat táblázat átalakítása Typst sablonná...],
+    ),
+  ),
+  total-share: [10%],
+  total-justification: [
+    A generatív MI eszközöket kizárólag segédletekhez, hibakereséshez és nyelvi fordításhoz használtam; a szakmai tartalmat minden esetben ellenőriztem.
+  ],
+)
 
-    ..usage-row([Irodalomkutatás]),
-    ..usage-row([Programkód generálása], share: [15%]),
-    ..usage-row([], share: [15%]),
-    ..usage-row([Új ötletek, megoldási javaslatok generálása]),
-    ..usage-row([Vázlat létrehozása (szövegstruktúra, vázlatpontok)]),
-    ..usage-row([Szövegblokkok létrehozása]),
-    ..usage-row([Képek generálása illusztrációs célból]),
-    ..usage-row([Adatvizualizáció, grafikonok generálása adatpontok alapján]),
-    ..usage-row([Prezentáció készítése]),
-    ..usage-row([Egyéb (nevezze meg)], sep: false),
-
-    // Summary rows
-    table.cell(colspan: 3, align: left)[
-      *Összesített százalékos érték (a feladat érdemi részére nézve):*
-    ],
-    [],
-
-    table.cell(colspan: 4, align: left + top)[
-      *Összesített érték rövid, szöveges indoklása:*
-      #v(4em)
-    ],
-  )
-]
 
 = Kérdések az első verzióhoz
 
