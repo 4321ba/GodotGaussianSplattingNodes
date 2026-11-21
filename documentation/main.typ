@@ -13,30 +13,26 @@
 
 #abstract[
   = Kivonat
+  
+  Napjainkban igen komoly fejlődésen mentek keresztül az inverz grafikai módszerek, amelyek a képalkotás folyamatát megfordítva végeznek 3D rekonstrukciót képi információk alapján. Ezek között kiemelten nagy figyelmet kapott a 3D Gaussian Splatting (3DGS), amely a színteret egy speciális, gaussi normális eloszlásokkal kiegészített pontfelhőként reprezentált radiancia mező formájában rekonstruálja. Ezen reprezentáció renderelése igen hatékonyan elvégezhető, a klasszikus 3D modellek raszterezéséhez hasonló módon. A 3DGS reprezentáció igen széles körben kezd elterjedni, már ipari szabványok is kezdenek megjelenni.
+  
+  Ezen korszerű technológia egy különösen érdekes alkalmazása grafikus assetek előállítása számítógépes játékokhoz, pl. a népszerű Godot engine-ben. A Godot játékmotor egy könnyű, szabad és nyílt forráskódú megoldás játékok és szimulációk készítésére.
 
-  TODO
+  A diplomaterv során integrálom a 3DGS megjelenítést a játékmotorba, lehetővé téve a hagyományos 3D modellekkel való együttes megjelenítést, és fizikai interakciót. Készítek egy plugint, és így egy másik Godot projektbe is könnyen lehet integrálni a Gaussian Splatting modelleket. Külön figyelmet fordítok apró részletekre, amik a játékmotorbeli használat élményét javítják. Továbbá implementálok instancing-et a 3DGS modellekhez, illetve több újravilágíthatóság-módszert megvizsgálok. Egy közben megjelent konkurens implementációval kapcsolatba lépek, és kollaborációt hajtunk végre.
+
+  Végül a projekt eredményének bemutatásaként integrálom a plugint több példaprojektbe, vegyesen használva 3DGS és klasszikus 3D modelleket, majd összehasonlítom a különböző logikájú újravilágítás-implementációkat.
+
   
-  Napjainkban igen komoly fejlődésen mentek keresztül az inverz grafikai módszerek, amelyek
-  a képalkotás folyamatát megfordítva végeznek 3D rekonstrukciót képi információk alapján.
-  Ezek között kiemelten nagy figyelmet kapott a 3D Gaussian Splatting (3DGS), amely a színteret
-  egy speciális, gaussi normális eloszlásokkal kiegészített pontfelhőként reprezentált radiancia
-  mező formájában rekonstruálja. Ezen reprezentáció renderelése igen hatékonyan elvégezhető,
-  a klasszikus 3D modellek raszterezéséhez hasonló módon. A 3DGS reprezentáció igen széles
-  körben kezd elterjedni, már ipari szabványok is kezdenek megjelenni.
-  
-  Ezen korszerű technológia egy különösen érdekes alkalmazása grafikus assetek előállítása
-  számítógépes játékokhoz, pl. a népszerű Godot engine-ben. Ehhez egyrészt szükséges a 3DGS
-  reprezentáció integrációja a grafikai és fizikai motorba, másrészt a szokványos 3D modellekkel
-  való interakció megvalósítása is.
-    
   = Abstract
 
 
-  TODO
-  
-  Nowadays, inverse graphics methods have undergone a very serious development, which perform 3D reconstruction based on image information by reversing the process of image creation. Among them, 3D Gaussian Splatting (3DGS) has received a lot of attention, which reconstructs the scene in the form of a radiance field represented as a special point cloud supplemented with Gaussian normal distributions. The rendering of this representation can be performed very efficiently, in a way similar to the rasterization of classical 3D models. 3DGS representation is becoming very widespread, and industry standards are already starting to appear.
-  
-  A particularly interesting application of this modern technology is the production of graphic assets for computer games, e.g. in the popular Godot engine. This requires, on the one hand, the integration of the 3DGS representation into the graphics and physics engine, and on the other hand, the implementation of interaction with conventional 3D models.
+  In recent years, inverse graphics methods, which reverse the image-generation process to perform 3D reconstruction from visual data, have undergone significant development. Among these, 3D Gaussian Splatting (3DGS) has gained special attention. It reconstructs a scene as a radiance field represented by a specialized point cloud enhanced with Gaussian distributions. This representation can be rendered very efficiently, in a way similar to the rasterization of traditional 3D models. 3DGS is becoming widely adopted, as industry standards are already beginning to emerge.
+
+  A particularly interesting application of this modern technology is creating graphical assets for video games, such as in the popular Godot engine. Godot is a lightweight, free and open-source game engine for developing games and simulations.
+
+  In this master's thesis, I integrate 3DGS rendering into the game engine, enabling combined rendering and physical interaction alongside traditional 3D models. I develop a plugin that allows Gaussian Splatting models to be easily integrated into other Godot projects. I pay special attention to small details that improve the user experience within the engine. Additionally, I implement instancing for 3DGS models, investigate multiple relighting methods, and collaborate with a competing implementation that emerged during the course of the project.
+
+  Finally, to demonstrate the results, I integrate the plugin into multiple sample projects while using a mix of 3DGS and traditional 3D models, and compare relighting implementations with different underlying approaches.
 ]
 
 
@@ -83,7 +79,7 @@ A motorba történő megfelelő integráció esetén lehetőség lenne Gaussian 
 
 == A diplomaterv további szerkezete
 
-A továbbiakban bemutatom a témában megtalálható forrásokat, implementációkat, és leírom az általam elvégzett munka tervét, majd a megvalósítását, és a megvalósítás felhasználását. Végül összegzem a leírtakat. TODO picit bővebben kifejteni
+A továbbiakban bemutatom a témában zajló kutatás-fejlesztés legfőbb eredményeit, és ismertetem a használandó fájlformátumokat, konvertáló programokat és egyéb technológiákat. Ezután bemutatom a projekt tervezését, majd a megvalósítását témák szerint csoportosított módon. Végül a projekt használatára adok példákat, részletes összehasonlítást végzek az újravilágíthatóság-implementálások között, és összefoglalom a leírtakat.
 
 = Irodalomkutatás
 
