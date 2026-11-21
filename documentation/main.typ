@@ -1181,28 +1181,77 @@ A mindenki számára szabadon letölthető plugin-változataim, illetve a másik
 
 = Nyilatkozat generatív mesterséges intelligencia alkalmazásáról
 
-// https://www.reddit.com/r/typst/comments/1d7empo/how_to_make_a_check_list_with_a_checkbox_at_the/
+#let checkbox(texttt) = square(height: 0.75em, inset: 0pt)[
+  #place(center + horizon, text(top-edge: "bounds", bottom-edge: "bounds")[#texttt])
+]
+
 #[
-  #set list(marker: square(height: 0.75em, inset: 0pt)[
-    #place(center + horizon, text(top-edge: "bounds", bottom-edge: "bounds")[ ])
-  ])
+  #set list(marker: checkbox([ ]))
   - *Nem használtam* semmilyen generatív MI segédeszközt.
-  #set list(marker: square(height: 0.75em, inset: 0pt)[
-    #place(center + horizon, text(top-edge: "bounds", bottom-edge: "bounds")[✘])
-  ])
+
+  #set list(marker: checkbox([x]))
   - *Használtam* generatív MI segédeszközt. Az MI-vel generált tartalmakat ellenőriztem, a generált kimenetek valóságtartalmáról meggyőződtem, az alábbi táblázatban megfelelően jelöltem minden használatot.
 ]
+
+#v(0.5em)
+
 #[
-  #set text(size: 10pt)
-  #table(columns: 4, align: center, row-gutter: 2pt, 
-  table.header(
-    [*Felhasználási módok*],
-    [*Generatív MI \ eszköz(ök) neve*],
-    [*Érintett részek* \ (fejezet, oldalszám, hivatkozás)],
-    [*Használat becsült aránya* (felhasználási módonként)]),
-    [asd], [qwe], [qwe], [sad]
+  #set text(size: 9.5pt)
+  #set par(justify: false) // Prevents stretched word spacing inside narrow cells
+
+  // Replicates LaTeX's \hline\hline double border between category blocks
+  #let double-line = (
+    table.cell(colspan: 4, inset: 0pt)[#v(1.5pt)],
   )
 
+  // Helper for each category + prompt block
+  #let usage-row(category, tool: [], parts: [], share: [], prompt: [], sep: true) = (
+    table.cell(align: left)[#category],
+    [#tool],
+    [#parts],
+    [#share],
+    table.cell(align: left)[*Prompt lényegi része*],
+    table.cell(colspan: 3, align: left)[#prompt],
+    ..(if sep { double-line } else { () }),
+  )
+
+  #table(
+    // Mirrors the 40mm : 30mm : 30mm : 30mm column ratio from the LaTeX template
+    columns: (4fr, 3fr, 3fr, 3fr),
+    align: center + horizon,
+    stroke: 0.5pt,
+    inset: (x: 6pt, y: 5pt),
+
+    table.header(
+      [*Felhasználási módok*],
+      [*Generatív MI \ eszköz(ök) neve*],
+      [*Érintett részek* \ (fejezet, oldalszám, hivatkozás)],
+      [*Használat becsült aránya* \ (felhasználási módonként)],
+    ),
+    ..double-line,
+
+    ..usage-row([Irodalomkutatás]),
+    ..usage-row([Programkód generálása], share: [15%]),
+    ..usage-row([], share: [15%]),
+    ..usage-row([Új ötletek, megoldási javaslatok generálása]),
+    ..usage-row([Vázlat létrehozása (szövegstruktúra, vázlatpontok)]),
+    ..usage-row([Szövegblokkok létrehozása]),
+    ..usage-row([Képek generálása illusztrációs célból]),
+    ..usage-row([Adatvizualizáció, grafikonok generálása adatpontok alapján]),
+    ..usage-row([Prezentáció készítése]),
+    ..usage-row([Egyéb (nevezze meg)], sep: false),
+
+    // Summary rows
+    table.cell(colspan: 3, align: left)[
+      *Összesített százalékos érték (a feladat érdemi részére nézve):*
+    ],
+    [],
+
+    table.cell(colspan: 4, align: left + top)[
+      *Összesített érték rövid, szöveges indoklása:*
+      #v(4em)
+    ],
+  )
 ]
 
 = Kérdések az első verzióhoz
