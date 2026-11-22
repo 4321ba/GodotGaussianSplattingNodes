@@ -1,0 +1,18 @@
+A renderer shaderkód több revízión átment, de logikailag végig a @depthblending_glslkod. kódrészleten látható megoldás maradt a mélység kinyerésének mószere.
+
+Ennek előnye, hogy pontszerű pontok halmazaként a GS megjelenítést nem támogató programok is meg képesek jeleníteni a modelleket
+
+A negatív előjelek bizonyára megmagyarázhatóak, de mindenesetre szükségesek, mivel nélkülük a bonsai fa láthatóan nem ugyanott volt, mint a kapszulákból álló "repülő-alak".
+
+A változtatás nem volt nehéz, de több fájlon át kellett propagálni a láthatóság értékét, ami végül a GPU-ra feltöltés során a transzformációs mátrix egyik nem használt értékének a helyére lett beszuszakolva.
+
+ Az Ön által megadott „radiancia mező” karaktersorozatot sajnos nem tudtuk értelmezni. (https://helyesiras.mta.hu/helyesiras/default/kulegy#)
+ 
+ Végül a teljes képernyős quadra helyezett spatial shader kapja meg az anyagtulajdonságokat, és adja tovább a játékmotornak, aki innentől kezeli az árnyalást.
+ 
+ Az eredeti projektet jreo03 készítette, és elég fapados modelleket és kód-esztétikát használó, de teljesen működőképes projektről van szó.
+ 
+ Egy problémás helyet az ikonnak viszont szükséges megemlíteni: a FileSystem dock-ban a Godot verziótól függően nem mindig jelenik meg az ikon, néha a sima `Resource` osztály ikonja látszik.
+ 
+ A „kovariancia” főnevet és a „mátrix” főnevet egybeírjuk az alábbi szabály alapján:
+A két főnévből álló – jelöletlen birtokos jelzői vagy jelentéssűrítő – alárendelő összetételeket egybeírjuk.
