@@ -131,7 +131,7 @@ Mivel a motor, és a Gaussian Splatting téma is népszerű, ezért több, hason
 === GodotGaussianSplatting 2Retr0-tól
 <OriginalGGSVFejezet>
 
-2Retr0 GS megjelenítője @OriginalGodotGaussianSplattingViewer az eredetileg leginkább használt implementáció. Ez egy darab GS modellt képes Godot-ban megjeleníteni, és egy repülő kamerával lehet körüljárni a modellt. Az @originalggs_banana. képen látható egy példakép, ami egy banánt ábrázol, az alatta levő terítővel együtt.
+2Retr0 GS megjelenítője @OriginalGodotGaussianSplattingViewer az eredetileg leginkább használt implementáció. Ez egy darab GS modellt képes Godot-ban megjeleníteni, és egy repülő kamerával lehet körüljárni a modellt. A @originalggs_banana. ábrán látható egy példakép, ami egy banánt ábrázol, az alatta levő terítővel együtt.
 
 #figure(
   image("pictures/originalggs_banana.png")
@@ -248,7 +248,7 @@ A különböző modellek betöltéséhez és manipulációjához különböző p
 
 A superspl.at egy könnyen használható, online szerkesztő #footnote[https://superspl.at/editor], konvertáló és publikációs felület, ami a modellek tisztításához, bizonyos blobok letörléséhez, bizonyos tárgyak környezettől történő elválasztásához kifejezetten hasznos volt számomra is. Be lehet tölteni sokféle fájlformátumot, meg lehet nézni a modellt, bizonyos részeket levágni, vagy éppen több modellt összekombinálni, majd az eredményt különböző formátumokba exportálni.
 
-Az @supersplat_teddy. ábrán az egyik modell talapzatának levágását illusztrálom. Természetesen pontosan a Z tengely irányába nézve, a tengely ábrázolt magasságában lebegve sokkal egyszerűbb a teljes talapzatot kijelölni, és levágni.
+A @supersplat_teddy. ábrán az egyik modell talapzatának levágását illusztrálom. Természetesen pontosan a Z tengely irányába nézve, a tengely ábrázolt magasságában lebegve sokkal egyszerűbb a teljes talapzatot kijelölni, és levágni.
 
 #figure(
   image("pictures/supersplat_teddy.png")
@@ -547,9 +547,9 @@ func is_splat_mesh():
 ```, caption: [Pull esetén a GS node implementációja]
 ) <pull_gsnode_gdscr>
 
-A root node feladata, a node-ok összegyűjtése picit bonyolultabb volt, és nem találtam könnyű megoldást saját típusú objektumok halmazának könnyű beszerzésére a SceneTree-ből. A legjobb megoldás egy rekurzív bejárás lett, ami az `is_splat_mesh()` függvény létezése alapján gyűjtötte össze a node-okat #footnote[https://forum.godotengine.org/t/how-do-you-get-all-nodes-of-a-certain-class/9143]. A node-okat egy tömbben eltárolta a kezdeti begyűjtés után, illetve a megfelelő fájlokkal inicializálta a rasterizert. Minden képkockában továbbá összegyűjtötte a tömbelemek aktuális transzformját, és továbbította a rasterizer @objecttransform_kod. kódrészleten látható `update_object_transforms(transforms)` függvénynek. Ez a logika viszont később át lett alakítva a @pull-vagy-push-fejezet. fejezetben leírtaknak megfelelően egy push logikájú megoldásra.
+A root node feladata, a node-ok összegyűjtése picit bonyolultabb volt, és nem találtam könnyű megoldást saját típusú objektumok halmazának könnyű beszerzésére a SceneTree-ből. A legjobb megoldás egy rekurzív bejárás lett, ami az `is_splat_mesh()` függvény létezése alapján gyűjtötte össze a node-okat #footnote[https://forum.godotengine.org/t/how-do-you-get-all-nodes-of-a-certain-class/9143]. A node-okat egy tömbben eltárolta a kezdeti begyűjtés után, illetve a megfelelő fájlokkal inicializálta a rasterizert. Minden képkockában továbbá összegyűjtötte a tömbelemek aktuális transzformját, és továbbította a rasterizer @objecttransform_kod. kódrészleten látható `update_object_transforms(transforms)` függvénynek. Ez a logika viszont később át lett alakítva az @pull-vagy-push-fejezet. fejezetben leírtaknak megfelelően egy push logikájú megoldásra.
 
-A transzformok rasterizernek való képkockánkénti továbbítása viszont aktuális maradt, és a @pull_rootnode_gdscr. kódrészleten látható módon történik.
+A transzformok rasterizernek való képkockánkénti továbbítása viszont aktuális maradt, és az @pull_rootnode_gdscr. kódrészleten látható módon történik.
 
 #figure(```py
 var splat_meshes : Array[SplatMesh] = []
@@ -1308,6 +1308,19 @@ But I'd want to include it so that I can pass the texts as arrays to the typst a
 but ofc this doesn't work :/],
       ),
     ),
+    (
+      category: [Egyéb: Nyelvtani és tartalmi ellenőrzés],
+      tool: [Gemini],
+      parts: [Teljes dokumentum],
+      share: [0.1%],
+      prompts: [
+        _main.typ részlete_
+        
+        Nagyon jó. Most a diplomaterv egy-egy részletét csatolom, kérlek nézd át részletesen, és jelezd a kirívó nyelvtani illetve tartalmi hibákat!
+
+        _A prompt többször is futtatásra került._
+      ],
+    ),
   ),
   total-share: [15%],
   total-justification: [
@@ -1319,17 +1332,13 @@ but ofc this doesn't work :/],
 = Kérdések az első verzióhoz
 
 - Fejezetek sorrendje, aránya jó-e?
-- Van-e valami, amit fejtsek ki bővebben?
+- Van-e valami, amit mindenképpen fejtsek ki bővebben?
 - Megvan a szükséges mennyiség?
 - Összességében egyéb javaslat?
 - Két oldalasra szeretném mindenképpen, mennyire baj?
 - AI táblázat mérete maradhat-e? Betűméret mennyire baj? Egyébként nagyon sok helyet foglalna.
 
 = További teendők a Dipterv 2-ig (végleges doksi leadásig)
-
-TODO-k kijavítása, eltüntetése itt is és a kódban is
-
-minden kép, táblázat és kódrészlet be van számozva? és rendesen referálva? A képaláírásokat mindenhol megcsináltam helyesen?
 
 TODO margó tükrözés rendesen, ha 2 oldalasat szeretnék, és a feladatkiíráshoz is a megfelelő margó! Illetve a legvégén: jól legyenek párosítva az oldalak, ha tényleg 2 oldalasat csinálok (tartalomjegyzék-tartalomjegyzék, absztrakt-abstract, stb.)
 
@@ -1349,11 +1358,7 @@ időben elküldeni az egészet reviewra (pl november eleje-közepe) (tartalmilag
 megkérdezni Mártont h jó-e 2 oldalasra, ha mindenképp úgy szeretném
 
 tervezett ütemterv:
-- AI táblázat betétele
-- újra végigfutni mindenen, absztraktok, dolgozat szerkezete, egyéb TODO-k letisztázása
-- képaláírások, kódaláírások rendben vannak? sehol sincs copy-paste ami nem oda tartozik?
 - AI nyelvtani korrekció tesztje (viabilis megoldás-e, minél több hiba, magyartalan szöveg javítása)
-- fentebbi todo-k átfutása, hogy van-e valami releváns
 - elküldeni a konzulensnek, még mivel érdemes kiegészíteni, átrendezés, ilyesmi stb.
 - újabb nyelvtani ellenőrzés
 - a/az az ábráknál / fejezetcímeknél kifejezetten! ezt már miután semmi átrendezés / új beszúrás nincs

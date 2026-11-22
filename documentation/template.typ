@@ -214,6 +214,9 @@
   total-share: [],
   total-justification: [],
 ) = {
+
+//  set page(margin: (left: 2.5cm, rest: 1.5cm))
+  
   [= Nyilatkozat generatív mesterséges intelligencia alkalmazásáról <ai-nyilatkozat-fejezet>]
 
   [
