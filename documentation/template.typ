@@ -251,7 +251,7 @@
           table.cell(align: left)[*Prompt lényegi része*],
           table.cell(colspan: 3, align: left)[
             #set par(first-line-indent: (amount: 0em))
-            #set text(size: 6pt)
+            //#set text(size: 6pt)
             #p
           ],
         )).flatten(),
@@ -260,13 +260,13 @@
     }
 
     table(
-      columns: (1.5fr, 3fr, 3fr, 3fr),
+      columns: (3.5fr, 3fr, 3fr, 3fr),
       align: center + horizon,
       stroke: 0.5pt,
       inset: (x: 6pt, y: 5pt),
 
       table.header(
-        [*Felhasz-nálási módok*],
+        [*Felhasználási módok*],
         [*Generatív MI \ eszköz(ök) neve*],
         [*Érintett részek* \ (fejezet, oldalszám, hivatkozás)],
         [*Használat becsült aránya* (felhasználási módonként)],

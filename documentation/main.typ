@@ -1158,8 +1158,6 @@ A mindenki számára szabadon letölthető plugin-változataim, illetve a másik
 
 #bibliography("bibliography.yml")
 
-#import "prompts.typ": prompts
-
 #show: appendix.with(
   used-ai: true,
   ai-usage: (
@@ -1168,10 +1166,129 @@ A mindenki számára szabadon letölthető plugin-változataim, illetve a másik
       tool: [ChatGPT, Gemini],
       parts: [@onallo-munka-bemutatasa\-@plugin-alkalmazasai-fejezet. fejezetek],
       share: [25%],
-      prompts: ([_Az ezen táblázatról szóló szabály meghozása előtt a projekthez használt promptok nem kerültek mentésre. Ezek viszonylag kis, specifikus kérések voltak, kis hatással._
-    
-    
-        ], ..prompts,
+      prompts: (
+        [_Az ezen táblázatról szóló szabály meghozása előtt a projekthez használt promptok nem kerültek mentésre. Ezek viszonylag kis, specifikus kérések voltak, kis hatással._],
+        [`rendered_image.gd` — How to support dynamic splat loading/unloading and editor viewport rendering in the `@tool` autoload singleton?],
+        [How to resolve the "Tried capturing more timestamps than the configured maximum (256)" Godot error?],
+        [What is the recommended GDScript function to replace ImGui debug UI calls with console prints?],
+        [How to call `print_debug_info()` every second in GDScript without using a `Timer` node?],
+        [`rendered_image.gd`, `splat_mesh.gd` — Refactor so `SplatMesh` nodes self-register/unregister on tree and visibility changes, and list modified functions.],
+        [Why is `viewport` `nil` at runtime initialization, and why prefer `get_node_or_null` over direct autoload singleton access?],
+        [Should rasterizer initialization be deferred if the viewport is not yet available?],
+        [`gaussian_splatting_rasterizer.gd` — Coalesce simultaneous reload requests by one frame and fix `load_thread.wait_to_finish()` crash in `cleanup_gpu()`.],
+        [Should `SplatMesh` registration occur in `_ready()` instead of `_enter_tree()` / `_exit_tree()`?],
+        [How to fix timestamp query buffer overflow errors occurring when the 3D editor viewport is idle?],
+        [How to keep the fullscreen quad transparent instead of white when zero splat objects are active?],
+        [`splat_mesh.gd` — Trigger splat reload only when the edited file path exists on disk.],
+        [How to register `.ply` files as custom Godot `Resource` assets for FileSystem visibility, drag-and-drop, and export bundling?],
+        [Is it better for `SplatMesh` nodes to push their 3D transforms or for the renderer to collect them?],
+        [`ply_file.gd` — How to structure and name an extensible `Resource` and `EditorImportPlugin` hierarchy to support both `.ply` and future glTF splats?],
+        [Does importing splat files into custom Godot `Resource` assets bloat exported build sizes?],
+        [Generate `ply_importer.gd` and list changes to refactor `ply_file.gd` into `gaussian_splat_data.gd`.],
+        [`splat_mesh.gd` — Update `SplatMesh` and `rendered_image.gd` to use `GaussianSplatData` resources instead of file paths.],
+        [Suggest concise, idiomatic Godot names analogous to `MeshInstance3D` and `Mesh` for the splat node and resource.],
+        [How to assign custom editor icons to `SplatCloud3D` and `SplatCloudData` in the FileSystem and Scene docks?],
+        [Generate Godot-style SVG icons for `SplatCloud3D` and `SplatCloudData` matching `MeshInstance3D` and `ArrayMesh` palettes.],
+        [Why do custom SVG icons look paler than built-in icons after upgrading to Godot 4.6?],
+        [Acknowledge Godot upstream icon theme fix.],
+        [Note the two SVG import settings from Godot docs that fix icon theme color conversion.],
+        [Why do imported `.ply` files show generic file icons instead of the custom resource icon in Godot 4.6?],
+        [Report `No loader found for resource (expected type: SplatCloudData)` errors upon reimporting `.ply` files.],
+        [Check if there is an upstream Godot issue tracking missing custom resource icons on imported files.],
+        [Conclude icon discussion and outline next priorities: memory leaks, AMD compatibility, and editor stutters.],
+        [GLSL shaders — Diagnose AMD GPU rendering bug causing visible tile edges and missing alpha blending.],
+        [Investigate parallel splat blending loop in `gsplat_render.glsl` for the AMD single-splat tile artifact.],
+        [Diagnose editor viewport stutters and crashes, and evaluate replacing the fullscreen quad with `CompositorEffect`.],
+        [Confirm 3D viewport GPU flooding and plan migration to `CompositorEffect` based on the ReconWorldLab implementation.],
+        [6 GDScript files — Port `CompositorEffect` rendering pipeline into existing rasterizer and render context scripts.],
+        [`post.glsl` — Assess feasibility of a minimal `CompositorEffect` prototype reusing existing shaders and loaders.],
+        [`splat_cloud_3d.gd` — Adapt `SplatCloud3D` registration to the `CompositorEffect` prototype.],
+        [Fix GDScript static type inference and compilation errors in `postprocess.gd` and `splat_cloud_3d.gd`.],
+        [Fix runtime null camera error in `update_camera_matrices()` when running the main scene.],
+        [Check how null camera/viewport timing was handled in the previous implementation.],
+        [Git patch — Review `CompositorEffect` prototype diff against the previous architecture and identify bugs.],
+        [Fix broken depth testing where splats always render in front of scene meshes.],
+        [`gsplat_boundaries.glsl` + patch — Compare shader differences against the ReconWorldLab implementation.],
+        [`gsplat_projection.glsl` + `gsplat_render.glsl.patch` — Continue shader diff review (mismatched patch attached).],
+        [`gsplat_projection.glsl` + patch — Compare projection shader differences against ReconWorldLab.],
+        [Identify which custom shader modifications should be preserved when adopting the upstream shaders.],
+        [Adopt ReconWorldLab codebase as base and plan porting runtime visibility toggles, editor icons, and instancing.],
+        [9 GDScript/GLSL files — Design instant visibility culling without GPU re-upload and multi-instance rendering for shared splat resources.],
+        [Generate a detailed implementation checklist for GPU instancing of shared splat resources.],
+        [Locate the compute shader dispatch count and verify how it must change for instancing.],
+        [Diagnose why instancing works visually but does not reduce VRAM consumption.],
+        [Research relightable PBR Gaussian Splatting approaches, existing implementations, and challenges for Godot.],
+        [Share `mesh2splat` PBR `.ply` header (`nx/ny/nz`, metallic, roughness) and outline relighting integration.],
+        [Evaluate packing PBR attributes into SH slots vs. separate buffers, and preserving transparency with deferred shading.],
+        [Can Godot shaders access aggregated scene lighting directly instead of manually querying `SceneTree` lights?],
+        [How does Godot's Forward+ renderer handle lighting for standard transparent meshes?],
+        [Can each splat object be rendered offscreen and passed to Godot as a transparent proxy mesh for lighting?],
+        [Clarify per-object offscreen splat accumulation into color/normal/ORM textures for Godot's shading pass.],
+        [10 GDScript/GLSL files — Implement draft PBR `.ply` importer, GPU buffer layout, and Godot deferred shading output.],
+        [Can a Godot 4.6 `CompositorEffect` write albedo, normal, and ORM directly into engine G-buffers without a proxy `Node3D`?],
+        [5 GDScript/GLSL files — Attach remaining files to implement custom PBR shading directly in the compute/composite shader.],
+        [Fix GDScript compilation, preload path, and main-thread `is_visible_in_tree()` errors across importer and render scripts.],
+        [Resolve `GaussianResource` byte-size mismatch warning (expected 165 MB vs. 33 MB).],
+        [Fix GLSL compilation errors (`undeclared identifier 'dims'` and `'rasterized_image'`).],
+        [Fix GLSL type mismatch compilation error in `get_rect()`.],
+        [Fix `BYTES_PER_FLOAT` constant bug and verify GPU storage buffer allocations for 20-float PBR splats.],
+        [Fix inverted directional light (sun) Y-axis direction in custom PBR shading.],
+        [Estimate fallback normal vectors from each splat's smallest scale axis for standard non-PBR `.ply` files.],
+        [10 project files — Port Godot deferred shading test onto the fullscreen-quad branch and skip redundant `_process()` redraws.],
+        [Generate the GDScript and shader code for native Godot deferred shading.],
+        [Fix null `device` / zero-size buffer errors and 4x4 checkerboard artifacts in the deferred shading test.],
+        [`gaussian_splatting_rasterizer.gd` — Clarify required `init_gpu()` changes for deferred shading texture creation.],
+        [Fix GDScript type inference parse errors on `num_sort_elements_max` and `num_partitions`.],
+        [Fix `RenderingDevice` errors caused by updating textures/buffers while a compute list is active.],
+        [Ask whether to allocate a dedicated `Texture2DRD` for `render_texture` as well.],
+        [Fix upside-down lighting and viewport resize mismatch on normal/ORM textures.],
+        [Fix broken depth testing and unlit screen regions after normal/ORM resize fix.],
+        [Clarify that the top and left ~10% of the viewport remain unlit.],
+        [Reuse the alpha channel for depth instead of adding a new texture, and evaluate keeping alpha blending.],
+        [`gsplat_render.glsl` — Fix `undeclared identifier 'first_hit_depth'` shader compilation error.],
+        [Fix depth comparison failing for splats with `x != 0`.],
+        [Current + `.old` shaders — Diff against working `.old` shaders to restore accurate depth output.],
+        [Diagnose why the top 40% and left 10% of the screen remain unshaded despite working depth.],
+        [Minimal `main.gdshader` — Isolate why the top 45% of the fullscreen quad receives no lighting in Godot.],
+        [Fix GLSL `Constants cannot be modified` error on line 54.],
+        [`main.gdshader` — Fix spotlight falloff and harsh edges caused by evaluating lighting at the cloud's center instead of per-pixel world position.],
+        [Dilate vertex grid depth by one neighbor to eliminate silhouette edge lighting artifacts.],
+        [Report that single-neighbor depth dilation did not resolve silhouette artifacts.],
+        [GLSL compute shaders — Check if reversed-Z depth (`1.0` vs. `0.0`) is inverted when sampling depth.],
+        [Confirm reversed-Z fix works and ask how to smooth minor grazing-angle silhouette artifacts.],
+        [Revert latest edge-smoothing change due to severe interior artifacts.],
+        [Research Khronos `KHR_gaussian_splatting` glTF extension status, sample assets, compression, and Godot implementation effort.],
+        [4 project/spec files — Implement `gltf_importer.gd` for uncompressed `.gltf`/`.glb` splats matching the PLY importer.],
+        [Find publicly available `KHR_gaussian_splatting` `.gltf`/`.glb` sample files.],
+        [Diagnose why an imported `.glb` file cannot be assigned to `SplatCloud3D`'s `SplatCloudData` property.],
+        [Identify import failure caused by `Invalid assignment of property 'split'` in `gltf_importer.gd`.],
+        [Diagnose invisible `.glb` splat rendering and add debug logging comparing `.ply` vs. `.glb` `SplatCloudData`.],
+        [Share debug vertex dumps for `.glb` and `.ply` imports showing zeroed scale, rotation, and opacity fields.],
+        [3 GDScript files — Re-attach correct versions of `splat_cloud_data.gd`, `ply_importer.gd`, and `gsplat-nodes.gd`.],
+        [9 GDScript files — Port the working glTF importer into the ReconWorldLab codebase style for a PR.],
+        [Refactor glTF port into `gaussian_import_plugin.gd` changes plus a `RefCounted` `gltf_decoder.gd` class.],
+        [Rewrite `gltf_decoder.gd` to fix issues in the initial generated decoder.],
+        [Why is `SH_COEFF_COUNT = 48` set when higher-order SH coefficients aren't parsed in the glTF importer?],
+        [Why do loaded glTF models appear to have view-dependent shading without higher-order SH coefficients?],
+        [Ask if `KHR_gaussian_splatting` defines any other major optional sub-extensions, such as per-splat PBR data.],
+        [Identify which standard 3DGS dataset scene best demonstrates view-dependent spherical harmonics.],
+        [`gltf_importer.gd`, `splat_cloud_data.gd` — Implement higher-order spherical harmonics parsing in `gltf_importer.gd`.],
+        [`ply_importer.gd`, `gltf_gs_ext_README.md` — Fix corrupted rainbow SH colors caused by coefficient layout/basis differences.],
+        [3 decoder/builder files — Add spherical harmonics parsing to `gltf_decoder.gd` for the ReconWorldLab codebase.],
+        [Report the same rainbow SH channel-ordering artifact in `gltf_decoder.gd`. (Eredeti: "ah, this one's gay as well :S")],
+        [Plan unified GPU splat buffer layout and pipeline supporting both SH and PBR relighting without separate shaders.],
+        [2 branch diffs — Plan merging the glTF+SH branch and the Godot-relightable branch into a single pipeline.],
+        [`gltf_importer.gd`, `ply_importer.gd` — Verify importer compatibility and restore transparency for non-relightable splats.],
+        [Fix regressed rainbow SH color ordering on `.ply` and `.glb` models after merging branches.],
+        [Apply inverse node rotation to view directions so spherical harmonics update properly when rotating splat objects.],
+        [Evaluate GPU cost of per-splat matrix inversion vs. uploading pre-inverted model matrices.],
+        [`enemy.gd`, `enemy_spawner.gd` — Design an object pool of pre-spawned `SplatCloud3D` enemies (10 Teddies, 10 Bonsais, 21 Toyotas) for a tower defense demo and raise max object limit to 48.],
+        [4 plugin scripts — Fix invisible pooled enemies and 15-second GPU re-upload stalls caused by `reparent()` triggering tree exit/enter.],
+        [Start status update on demo integration (incomplete message).],
+        [`gs_pool.gd` — Fix pooled splats not resetting position upon enemy death and diagnose missing Toyota models.],
+        [Return pooled splats before `queue_free()` when enemies reach the goal in `enemy.gd`.],
+        [Add per-model scale and position offsets when instantiating pooled splats to match original enemy hitboxes.],
+        [Attach pooled splats to an editor-configurable child `Node3D` anchor inside each enemy scene instead of hardcoded offsets.],
       ),
     ),
     (
@@ -1179,114 +1296,24 @@ A mindenki számára szabadon letölthető plugin-változataim, illetve a másik
       tool: [Gemini],
       parts: [Abstract],
       share: [95%],
-      prompts: [Nice. It's been a while. Now I wrote the thesis text. Below I paste the abstract in Hungarian, please translate it into English. Use simple english, but still it should be fine for a master thesis' abstract.
-
-      _Absztrakt akkori változata_],
+      prompts: [
+        _Absztrakt akkori változata_ \
+        Translate the attached Hungarian master's thesis abstract into clear, natural English.
+      ],
     ),
     (
       category: [Egyéb: AI nyilatkozat írása a Typst sablonhoz],
       tool: [Gemini],
       parts: [@ai-nyilatkozat-fejezet függelék],
-      share: [50%],
+      share: [60%],
       prompts: (
-        [in typst I have this for list entries. I want the X to be in the middle of the square, but probably because of some spacing it is off. I want the exact size for the square, I don't want to make it bigger. How do I reduce the spacing or make it negative, so that the X goes up and right relative to the square, and they also take less space (only the space that the empty square would)?
-```
-#set list(marker: square(height: 0.75em)[✘])
-```
-The checkbox character doesn't work well, its using a different font and its ugly],
-        [_AI_nyilatkozat_tablazat_HU.tex_
-        
-        Nice. To be fair the whole task is to translate the attached latex template to typst. So far I've got until here:
-        
-_AI nyilatkozat kódjának akkori változata_
-
-Please try to finish the rest. Take special care to nice spacing and the lines between rows, if you can.],
-[Yeah I like the non-rowgutter version. 
-The box looks worse than it did, but I do like the non-code-duplicatedness. Please however make it like this:
-
-```
-#let checkbox(texttt) = square(height: 0.75em, inset: 0pt)[
-  #place(center + horizon, text(top-edge: "bounds", bottom-edge: "bounds")[texttt])
-]``` (though this doesnt work cuz it writes texttt instead of the variable xddd)
-
-Also, sometimes we need to put multiple prompts, so please make usage-row accept multiple values for the prompt, and add multiple lines after the usage with "prompt lényegi része" on the left 1, and the prompt on the right 3 cells
-
-And please put the whole thing into the appendix function, so far it looks like this:
-
-
-```
-#let appendix(body) = {
-  heading(level: 1, numbering: none)[Függelék]
-  set heading(offset: 1, numbering: (..numbers) => {
-    let nums = numbers.pos()
-    let _ = nums.remove(0)
-    numbering("A.1.", ..nums)
-  })
-  counter(heading).update(0)
-  body
-}
-```
-
-and it is used like this:
-
-```
-#show: appendix
-
-= Nyilatkozat generatív mesterséges intelligencia alkalmazásáról
-...
-```
-
-But I'd want to be able to wrap this text and table into the appendix, while still being able to add other appendix entries after the table. And also be able to populate the ai table from the usage, while the table itself stays in the template.],
-[nice, this is pretty good! I want to ask for a few small adjustments:
-10pt for text size is good (?)
-no need for the 0.5em vspace just before the table
-I want to be able to reorganize the usage-categories, but it is fine if the templates text is in the user-file, since then they can customize the text if they want more easily. Also, we should be able to have multiple "egyéb" options. Or all of them can be done with the same logic, and then it becomes simpler as well.
-I want to draw no table at all if they say they didn't use any AI. (then any info that is passed for the table can be dropped, but it should still compile if possible)],
-[nice, thats good. Now, please write me a python script that converts the attached prompts into the required format. Please pay special attention to line breaks, code blocks, characters that need escaping, etc. It would be good to convert the prompts to a separate file, and have an easy way to "include" that file in the main.typ, since this will be a huge amount of text.
-
-They all go to one category, titled "Új ötletek, megoldási javaslatok és programkód generálása", I will take care of that.
-
-So please write a script that scrapes all of my prompts in the attached file, and word-by-word copies them to this new file. If there is an attachment file to the prompt as well, put the name of the file in front of the prompt like this:
-`_file.ext akkori változata_` (\_ so that it is in italics)
-No need to scrape the responses you gave.
-If there is code pasted into the prompt too, you don't need to auto-recognize that and put the whole thing into a codeblock, but please make sure to escape the characters in a way that I don't get comp.error when I try to see the result. ],
-
-[
-  _extract_prompts.py akkori változata_
-  
-  okay, that is starting to take shape. Now I have the typst file like this:
-```
-[
-
-_rendered\_image\.gd akkori változata_ \
-Hi\. I am making a godot addon that integrates gaussian splatting into the editor\/games, as nodes that can be moved\. I have an autoload singleton with a fullscreen quad where the drawing happens\. This works fine when running the game\. However, I am not sure how it would work in the editor, which would be pretty cool\. This way people could see their splat objects also in the editor\. Now I am getting a bunch of errors from the autoload singleton, which would suggest that it is actually loaded in the editor (it is a \@tool script, however I was not sure if that also is enough for autoload singletons to start during edited scenes, it looks like it is)\.
-
-The errors point to the following problem: \
-splat\_filenames is empty on line 34, meaning the initialization of the rest of the scene probably happens after that is  called\. It is probably indeed true, since if I close the main demo scene, the errrors keep repeating, suggesting that the autoload tools are loaded before everything, and keep running, even if there is no 3d scene open\.
-
-So my guess for a fix is to make dynamically loading\/unloading splat files possible, and that would possibly solve this as well\. My question is what do you think of all of this, and also do you know if the autoload tool is only the script running, or the attached MeshInstance3D will also be available in the editor in case a 3d scene is opened, rendering the splat objects hopefully in the right place, as they do during running the scene?
-
-], [...
-```
-But I'd want to include it so that I can pass the texts as arrays to the typst array we had above to use the function to put it into the table. How to do that? Here is the current python script, and how the main.typ looks like now:
-```
-#show: appendix.with(
-  used-ai: true,
-  ai-usage: (
-    (
-      category: [Új ötletek, megoldási javaslatok és programkód generálása],
-      tool: [ChatGPT, Gemini],
-      parts: [@onallo-munka-bemutatasa\-@plugin-alkalmazasai-fejezet. fejezet],
-      share: [25%],
-      prompts: [_Az ezen táblázatról szóló szabály meghozása előtt a projekthez használt promptok nem kerültek mentésre. Ezek viszonylag kis, specifikus kérések voltak, kis hatással._
-    
-    
-    ],
-    #include "prompts.typ"
-    ),
-....
-```
-but ofc this doesn't work :/],
+        [How to center a checkmark (`✘`) inside a fixed-size `0.75em` Typst square marker without font/spacing distortion?],
+        [_AI\_nyilatkozat\_tablazat\_HU.tex_, _AI nyilatkozat kódjának akkori változata_ — Complete the Typst translation of the LaTeX AI declaration table with clean row borders and spacing.],
+        [Fix the `checkbox` parameter rendering, support multiple prompt rows per usage category, and integrate the AI table into the `appendix` template function.],
+        [Adjust table spacing/font size, allow flexible category ordering, and omit the table when `used-ai` is false.],
+        [Write a Python script to extract user prompts and attachment labels from chat history into an escaped Typst file.],
+        [_extract\_prompts.py akkori változata_ — Update the extractor script and `main.typ` to export prompts as a Typst array for table population.],
+        [_main.typ részlete_, _prompts.typ akkori változata_ — Aggressively summarize all prompts one-by-one while preserving structure, percentages, and descriptions, and merge `prompts.typ` into `main.typ`.],
       ),
     ),
     (
